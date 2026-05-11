@@ -1,57 +1,89 @@
-# Mini-Project
+# Fun English 2026: Step-by-Step English Learning App
 
-# 🚌 Hello Words 🚌
+## Teaching Context
 
-## 1. App Purpose
-This app is designed to facilitate vocabulary acquisition for language learners.
-It provides an accessible way for students to progress from simple to challenging words.
+This project is designed for first-year students at a Korean vocational high school in 2026. Although they are high school students, many of them need elementary-level English support. They often lack confidence in English and feel anxious when they have to read, write, or speak.
 
-## 2. Target Learners
-This app is intended for English language learners who want to practice vocabulary by themselves.  
-It can be useful for middle school and high school students.
+The class is a regular high school English class. The teacher uses a screen to demonstrate the app, and students use their phones or classroom devices to practice.
 
-## 3. Data or Content Used
-The app utilizes 20 middle school-level English words and 30 first-year high school-level English words.
+## Lesson Purpose
 
-## 4. What Users Can Learn or Do
-Users can:
-- practice vocabulary
-- match English words with their meanings
-- find the correct answers with the help of images or audio
-- review and restudy only the words they answered incorrectly
- 
-## 5. Classroom or Self-Study Use
-This app can be used for:
-- previewing or reviewing unit vocabulary
-- level-appropriate vocabulary learning
-- preparation for vocabulary quizzes or performance assessments
-- warm-up or wrap-up activities in the classroom
-- independent review focusing on incorrect answers
+The lesson helps students build basic English ability step by step. Instead of starting with difficult grammar rules or long reading texts, the lesson begins with useful words, listening, and speaking.
 
-## 6. App Design Description
-The app consists of the following parts:
-- word-meaning matching interface
-- multimedia hint function (image and audio)
-- incorrect answer review section
-- audio playback button
-- vocabulary list display
-  
-## 7. Difficulties or Limitations
-One limitation is that the app currently does not track long-term learning progress for individual students.
-Another limitation is that the app cannot save or sync user learning data across different devices.
+Students first learn survival words and daily words. Then they learn simple sentence structures that can be used in real-life situations. After that, they apply the words and structures to short speaking and reading activities.
 
-## 8. Further Improvement
-This app could be improved by adding:
-- addition of advanced-level vocabulary quizzes
-- provision of sentence-level context for words
-- student progress tracking system
-- customizable vocabulary list creation
+The goal is to help students feel that English is something they can understand, say, and use.
 
-## 9. App Link
-[APP link](https://miniproject-epfq3zrjqsersgbtoxy8t2.streamlit.app/): https://miniproject-epfq3zrjqsersgbtoxy8t2.streamlit.app/
+## App Purpose
 
-## 10. Reflection
-Through this project, we learned that creating an educational app for learners is not difficult when utilizing generative AI. We also realized that with basic coding knowledge, it is entirely possible to build a customized vocabulary app tailored to our specific teaching context and our students' levels.
+I built this app to support low-confidence learners who need basic and repeated English practice. Many students are not ready to begin with long texts or abstract grammar explanations.
 
-## 11. Describe which Generative AI tool you used and for what specific purpose.
-We used both Chat gpt and Google Gemini for this project. Specifically, we utilized them to generate the basic code framework for the app and to get assistance with modifying and troubleshooting the code when needed.
+They need to hear English first, say it aloud, understand simple sentence patterns, and gradually move toward sentence use and reading.
+
+The app gives students a low-pressure way to practice English at their own pace.
+
+## App Design
+
+The app is a Streamlit-based learning tool called **Fun English 2026**.
+
+It includes several learning sections:
+
+1. **Survival English 160**  
+   Students learn essential words and expressions for basic communication, such as asking for help, expressing needs, and understanding simple situations.
+
+2. **Daily English 400**  
+   Students learn everyday words related to people, actions, feelings, food, places, school life, and time.
+
+3. **Survival Sentence Structures**  
+   Students learn basic sentence patterns that help them make simple English sentences.
+
+   Example patterns include:
+
+   - I am ______.
+   - I need ______.
+   - I want ______.
+   - I have ______.
+   - Where is ______?
+   - Can you ______?
+   - I don’t understand.
+
+4. **Sentence Practice with Speech Recognition**  
+   Students apply the words and sentence structures by speaking target sentences. The app uses speech recognition to check whether their spoken response is close to the target sentence.
+
+5. **Pronunciation Practice**  
+   Students listen to model pronunciation, repeat the words or sentences, and practice speaking again.
+
+6. **Short Reading Practice**  
+   After listening, speaking, and sentence practice, students read short and simple texts that include familiar words and sentence structures.
+
+The main learning sequence is:
+
+**Listen → Speak → Learn Sentence Structures → Practice Pronunciation → Make Sentences → Read**
+
+## Classroom Use
+
+In class, the teacher first introduces a real-life situation, such as needing help, being hungry, being lost, or asking for a place. Students use the app to listen to key words and expressions, repeat them, and check the meaning.
+
+Then students learn a simple sentence structure, such as “I need ______.” They practice replacing the blank with words they already know, such as “water,” “food,” or “help.”
+
+After that, students use the speech recognition and pronunciation practice functions to practice saying target sentences. Students who need more help can replay the audio, check Korean meanings, and repeat the same patterns. More confident students can make their own sentences or move on to short reading activities.
+
+The app supports adaptive learning because students can practice at different speeds and receive different levels of support.
+
+## Limitations
+
+The app includes speech recognition and pronunciation practice, but the feedback is still limited. It can help students check whether their spoken response is close to the target sentence, but it cannot fully evaluate detailed pronunciation features such as stress, rhythm, intonation, or vowel quality.
+
+Also, speech recognition may not always work perfectly on all devices, especially on some mobile phones or in a noisy classroom. Because of this, students still need teacher feedback and peer support.
+
+The reading materials are still simple, so more leveled reading texts may be needed in the future.
+
+## Future Development
+
+In the future, I would like to add learner progress tracking.
+
+This feature would allow students and the teacher to see which words, sentence patterns, and speaking tasks students have practiced. It could also show which items students still need to review.
+
+With learner progress tracking, the app could become more adaptive because students would receive practice based on their own learning progress.
+
+The long-term goal is to make the app more practical and supportive for low-level high school English learners.
