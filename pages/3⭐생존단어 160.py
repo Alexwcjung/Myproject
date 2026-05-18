@@ -696,180 +696,34 @@ AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
 # =========================
 # 단어용 HTML 오디오 플레이어
 # =========================
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=42):
-    audio_bytes = make_tts_audio(text)
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+def safe_audio_button(label, text, key=None):
+    """
+    개별 단어 듣기용 안전한 오디오 버튼입니다.
 
-    audio_id = f"audio_{uuid.uuid4().hex}"
-    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
-    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    player_id = f"player_{uuid.uuid4().hex}"
+    기존 방식:
+    - components.html 안에서 JavaScript로 audio를 반복 재생
 
-    safe_label = json.dumps(label)
-    safe_text = json.dumps(text)
-    safe_player_id = json.dumps(player_id)
-    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
+    수정 방식:
+    - Streamlit 기본 st.button + st.audio 사용
+    - JavaScript를 쓰지 않아서 Streamlit Cloud에서 더 안전함
+    - 버튼을 누른 단어만 음성 생성/재생
+    """
+    button_key = key or f"safe_audio_{abs(hash(text))}"
 
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:36px;">
-            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
-
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #fce7f3, #dbeafe);
-                border: 1px solid #e9d5ff;
-                border-radius: 999px;
-                padding: 5px 8px;
-                font-weight: 800;
-                font-size: 12px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.06);
-                white-space: nowrap;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 5px 8px;
-                font-weight: 800;
-                font-size: 12px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-                white-space: nowrap;
-            ">
-                ⏹ 중지
-            </button>
-
-            <span id="{status_id}" style="
-                font-size: 12px;
-                color: #075985;
-                font-weight: 700;
-                white-space: nowrap;
-            "></span>
-
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-
-            let count = 0;
-            let timer = null;
-            let isStopped = false;
-
-            const maxCount = {repeat_count};
-            const pauseMs = {pause_ms};
-            const labelText = {safe_label};
-            const wordText = {safe_text};
-            const playerId = {safe_player_id};
-            const channelName = {safe_channel};
-
-            const channel = new BroadcastChannel(channelName);
-
-            function stopThisAudio(showMessage = false) {{
-                isStopped = true;
-
-                if (timer) {{
-                    clearTimeout(timer);
-                    timer = null;
-                }}
-
-                audio.pause();
-                audio.currentTime = 0;
-                count = 0;
-
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-
-                if (showMessage) {{
-                    status.innerText = "중지됨";
-                }} else {{
-                    status.innerText = "";
-                }}
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
-                }}
-            }};
-
-            function playOnce() {{
-                if (isStopped) return;
-
-                if (count >= maxCount) {{
-                    status.innerText = "완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                    return;
-                }}
-
-                audio.currentTime = 0;
-
-                audio.play().then(() => {{
-                    count += 1;
-                    status.innerText = count + "/" + maxCount;
-                }}).catch((error) => {{
-                    status.innerText = "다시 클릭";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }}
-
-            audio.addEventListener("ended", function() {{
-                if (isStopped) return;
-
-                if (count < maxCount) {{
-                    timer = setTimeout(playOnce, pauseMs);
-                }} else {{
-                    status.innerText = "완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }}
-            }});
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                stopThisAudio(false);
-
-                isStopped = false;
-                count = 0;
-                playBtn.disabled = true;
-                playBtn.innerText = "재생중";
-                status.innerText = "시작";
-                playOnce();
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
-            }});
-            </script>
-        </div>
-        """,
-        height=height
-    )
+    if st.button(label, key=button_key):
+        try:
+            audio_bytes = make_tts_audio(text, lang="en", tld="com")
+            st.audio(audio_bytes, format="audio/mp3")
+        except Exception:
+            st.warning("음성을 만들 수 없습니다. 잠시 후 다시 눌러 주세요.")
 
 
 def audio_button(label, text, key=None):
-    html_word_audio_player(
-        label=label,
-        text=text,
-        repeat_count=20,
-        pause_ms=1500,
-        height=42
-    )
+    """
+    기존 audio_button 이름은 그대로 유지합니다.
+    따라서 아래쪽 코드의 audio_button(...) 호출 부분은 수정하지 않아도 됩니다.
+    """
+    safe_audio_button(label, text, key=key)
 
 
 # =========================
