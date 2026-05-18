@@ -1,13 +1,14 @@
 
 import streamlit as st
-from gtts import gTTS
-import io
+from urllib.parse import quote
+import requests
+import hashlib
 import random
-import base64
-import uuid
 import re
-import json
 import html
+import base64
+import json
+import uuid
 import streamlit.components.v1 as components
 
 # =========================
@@ -324,15 +325,40 @@ st.markdown(
 )
 
 # =========================
-# TTS 함수
+# TTS 함수 - 일상 400과 같은 requests 방식
 # =========================
-@st.cache_data
+def make_google_tts_url(text, lang="en"):
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello"
+    encoded = quote(clean_text)
+    return f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded}"
+
+
+@st.cache_data(show_spinner=False)
+def get_tts_mp3_bytes(text, lang="en"):
+    """Google TTS mp3를 requests로 직접 받아와 st.audio에서 재생합니다."""
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello"
+
+    url = make_google_tts_url(clean_text, lang=lang)
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://translate.google.com/",
+    }
+    response = requests.get(url, headers=headers, timeout=12)
+    response.raise_for_status()
+
+    audio_bytes = response.content
+    if not audio_bytes or len(audio_bytes) < 500:
+        raise ValueError("음성 파일이 비어 있습니다.")
+    return audio_bytes
+
+
 def make_tts_audio(text, lang="en", tld="com"):
-    fp = io.BytesIO()
-    tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
-    tts.write_to_fp(fp)
-    fp.seek(0)
-    return fp.read()
+    """기존 코드 호환용 함수입니다."""
+    return get_tts_mp3_bytes(text, lang=lang)
 
 
 def remove_speaker_label(sentence):
@@ -341,6 +367,41 @@ def remove_speaker_label(sentence):
 
 def make_dialogue_tts_text(dialogue):
     return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
+
+
+def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
+    text = str(text).strip()
+    if not text:
+        return
+
+    if key is None:
+        key = "audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
+
+    if st.button(label, key=key, use_container_width=True):
+        try:
+            audio_bytes = get_tts_mp3_bytes(text, lang="en")
+            st.audio(audio_bytes, format="audio/mp3")
+        except Exception as e:
+            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
+            if show_link:
+                st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+
+
+def direct_audio_player(text, show_link=True):
+    """단어 카드용: 오디오 플레이어를 바로 보여줍니다."""
+    text = str(text).strip()
+    if not text:
+        return
+
+    try:
+        audio_bytes = get_tts_mp3_bytes(text, lang="en")
+        st.audio(audio_bytes, format="audio/mp3")
+    except Exception as e:
+        st.error("음성 파일을 만들지 못했습니다.")
+        st.caption(f"오류 내용: {e}")
+        if show_link:
+            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
 
 
 # =========================
@@ -688,218 +749,20 @@ def get_word_emoji(word):
 
 
 # =========================
-# 오디오 공통 중지 채널
+# 단어·대화 오디오 - 일상 400과 같은 안전한 st.audio 방식
 # =========================
-AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
-
-
-# =========================
-# 단어용 HTML 오디오 플레이어
-# =========================
-def safe_audio_button(label, text, key=None):
-    """
-    개별 단어 듣기용 안전한 오디오 버튼입니다.
-
-    기존 방식:
-    - components.html 안에서 JavaScript로 audio를 반복 재생
-
-    수정 방식:
-    - Streamlit 기본 st.button + st.audio 사용
-    - JavaScript를 쓰지 않아서 Streamlit Cloud에서 더 안전함
-    - 버튼을 누른 단어만 음성 생성/재생
-    """
-    button_key = key or f"safe_audio_{abs(hash(text))}"
-
-    if st.button(label, key=button_key):
-        try:
-            audio_bytes = make_tts_audio(text, lang="en", tld="com")
-            st.audio(audio_bytes, format="audio/mp3")
-        except Exception:
-            st.warning("음성을 만들 수 없습니다. 잠시 후 다시 눌러 주세요.")
-
-
 def audio_button(label, text, key=None):
-    """
-    기존 audio_button 이름은 그대로 유지합니다.
-    따라서 아래쪽 코드의 audio_button(...) 호출 부분은 수정하지 않아도 됩니다.
-    """
-    safe_audio_button(label, text, key=key)
+    # 버튼을 한 번 더 거치지 않고 오디오 플레이어를 바로 보여줍니다.
+    direct_audio_player(text)
 
 
-# =========================
-# 대화용 HTML 오디오 플레이어
-# =========================
 def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height=105):
-    audio_data_list = []
-
-    for line in dialogue_lines:
-        clean_text = remove_speaker_label(line["en"])
-        audio_bytes = make_tts_audio(clean_text)
-        audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-        audio_data_list.append({
-            "text": clean_text,
-            "src": f"data:audio/mp3;base64,{audio_base64}"
-        })
-
-    audio_json = json.dumps(audio_data_list)
-    safe_label = json.dumps(label)
-
-    audio_id = f"dialogue_audio_{uuid.uuid4().hex}"
-    play_btn_id = f"dialogue_play_{uuid.uuid4().hex}"
-    stop_btn_id = f"dialogue_stop_{uuid.uuid4().hex}"
-    status_id = f"dialogue_status_{uuid.uuid4().hex}"
-    player_id = f"dialogue_player_{uuid.uuid4().hex}"
-    safe_player_id = json.dumps(player_id)
-    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
-
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
-            <audio id="{audio_id}"></audio>
-
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #fef3c7, #dbeafe);
-                border: 1px solid #fde68a;
-                border-radius: 999px;
-                padding: 9px 15px;
-                font-weight: 800;
-                font-size: 14px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                margin-right: 6px;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 9px 15px;
-                font-weight: 800;
-                font-size: 14px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-            ">
-                ⏹ 중지
-            </button>
-
-            <div id="{status_id}" style="
-                margin-top: 8px;
-                font-size: 13px;
-                color: #075985;
-                font-weight: 700;
-            "></div>
-
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-
-            const dialogueAudios = {audio_json};
-            const linePauseMs = {line_pause_ms};
-            const labelText = {safe_label};
-            const playerId = {safe_player_id};
-            const channelName = {safe_channel};
-
-            let index = 0;
-            let timer = null;
-            let isStopped = false;
-
-            const channel = new BroadcastChannel(channelName);
-
-            function stopThisAudio(showMessage = false) {{
-                isStopped = true;
-
-                if (timer) {{
-                    clearTimeout(timer);
-                    timer = null;
-                }}
-
-                audio.pause();
-                audio.currentTime = 0;
-                index = 0;
-
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-
-                if (showMessage) {{
-                    status.innerText = "⏹ 대화 듣기를 중지했습니다.";
-                }} else {{
-                    status.innerText = "";
-                }}
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
-                }}
-            }};
-
-            function playCurrentLine() {{
-                if (isStopped) return;
-
-                if (index >= dialogueAudios.length) {{
-                    status.innerText = "✅ 대화 재생 완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                    return;
-                }}
-
-                audio.src = dialogueAudios[index].src;
-                audio.currentTime = 0;
-
-                audio.play().then(() => {{
-                    status.innerText = "🔊 대화 재생 중: " + (index + 1) + " / " + dialogueAudios.length;
-                }}).catch((error) => {{
-                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }}
-
-            audio.addEventListener("ended", function() {{
-                if (isStopped) return;
-
-                index += 1;
-
-                if (index < dialogueAudios.length) {{
-                    timer = setTimeout(playCurrentLine, linePauseMs);
-                }} else {{
-                    status.innerText = "✅ 대화 재생 완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }}
-            }});
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                stopThisAudio(false);
-
-                isStopped = false;
-                index = 0;
-                playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
-                status.innerText = "🔊 대화 듣기를 시작합니다.";
-                playCurrentLine();
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
-            }});
-            </script>
-        </div>
-        """,
-        height=height
+    # 기존 함수 이름은 유지하되, 내부는 안정적인 st.audio 방식으로 바꿉니다.
+    dialogue_text = make_dialogue_tts_text(dialogue_lines)
+    play_audio_block(
+        dialogue_text,
+        label=label,
+        key="dialogue_" + hashlib.md5(dialogue_text.encode("utf-8")).hexdigest()
     )
 
 
@@ -975,8 +838,7 @@ theme_dialogues = {
 
 
 # =========================
-# 전체 카세트 듣기 기능
-# 브라우저 음성 엔진 사용
+# 카세트 듣기 - 일상 400과 같은 단어별 mp3 순차 재생 방식
 # =========================
 def get_example_sentence(word):
     return CASSETTE_EXAMPLES.get(word, f"This is {word}.")
@@ -989,532 +851,308 @@ def get_example_sentence_ko(word):
 def flatten_survival_words():
     all_items = []
     number = 1
-
     for theme_name, theme_words in word_themes.items():
         for item in theme_words:
             word = item["word"]
-            example = get_example_sentence(word)
-            example_ko = get_example_sentence_ko(word)
-
             all_items.append({
                 "number": number,
                 "theme": theme_name,
                 "word": word,
                 "meaning": item["meaning"],
-                "example": example,
-                "example_ko": example_ko,
-                "script": f"{word}. {word}. {word}."
+                "emoji": get_word_emoji(word),
             })
             number += 1
-
     return all_items
 
 
 def make_theme_cassette_items(theme_words, theme_name):
     theme_items = []
-
     for idx, item in enumerate(theme_words, start=1):
         word = item["word"]
-        example = get_example_sentence(word)
-        example_ko = get_example_sentence_ko(word)
-
         theme_items.append({
             "number": idx,
             "theme": theme_name,
             "word": word,
             "meaning": item["meaning"],
-            "example": example,
-            "example_ko": example_ko,
-            "script": f"{word}. {word}. {word}."
+            "emoji": get_word_emoji(word),
         })
-
     return theme_items
 
 
+def make_cassette_text(items, repeat_word=2):
+    parts = []
+    for item in items:
+        word = item["word"]
+        parts.append(". ".join([word] * repeat_word) + ".")
+    return " ".join(parts)
 
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="재생 버튼을 누르면 단어가 차례대로 재생됩니다.", height=430):
+
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=470):
     """
-    아주 단순한 카세트 플레이어입니다.
-    남긴 기능:
+    일상 400과 같은 형태의 카세트입니다.
+    남기는 기능:
     - 재생/멈춤 버튼 1개
-    - 이전 버튼
-    - 다음 버튼
+    - 이전
+    - 다음
     - 속도 선택
     - 전체 반복 선택
     """
+    player_id = "survival_cassette_" + uuid.uuid4().hex
 
-    player_id = f"simple_cassette_{uuid.uuid4().hex}"
-    play_btn_id = f"play_{uuid.uuid4().hex}"
-    prev_btn_id = f"prev_{uuid.uuid4().hex}"
-    next_btn_id = f"next_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    word_id = f"word_{uuid.uuid4().hex}"
-    meaning_id = f"meaning_{uuid.uuid4().hex}"
-    count_id = f"count_{uuid.uuid4().hex}"
-    theme_id = f"theme_{uuid.uuid4().hex}"
-    speed_select_id = f"speed_{uuid.uuid4().hex}"
-    repeat_select_id = f"repeat_{uuid.uuid4().hex}"
-    wrap_id = f"wrap_{uuid.uuid4().hex}"
-    bar_id = f"bar_{uuid.uuid4().hex}"
+    visual_items = []
+    for idx, (item, audio_b64) in enumerate(zip(items, audio_payloads), start=1):
+        visual_items.append({
+            "number": item.get("number", idx),
+            "theme": str(item.get("theme", "")),
+            "word": str(item.get("word", "")),
+            "meaning": str(item.get("meaning", "")),
+            "emoji": get_word_emoji(item.get("word", "")),
+            "src": "data:audio/mp3;base64," + audio_b64,
+        })
 
-    cassette_json = json.dumps(all_items, ensure_ascii=False)
-    safe_player_id = json.dumps(player_id)
-    safe_title = html.escape(title)
+    items_json = json.dumps(visual_items, ensure_ascii=False)
 
     components.html(
         f"""
-        <style>
-            .simple-cassette-wrap {{
-                font-family: Arial, sans-serif;
-                width: 100%;
-                box-sizing: border-box;
-                overflow: hidden;
-                border-radius: 26px;
-                padding: 18px;
-                background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 52%, #fdf2f8 100%);
-                border: 1px solid #bae6fd;
-                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09);
-            }}
-            .simple-top {{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 10px;
-                flex-wrap: wrap;
-                margin-bottom: 10px;
-            }}
-            .simple-title {{
-                font-size: 22px;
-                font-weight: 900;
-                color: #0f172a;
-                line-height: 1.25;
-            }}
-            .simple-count {{
-                font-size: 13px;
-                font-weight: 900;
-                color: #475569;
-                background: rgba(255,255,255,0.8);
-                border: 1px solid #dbeafe;
-                border-radius: 999px;
-                padding: 7px 12px;
-            }}
-            .simple-card {{
-                background: rgba(255,255,255,0.9);
-                border: 1px solid #dbeafe;
-                border-radius: 24px;
-                padding: 18px 16px;
-                margin: 12px 0;
-                text-align: center;
-            }}
-            .simple-theme {{
-                display: inline-block;
-                font-size: 13px;
-                font-weight: 900;
-                color: #7c3aed;
-                background: #f3e8ff;
-                border-radius: 999px;
-                padding: 6px 11px;
-                margin-bottom: 8px;
-            }}
-            .simple-word {{
-                font-size: clamp(40px, 8vw, 68px);
-                font-weight: 1000;
-                color: #111827;
-                line-height: 1.08;
-                word-break: break-word;
-            }}
-            .simple-meaning {{
-                margin-top: 8px;
-                font-size: clamp(20px, 4.6vw, 30px);
-                font-weight: 900;
-                color: #334155;
-                word-break: keep-all;
-            }}
-            .simple-bar-bg {{
-                width: 100%;
-                height: 12px;
-                background: #e2e8f0;
-                border-radius: 999px;
-                overflow: hidden;
-                margin-top: 14px;
-            }}
-            .simple-bar-fill {{
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);
-                border-radius: 999px;
-            }}
-            .simple-btn-grid {{
-                display: grid;
-                grid-template-columns: 1fr 1.35fr 1fr;
-                gap: 8px;
-                margin-top: 12px;
-            }}
-            .simple-btn {{
-                width: 100%;
-                min-height: 48px;
-                border-radius: 17px;
-                border: 1px solid #cbd5e1;
-                font-size: 16px;
-                font-weight: 900;
-                cursor: pointer;
-                box-sizing: border-box;
-                white-space: nowrap;
-                box-shadow: 0 3px 9px rgba(15,23,42,0.07);
-            }}
-            .simple-play {{
-                min-height: 56px;
-                font-size: 20px;
-                background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                border-color: #c4b5fd;
-                color: #111827;
-            }}
-            .simple-select-row {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 8px;
-                margin-top: 10px;
-            }}
-            .simple-select-box {{
-                background: rgba(255,255,255,0.86);
-                border: 1px solid #dbeafe;
-                border-radius: 17px;
-                padding: 10px 12px;
-                box-sizing: border-box;
-            }}
-            .simple-label {{
-                font-size: 12px;
-                font-weight: 900;
-                color: #64748b;
-                margin-bottom: 5px;
-            }}
-            .simple-select {{
-                width: 100%;
-                border: 0;
-                background: transparent;
-                font-size: 16px;
-                font-weight: 900;
-                color: #0f172a;
-                outline: none;
-            }}
-            .simple-status {{
-                margin-top: 9px;
-                font-size: 14px;
-                font-weight: 900;
-                color: #075985;
-                min-height: 20px;
-            }}
-            @media (max-width: 520px) {{
-                .simple-cassette-wrap {{ padding: 13px 10px; border-radius: 22px; }}
-                .simple-title {{ font-size: 18px; }}
-                .simple-count {{ font-size: 12px; padding: 6px 9px; }}
-                .simple-card {{ padding: 15px 12px; border-radius: 20px; }}
-                .simple-btn-grid {{ grid-template-columns: 1fr 1.15fr 1fr; gap: 6px; }}
-                .simple-btn {{ min-height: 42px; font-size: 13px; border-radius: 15px; padding: 7px 3px; }}
-                .simple-play {{ min-height: 48px; font-size: 16px; }}
-                .simple-select-row {{ gap: 6px; }}
-                .simple-select {{ font-size: 14px; }}
-            }}
-        </style>
-
-        <div id="{wrap_id}" class="simple-cassette-wrap">
-            <div class="simple-top">
-                <div class="simple-title">{safe_title}</div>
-                <div id="{count_id}" class="simple-count">1 / {len(all_items)}</div>
+        <div id="{player_id}" style="
+            font-family: Arial, sans-serif;
+            width:100%;
+            box-sizing:border-box;
+            border-radius:28px;
+            padding:14px;
+            background:linear-gradient(135deg,#f0fdf4 0%,#eff6ff 48%,#fff7ed 100%);
+            border:1px solid #bbf7d0;
+            box-shadow:0 8px 22px rgba(15,23,42,0.10);
+            overflow:hidden;
+        ">
+            <div style="display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                <div id="count_{player_id}" style="font-size:13px; font-weight:900; color:#475569; background:rgba(255,255,255,.8); border:1px solid #dcfce7; border-radius:999px; padding:7px 12px;">1 / {len(visual_items)}</div>
             </div>
 
-            <div class="simple-card">
-                <div id="{theme_id}" class="simple-theme">Theme</div>
-                <div id="{word_id}" class="simple-word">Ready</div>
-                <div id="{meaning_id}" class="simple-meaning">재생 버튼을 눌러 주세요.</div>
-                <div class="simple-bar-bg"><div id="{bar_id}" class="simple-bar-fill"></div></div>
-            </div>
+            <audio id="audio_{player_id}" preload="auto" style="width:100%; margin:6px 0 14px 0;"></audio>
 
-            <div class="simple-btn-grid">
-                <button id="{prev_btn_id}" class="simple-btn" style="background:#f8fafc; color:#334155;">⏮ 이전</button>
-                <button id="{play_btn_id}" class="simple-btn simple-play">▶️ 재생</button>
-                <button id="{next_btn_id}" class="simple-btn" style="background:#f8fafc; color:#334155;">다음 ⏭</button>
-            </div>
-
-            <div class="simple-select-row">
-                <div class="simple-select-box">
-                    <div class="simple-label">속도</div>
-                    <select id="{speed_select_id}" class="simple-select">
-                        <option value="0.55">천천히</option>
-                        <option value="0.75" selected>보통</option>
-                        <option value="0.95">조금 빠르게</option>
-                        <option value="1.15">빠르게</option>
-                    </select>
+            <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+                <div style="
+                    background:rgba(255,255,255,0.88);
+                    border:1px solid #dcfce7;
+                    border-radius:26px;
+                    padding:16px 14px;
+                    text-align:center;
+                ">
+                    <div id="theme_{player_id}" style="display:inline-block; font-size:13px; font-weight:900; color:#15803d; background:#dcfce7; border-radius:999px; padding:6px 12px; margin-bottom:10px;">Theme</div>
+                    <div id="emoji_{player_id}" style="font-size:46px; line-height:1.05; margin:2px 0;">🛟</div>
+                    <div id="word_{player_id}" style="font-size:clamp(36px,7.8vw,62px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
+                    <div id="meaning_{player_id}" style="font-size:clamp(20px,4.4vw,30px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
+                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:12px;">
+                        <div id="bar_{player_id}" style="height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#0ea5e9,#8b5cf6); border-radius:999px;"></div>
+                    </div>
                 </div>
-                <div class="simple-select-box">
-                    <div class="simple-label">전체 반복</div>
-                    <select id="{repeat_select_id}" class="simple-select">
-                        <option value="1">1번</option>
-                        <option value="2">2번</option>
-                        <option value="3" selected>3번</option>
-                    </select>
-                </div>
-            </div>
 
-            <div id="{status_id}" class="simple-status">준비 완료</div>
+                <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+                    <button id="play_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:13px; font-weight:900; cursor:pointer; box-shadow:0 3px 9px rgba(15,23,42,0.08);">▶️ 재생</button>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="prev_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">⏮ 이전</button>
+                    <button id="next_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">다음 ⏭</button>
+                </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <div style="background:rgba(255,255,255,0.88); border:1px solid #dcfce7; border-radius:16px; padding:9px 11px;">
+                        <div style="font-size:12px; font-weight:900; color:#64748b; margin-bottom:4px;">속도</div>
+                        <select id="speed_{player_id}" style="width:100%; border:0; background:transparent; font-size:14px; font-weight:900; color:#0f172a; outline:none;">
+                            <option value="0.75">천천히</option>
+                            <option value="1" selected>보통</option>
+                            <option value="1.15">조금 빠르게</option>
+                            <option value="1.3">빠르게</option>
+                        </select>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.88); border:1px solid #dcfce7; border-radius:16px; padding:9px 11px;">
+                        <div style="font-size:12px; font-weight:900; color:#64748b; margin-bottom:4px;">전체 반복</div>
+                        <select id="loop_{player_id}" style="width:100%; border:0; background:transparent; font-size:14px; font-weight:900; color:#0f172a; outline:none;">
+                            <option value="1" selected>1번</option>
+                            <option value="2">2번</option>
+                            <option value="3">3번</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
+            </div>
         </div>
 
         <script>
-        (function() {{
-            const cassetteItems = {cassette_json};
-            const playBtn = document.getElementById("{play_btn_id}");
-            const prevBtn = document.getElementById("{prev_btn_id}");
-            const nextBtn = document.getElementById("{next_btn_id}");
-            const status = document.getElementById("{status_id}");
-            const wordBox = document.getElementById("{word_id}");
-            const meaningBox = document.getElementById("{meaning_id}");
-            const countBox = document.getElementById("{count_id}");
-            const themeBox = document.getElementById("{theme_id}");
-            const speedSelect = document.getElementById("{speed_select_id}");
-            const repeatSelect = document.getElementById("{repeat_select_id}");
-            const bar = document.getElementById("{bar_id}");
-            const playerId = {safe_player_id};
-            const channel = new BroadcastChannel("survival_english_audio_channel");
+        const items_{player_id} = {items_json};
+        const audio_{player_id} = document.getElementById("audio_{player_id}");
+        const wordEl_{player_id} = document.getElementById("word_{player_id}");
+        const meaningEl_{player_id} = document.getElementById("meaning_{player_id}");
+        const emojiEl_{player_id} = document.getElementById("emoji_{player_id}");
+        const themeEl_{player_id} = document.getElementById("theme_{player_id}");
+        const countEl_{player_id} = document.getElementById("count_{player_id}");
+        const barEl_{player_id} = document.getElementById("bar_{player_id}");
+        const statusEl_{player_id} = document.getElementById("status_{player_id}");
+        const playBtn_{player_id} = document.getElementById("play_{player_id}");
+        const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
+        const nextBtn_{player_id} = document.getElementById("next_{player_id}");
+        const speedSelect_{player_id} = document.getElementById("speed_{player_id}");
+        const loopSelect_{player_id} = document.getElementById("loop_{player_id}");
 
-            let index = 0;
-            let repeatRound = 1;
-            let isPlaying = false;
-            let token = 0;
-            let timer = null;
+        let currentIndex_{player_id} = 0;
+        let currentLoop_{player_id} = 1;
+        let isPlayingList_{player_id} = false;
+        let isFinished_{player_id} = false;
 
-            function getEmoji(word) {{
-                const emojiMap = {{
-                    "I":"🙋","you":"👉","he":"👦","she":"👧","we":"👥","they":"👥","friend":"🤝","teacher":"👩‍🏫","student":"🧑‍🎓",
-                    "go":"➡️","come":"⬅️","walk":"🚶","run":"🏃","sit":"🪑","stand":"🧍","stop":"🛑","start":"▶️","open":"📂","close":"📕",
-                    "eat":"🍽️","drink":"🥤","sleep":"😴","study":"📚","read":"📖","write":"✏️","listen":"👂","speak":"🗣️","help":"🆘",
-                    "happy":"😊","sad":"😢","angry":"😠","tired":"🥱","hungry":"😋","thirsty":"🥤","sick":"🤒","okay":"👌","fine":"🙂",
-                    "food":"🍽️","water":"💧","rice":"🍚","bread":"🍞","milk":"🥛","juice":"🧃","coffee":"☕","tea":"🍵",
-                    "home":"🏠","school":"🏫","bathroom":"🚻","hospital":"🏥","store":"🏪","bus":"🚌","car":"🚗","taxi":"🚕","train":"🚆","bike":"🚲",
-                    "time":"⏰","now":"🕒","today":"📅","tomorrow":"➡️📅","yesterday":"⬅️📅","nine":"9️⃣","ten":"🔟",
-                    "bag":"🎒","phone":"📱","book":"📘","money":"💵","card":"💳","ticket":"🎫",
-                    "please":"🙏","sorry":"🙇","excuse me":"🙋","again":"🔁","slowly":"🐢","question":"❓","answer":"✅"
-                }};
-                return emojiMap[word] || "🌱";
+        function setCurrent_{player_id}(idx) {{
+            if (!items_{player_id}.length) return;
+            idx = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
+            currentIndex_{player_id} = idx;
+            const it = items_{player_id}[idx];
+
+            wordEl_{player_id}.textContent = it.word;
+            meaningEl_{player_id}.textContent = it.meaning;
+            emojiEl_{player_id}.textContent = it.emoji;
+            themeEl_{player_id}.textContent = it.theme || "Survival English";
+            countEl_{player_id}.textContent = (idx + 1) + " / " + items_{player_id}.length + " · " + currentLoop_{player_id} + "회차";
+
+            const percent = items_{player_id}.length <= 1 ? 100 : (idx / (items_{player_id}.length - 1)) * 100;
+            barEl_{player_id}.style.width = percent + "%";
+        }}
+
+        function loadCurrent_{player_id}() {{
+            const it = items_{player_id}[currentIndex_{player_id}];
+            setCurrent_{player_id}(currentIndex_{player_id});
+            if (audio_{player_id}.src !== it.src) {{
+                audio_{player_id}.src = it.src;
+                audio_{player_id}.load();
             }}
+            audio_{player_id}.playbackRate = parseFloat(speedSelect_{player_id}.value || "1");
+        }}
 
-            function getEnglishVoice() {{
-                const voices = window.speechSynthesis.getVoices();
-                const preferredNames = ["Samantha", "Google US English", "Microsoft Jenny", "Microsoft Aria", "Microsoft Zira", "Karen", "Moira", "Tessa", "Fiona", "Victoria"];
-                for (const name of preferredNames) {{
-                    const found = voices.find(v => v.name && v.name.toLowerCase().includes(name.toLowerCase()) && v.lang && v.lang.toLowerCase().startsWith("en"));
-                    if (found) return found;
-                }}
-                return voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) || null;
-            }}
-
-            function updateDisplay() {{
-                if (!cassetteItems.length) return;
-                const item = cassetteItems[index];
-                const max = Math.max(cassetteItems.length - 1, 1);
-                const pct = Math.round((index / max) * 100);
-                countBox.innerText = (index + 1) + " / " + cassetteItems.length;
-                themeBox.innerText = item.theme || "Theme";
-                wordBox.innerText = item.word + " " + getEmoji(item.word);
-                meaningBox.innerText = item.meaning || "";
-                bar.style.width = pct + "%";
-                status.innerText = "반복 " + repeatRound + " / " + repeatSelect.value;
-            }}
-
-            function clearTimer() {{
-                if (timer) {{ clearTimeout(timer); timer = null; }}
-            }}
-
-            function stopAudio(message="정지됨") {{
-                token += 1;
-                clearTimer();
-                window.speechSynthesis.cancel();
-                isPlaying = false;
-                playBtn.innerText = "▶️ 재생";
-                status.innerText = message;
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopAudio("");
-                }}
-                if (event.data.type === "STOP_ALL") {{
-                    stopAudio("");
-                }}
-            }};
-
-            window.addEventListener("pagehide", function() {{ stopAudio(""); }});
-            window.addEventListener("beforeunload", function() {{ stopAudio(""); }});
-            document.addEventListener("visibilitychange", function() {{
-                if (document.hidden) stopAudio("");
+        function playCurrent_{player_id}() {{
+            if (!items_{player_id}.length) return;
+            isPlayingList_{player_id} = true;
+            isFinished_{player_id} = false;
+            loadCurrent_{player_id}();
+            playBtn_{player_id}.textContent = "⏸ 멈춤";
+            statusEl_{player_id}.textContent = "현재 단어: " + items_{player_id}[currentIndex_{player_id}].word;
+            audio_{player_id}.play().catch(() => {{
+                statusEl_{player_id}.textContent = "브라우저가 자동 재생을 막았습니다. 재생 버튼을 한 번 더 눌러 주세요.";
+                playBtn_{player_id}.textContent = "▶️ 재생";
             }});
+        }}
 
-            function speakCurrent(localToken) {{
-                if (!isPlaying || localToken !== token) return;
-                const item = cassetteItems[index];
-                if (!item) return;
-                updateDisplay();
+        function pauseCurrent_{player_id}() {{
+            isPlayingList_{player_id} = false;
+            audio_{player_id}.pause();
+            playBtn_{player_id}.textContent = "▶️ 이어 듣기";
+            statusEl_{player_id}.textContent = "일시정지";
+        }}
 
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(item.script || item.word);
-                utterance.lang = "en-US";
-                utterance.rate = parseFloat(speedSelect.value || "0.75");
-                utterance.pitch = 1.05;
-                const voice = getEnglishVoice();
-                if (voice) utterance.voice = voice;
-
-                function goNext() {{
-                    if (!isPlaying || localToken !== token) return;
-                    index += 1;
-                    if (index >= cassetteItems.length) {{
-                        const maxRepeat = parseInt(repeatSelect.value || "1");
-                        if (repeatRound < maxRepeat) {{
-                            repeatRound += 1;
-                            index = 0;
-                            timer = setTimeout(function() {{ speakCurrent(localToken); }}, 500);
-                            return;
-                        }}
-                        isPlaying = false;
-                        index = cassetteItems.length - 1;
-                        updateDisplay();
-                        playBtn.innerText = "▶️ 처음부터";
-                        status.innerText = "카세트 듣기 완료";
-                        bar.style.width = "100%";
-                        return;
-                    }}
-                    timer = setTimeout(function() {{ speakCurrent(localToken); }}, 450);
-                }}
-
-                let done = false;
-                function finish() {{
-                    if (done) return;
-                    done = true;
-                    goNext();
-                }}
-
-                utterance.onend = finish;
-                utterance.onerror = finish;
-                window.speechSynthesis.speak(utterance);
-
-                const estimatedMs = Math.max(1600, (item.script || item.word || "word").length * 160 / Math.max(parseFloat(speedSelect.value || "0.75"), 0.4));
-                timer = setTimeout(finish, estimatedMs);
+        function moveTo_{player_id}(idx, autoPlay=false) {{
+            isPlayingList_{player_id} = autoPlay;
+            isFinished_{player_id} = false;
+            audio_{player_id}.pause();
+            currentIndex_{player_id} = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
+            loadCurrent_{player_id}();
+            if (autoPlay) {{
+                playCurrent_{player_id}();
+            }} else {{
+                playBtn_{player_id}.textContent = "▶️ 재생";
+                statusEl_{player_id}.textContent = "선택된 단어: " + items_{player_id}[currentIndex_{player_id}].word;
             }}
+        }}
 
-            function startAudio() {{
-                if (!cassetteItems.length) return;
-                channel.postMessage({{ type: "STOP_OTHERS", playerId: playerId }});
-                token += 1;
-                clearTimer();
-                window.speechSynthesis.cancel();
-                isPlaying = true;
-                if (index >= cassetteItems.length - 1 && playBtn.innerText.includes("처음")) {{
-                    index = 0;
-                    repeatRound = 1;
+        loadCurrent_{player_id}();
+
+        speedSelect_{player_id}.addEventListener("change", function() {{
+            audio_{player_id}.playbackRate = parseFloat(speedSelect_{player_id}.value || "1");
+        }});
+
+        playBtn_{player_id}.addEventListener("click", function() {{
+            if (isPlayingList_{player_id}) {{
+                pauseCurrent_{player_id}();
+            }} else {{
+                if (isFinished_{player_id}) {{
+                    currentIndex_{player_id} = 0;
+                    currentLoop_{player_id} = 1;
+                    isFinished_{player_id} = false;
                 }}
-                playBtn.innerText = "⏸ 멈춤";
-                speakCurrent(token);
+                playCurrent_{player_id}();
             }}
+        }});
 
-            function move(delta) {{
-                stopAudio("선택된 단어");
-                repeatRound = 1;
-                index = Math.max(0, Math.min(cassetteItems.length - 1, index + delta));
-                updateDisplay();
+        prevBtn_{player_id}.addEventListener("click", function() {{
+            moveTo_{player_id}(currentIndex_{player_id} - 1, false);
+        }});
+
+        nextBtn_{player_id}.addEventListener("click", function() {{
+            moveTo_{player_id}(currentIndex_{player_id} + 1, false);
+        }});
+
+        audio_{player_id}.addEventListener("ended", function() {{
+            if (!isPlayingList_{player_id}) return;
+            const maxLoop = parseInt(loopSelect_{player_id}.value || "1");
+            if (currentIndex_{player_id} < items_{player_id}.length - 1) {{
+                currentIndex_{player_id} += 1;
+                playCurrent_{player_id}();
+            }} else if (currentLoop_{player_id} < maxLoop) {{
+                currentLoop_{player_id} += 1;
+                currentIndex_{player_id} = 0;
+                playCurrent_{player_id}();
+            }} else {{
+                isPlayingList_{player_id} = false;
+                isFinished_{player_id} = true;
+                playBtn_{player_id}.textContent = "▶️ 처음부터 다시";
+                statusEl_{player_id}.textContent = "✅ 카세트 재생 완료";
+                barEl_{player_id}.style.width = "100%";
             }}
-
-            playBtn.addEventListener("click", function() {{
-                if (isPlaying) {{
-                    stopAudio("멈춤");
-                }} else {{
-                    startAudio();
-                }}
-            }});
-
-            prevBtn.addEventListener("click", function() {{ move(-1); }});
-            nextBtn.addEventListener("click", function() {{ move(1); }});
-
-            speedSelect.addEventListener("change", function() {{
-                status.innerText = "속도: " + speedSelect.options[speedSelect.selectedIndex].text;
-            }});
-            repeatSelect.addEventListener("change", function() {{
-                repeatRound = 1;
-                updateDisplay();
-            }});
-
-            if (typeof speechSynthesis !== "undefined") {{
-                speechSynthesis.onvoiceschanged = function() {{ getEnglishVoice(); }};
-            }}
-            updateDisplay();
-        }})();
+        }});
         </script>
         """,
-        height=height
+        height=height,
+        scrolling=False
     )
 
 
-def browser_survival_cassette_player(all_items, height=620):
-    browser_easy_cassette_player(
-        all_items,
-        title="📼 전체 단어 카세트 듣기",
-        intro="재생, 이전, 다음, 속도, 전체 반복만 사용합니다.",
-        height=height
+def show_cassette_audio(items, title):
+    repeat_word = st.selectbox(
+        "단어 반복 횟수",
+        [1, 2, 3],
+        index=1,
+        key=f"repeat_{title}"
     )
 
+    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 테마별 전체 단어 듣기"
 
-def browser_theme_cassette_player(theme_items, theme_name, height=580):
-    browser_easy_cassette_player(
-        theme_items,
-        title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="재생, 이전, 다음, 속도, 전체 반복만 사용합니다.",
-        height=height
-    )
+    if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
+        try:
+            with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+                audio_payloads = []
+                for item in items:
+                    word = str(item["word"]).strip()
+                    tts_text = ". ".join([word] * repeat_word) + "."
+                    audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
+                    audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
+
+            js_cassette_visual_player(
+                items=items,
+                audio_payloads=audio_payloads,
+                title="🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기",
+                height=470
+            )
+        except Exception as e:
+            st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어만 카세트 듣기")
-
     all_items = flatten_survival_words()
-    browser_survival_cassette_player(all_items, height=470)
-
-    with st.expander("📜 전체 카세트 단어 목록 보기"):
-        st.write("카세트에서 실제로 들려주는 단어와 뜻을 확인할 수 있습니다.")
-
-        for item in all_items:
-            st.markdown(
-                f"""
-                <div style="
-                    background:white;
-                    border:1px solid #dbeafe;
-                    border-radius:16px;
-                    padding:12px 14px;
-                    margin-bottom:8px;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.035);
-                ">
-                    <div style="font-size:18px; font-weight:900; color:#111827;">
-                        {item['number']}. {item['word']}
-                    </div>
-                    <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
-                        단어 뜻: {item['meaning']}
-                    </div>
-                    <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
-                        {item['theme']}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+    show_cassette_audio(all_items, "전체 단어")
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 테마 단어만 카세트 듣기")
-
     theme_items = make_theme_cassette_items(theme_words, theme_name)
-
-    browser_theme_cassette_player(
-        theme_items,
-        theme_name,
-        height=470
-    )
+    show_cassette_audio(theme_items, theme_name)
 
 
 # =========================
@@ -1667,9 +1305,6 @@ def show_word_cards(theme_words, theme_name):
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-
-    st.markdown('---')
-    show_cassette_player(theme_words, theme_name)
 
 
 # =========================
@@ -1870,6 +1505,8 @@ for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
         )
 
         if mode == "🌱 핵심 단어 익히기":
+            # 일상 400처럼 맨 위에 테마별 전체 단어 듣기를 먼저 보여줍니다.
+            show_cassette_player(theme_words, theme_name)
             show_word_cards(theme_words, theme_name)
         else:
             show_quiz(theme_words, theme_name)
