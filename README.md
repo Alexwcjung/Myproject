@@ -103,7 +103,4 @@ Future improvements include more learner-friendly speech recognition, more sente
 ---
 
 ## ✅ Summary
-
-This project supports low-proficiency vocational high school students through familiar pop songs, short reading passages, guided writing, daily vocabulary learning, and speech recognition-based speaking practice.
-
 The app helps students listen, read, write, speak, check, and try again at their own pace. Overall, the project aims to make English learning more accessible, interactive, voluntary, and confidence-building.
