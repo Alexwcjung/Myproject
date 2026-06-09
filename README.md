@@ -6,7 +6,11 @@
   <img src="https://img.youtube.com/vi/mkiQJoR8sVQ/maxresdefault.jpg" alt="재미있는 영어 놀이터 앱 소개 영상" width="500">
 </a>
 
-## 🔗 Streamlit App Deployment Link 👉 [Click here to open the app](https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/)
+---
+## 🔗 Streamlit App Deployment Link 
+👉 [Click here to open the app](https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/)
+
+---
 
 ## 🏫 Teaching Context
 
