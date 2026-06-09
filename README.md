@@ -39,13 +39,28 @@ They also have low confidence and feel anxious about making mistakes. Therefore,
 This lesson teaches basic English through listening, speaking, reading, vocabulary, and short writing activities using familiar topics, pop songs, and simple tasks.
 
 ### Why is this lesson meaningful?
-The theoretical foundation of this app is based on several connected approaches. First, it uses **activity-based English learning** rather than a fully task-based learning model. The app does not require students to complete complex real-world communication tasks entirely in English. Instead, it provides simple learning activities such as listening, matching, choosing answers, short writing, reading, speaking words aloud, and reviewing difficult items.
+### Why is this lesson meaningful?
 
-Second, it reflects **skill-integrated learning**, because students practice listening, reading, vocabulary, writing, and speaking through connected activities. Third, it is based on **technology-enhanced language learning** and **mobile-assisted language learning (MALL)**. Through smartphones, tablets, or computers, students can listen to English input repeatedly, receive simple feedback, retry difficult tasks, and learn at their own pace.
+This lesson is meaningful because it helps low-proficiency vocational high school students practice English in a less stressful, more accessible, and more supportive way. Many students have difficulty with basic vocabulary, spelling, listening, reading, writing, and speaking. Therefore, the lesson is designed to give them repeated input, simple practice, meaning support, and opportunities to retry.
 
-The app also supports **noticing** and **inductive grammar learning** by helping students discover useful patterns from pop song lyrics and examples. In addition, it uses **caption and L1 meaning support** to help low-proficiency learners connect English sounds, spelling, and meaning. By providing English text with Korean meaning support, the app reduces comprehension burden and helps students understand input more easily.
+The app partially borrows from the **Audio-Lingual Method (ALM)** because low-proficiency students need repeated exposure to English sounds before producing longer language. Through repeated listening, imitation, and speaking practice, students can become more familiar with basic English words and expressions. However, the app is not a traditional ALM lesson because it also includes meaning-focused activities such as pop song comprehension, reading passages, sentence matching, guided writing, and reflection tasks.
 
-It also promotes **learner autonomy** and **self-paced learning** because students can listen again, retry speaking tasks, mark difficult words, and review items at their own pace. Finally, the speech recognition function is used not as a perfect pronunciation assessment tool, but as a low-pressure speaking practice tool that can reduce speaking anxiety and increase participation.
+The lesson reflects **skill-integrated learning** because students need to meet English in connected ways, not as isolated grammar or vocabulary items. In the app, students listen to songs, read lyrics and passages, answer comprehension questions, match expressions, write short responses, and practice speaking. This repeated exposure across listening, reading, vocabulary, writing, and speaking can help students understand and remember useful expressions more easily.
+
+The app also reflects **technology-enhanced language learning** because technology can provide repeated input, simple feedback, individual practice, and review opportunities that are difficult for one teacher to provide to every student at the same time. Students can listen again, check meanings, retry tasks, and review difficult items individually. This is especially useful in a mixed-level classroom where students need different amounts of support.
+
+The app uses **mobile-assisted language learning (MALL)** because students can use familiar devices such as smartphones, tablets, or computers. For low-proficiency vocational high school students, mobile devices can lower the entry barrier to English learning because they are familiar and easy to access. Students can practice more privately, repeat activities at their own pace, and feel less pressure than when speaking in front of the whole class.
+
+The app provides **caption and L1 meaning support** because low-proficiency students often struggle to connect English sounds, spelling, and meaning. By showing English text together with Korean meaning support, the app reduces comprehension burden and helps students understand input more easily. This support is especially important when students listen to songs, read short passages, or learn new expressions.
+
+The app uses **ASR-based speaking practice** because many students feel anxious when speaking English in front of classmates. ASR gives students a private and low-pressure way to say words aloud, check whether the app recognizes them, and retry difficult items. The purpose is not to provide a perfect pronunciation score, but to increase students’ oral practice opportunities and encourage them to actually speak English.
+
+The pop song grammar section uses **noticing** and **inductive grammar learning** because grammar can feel too abstract for low-proficiency students when it is explained through rules first. Instead, students first see repeated expressions in song lyrics and examples, notice useful patterns, and then receive simple explanations. This helps grammar become more meaningful and less intimidating.
+
+Finally, the lesson supports **self-paced practice** because students can listen again, retry speaking tasks, check meanings, mark difficult words, and review items at their own pace. This does not mean full learner autonomy, but it gives students limited and useful control over their learning process within a teacher-guided classroom.
+
+Overall, this lesson is meaningful because it gives students more chances to listen, read, write, speak, retry, and review English individually. It can lower speaking anxiety, increase participation, and help students build confidence through small success experiences.
+
 
 
 
