@@ -56,7 +56,7 @@ Fifth, the pop song grammar section supports **noticing** and **inductive gramma
 
 Finally, the app supports **self-paced practice**. Students can listen again, retry speaking tasks, check meanings, mark difficult words, and review items at their own pace. This does not mean full learner autonomy, but it gives students limited and useful control over their learning process within a teacher-guided classroom.
 
-Overall, this lesson is meaningful because it gives students more chances to listen, read, write, speak, retry, and review English individually. It can lower speaking anxiety, increase participation, and help students build confidence through small success experiences.
+Overall, this lesson gives students more chances to listen, read, write, speak, retry, and review English individually. It can lower speaking anxiety, increase participation, and help students build confidence through small success experiences.
 
 ---
 
