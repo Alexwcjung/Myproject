@@ -40,7 +40,7 @@ This lesson teaches basic English through listening, speaking, reading, vocabula
 
 ### Why is this lesson meaningful?
 
-This lesson is meaningful because it helps low-proficiency vocational high school students practice English in a less stressful and more accessible way. The app does not simply provide digital activities; it uses specific pedagogical supports for students who struggle with basic vocabulary, spelling, listening, reading, writing, and speaking.
+This lesson is meaningful because it helps low-proficiency vocational high school students practice English in **a less stressful and more accessible way.** The app does not simply provide digital activities; it uses specific pedagogical supports for students who struggle with basic vocabulary, spelling, listening, reading, writing, and speaking.
 
 First, the app partially borrows from the **Audio-Lingual Method (ALM)**. Students repeatedly listen to words and short expressions, imitate them, and say them aloud through speaking cards. This is useful because low-proficiency learners need repeated exposure to English sounds before producing longer language. However, the app is not a traditional ALM lesson because it also includes meaning-focused activities such as pop song comprehension, reading passages, sentence matching, guided writing, and reflection tasks.
 
