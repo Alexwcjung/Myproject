@@ -58,21 +58,20 @@ By the end of the lesson, students will be able to:
 
 ## 🧭 6. Teaching Procedure
 
-| Section | Stage | Time | Student Activities | Teacher Role | App Integration |
-|---|---|---:|---|---|---|
-| 🌍 Warm-up | World Map Quiz | 3 min | Answer a few simple world map quiz questions to activate interest. | Leads the warm-up and encourages quick participation. | World map quiz section |
-| 🎵 Pop Song Learning | Lyrics and Comprehension Quiz | 7 min | Listen to a familiar pop song, follow the lyrics, and answer simple comprehension questions. | Helps students follow the lyrics and understand key meanings. | Lyrics & comprehension quiz |
-| 🎵 Pop Song Learning | Grammar Discovery | 3 min | Notice a useful grammar pattern from the lyrics through guided examples. | Guides students to discover the pattern without heavy grammar explanation. | Grammar tab |
-| 🎵 Pop Song Learning | Sentence Matching | 2 min | Match English sentences or expressions from the song with Korean meanings. | Gives feedback and helps students connect form and meaning. | Sentence matching tab |
-| 🎵 Pop Song Learning | Short Reflection Writing | 2 min | Write a short guided response about the song, lyrics, or message. | Provides simple sentence starters and brief feedback. | Thinking/writing tab |
-| 🎵 Pop Song Learning | Key Expression Learning | 1 min | Review and practice useful expressions from the song. | Models expressions and connects them to simple communication. | Key expression learning tab |
-| 📖 Reading Learning | Reading Passage and Comprehension Quiz | 7 min | Read a short passage, such as the Ronaldo passage, and answer simple comprehension questions. | Guides reading, explains difficult words, and checks basic understanding. | Reading passage and quiz |
-| 📖 Reading Learning | Reading Sentence Matching | 2 min | Match English sentences or expressions from the passage with their meanings. | Helps students connect sentence forms with meaning. | Reading sentence matching activity |
-| 📖 Reading Learning | Letter Writing with Translation Support | 3 min | Write a short guided letter or response based on the reading passage. Use Google Translation support to draft or revise sentences when needed. | Provides writing support, encourages students to check and improve translated sentences, and gives simple feedback. | Letter writing activity and Google Translation support |
-| 📖 Reading Learning | Reading Key Expressions | 1 min | Review useful expressions from the reading passage. | Models expressions and connects them to real use. | Reading key expression learning |
-| 🎤 Vocabulary and Speaking | Speaking Cards Game | 16 min | Listen to daily vocabulary, check meanings, say selected words aloud, and retry difficult words through speaking cards. | Monitors students, models difficult words, and supports repeated speaking practice. | Daily English 400 word cards and speaking quiz |
-| 🔁 Wrap-up | Self-Check | 3 min | Check what they practiced and choose words or expressions to review later. | Summarizes the lesson and gives brief final feedback. | Self-check or review function |
-
+| Section | Stage | Time | Student Activities | App Integration |
+|---|---|---:|---|---|
+| 🌍 Warm-up | World Map Quiz | 3 min | Answer a few simple world map quiz questions to activate interest. | World map quiz section |
+| 🎵 Pop Song Learning | Lyrics and Comprehension Quiz | 7 min | Listen to a familiar pop song, follow the lyrics, and answer simple comprehension questions. | Lyrics & comprehension quiz |
+| 🎵 Pop Song Learning | Grammar Discovery | 3 min | Notice a useful grammar pattern from the lyrics through guided examples. | Grammar tab |
+| 🎵 Pop Song Learning | Sentence Matching | 2 min | Match English sentences or expressions from the song with Korean meanings. | Sentence matching tab |
+| 🎵 Pop Song Learning | Short Reflection Writing | 2 min | Write a short guided response about the song, lyrics, or message. | Thinking/writing tab |
+| 🎵 Pop Song Learning | Key Expression Learning | 1 min | Review and practice useful expressions from the song. | Key expression learning tab |
+| 📖 Reading Learning | Intro Video, Reading Passage and Comprehension Quiz | 9 min | Watch a short video related to the reading topic for 2 minutes. Then read a short passage, such as the Ronaldo passage, and answer simple comprehension questions. | Reading intro video, reading passage and quiz |
+| 📖 Reading Learning | Reading Sentence Matching | 2 min | Match English sentences or expressions from the passage with their meanings. | Reading sentence matching activity |
+| 📖 Reading Learning | Letter Writing with Translation Support | 3 min | Write a short guided letter or response based on the reading passage and revise sentences with translation support when needed. | Letter writing activity and Google Translation support |
+| 📖 Reading Learning | Reading Key Expressions | 1 min | Review useful expressions from the reading passage. | Reading key expression learning |
+| 🎤 Vocabulary and Speaking | Speaking Cards Game | 16 min | Listen to daily vocabulary, check meanings, say selected words aloud, and retry difficult words through speaking cards. | Daily English 400 word cards and speaking quiz |
+| 🔁 Wrap-up | Self-Check | 1 min | Quickly check what they practiced and choose words or expressions to review later. | Self-check or review function |
 ## 📱 7. App Integration
 
 The customized app supports the lesson through:
