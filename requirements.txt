@@ -1,0 +1,14 @@
+streamlit>=1.30
+requests>=2.31
+gTTS
+
+pandas
+numpy
+matplotlib
+plotly
+Pillow
+qrcode
+openpyxl
+
+wordcloud
+streamlit-drawable-canvas
