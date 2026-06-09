@@ -112,6 +112,3 @@ The app still requires teacher guidance for meaning explanation, reading support
 Future improvements include more learner-friendly speech recognition, more sentence-level speaking tasks, better writing support, and student progress tracking.
 
 ---
-
-## ✅ Summary
-The app helps students listen, read, write, speak, check, and try again at their own pace. Overall, the project aims to make English learning more accessible, interactive, voluntary, and confidence-building.
