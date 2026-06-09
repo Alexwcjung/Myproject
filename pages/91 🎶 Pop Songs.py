@@ -1653,6 +1653,25 @@ def try_translate_ko_to_en(korean_text):
             "The song reminds me that difficult memories can become meaningful when we try to understand them honestly."
         )
 
+
+def try_translate_en_to_ko(english_text):
+    english_text = str(english_text).strip()
+    if not english_text:
+        return ""
+    try:
+        from deep_translator import GoogleTranslator
+        translated = GoogleTranslator(source="en", target="ko").translate(english_text)
+        translated = str(translated).strip()
+        if not re.search(r"[가-힣]", translated):
+            raise ValueError("Korean not produced")
+        return translated
+    except Exception:
+        return (
+            "이 노래를 들으며 나는 내 기억과 감정을 다시 떠올렸습니다. "
+            "처음에는 짧은 생각이었지만, 그 감정을 조금 더 자세히 바라보니 나의 관계, 선택, 그리고 마음을 더 깊이 이해할 수 있었습니다. "
+            "이 노래는 음악이 단순한 감상이 아니라 나의 삶을 돌아보게 하는 계기가 될 수 있다는 점을 느끼게 해 줍니다."
+        )
+
 def make_polished_feedback(song_title, question, student_answer):
     answer = str(student_answer).strip()
     question = str(question).strip()
@@ -1958,7 +1977,7 @@ def polish_student_english_text(student_answer, song_title="", question=""):
 
 
 def make_english_only_feedback(song_title, question, student_answer):
-    """영어 생각 적기 제출 시 문법 수정문과 풍부한 영어 버전을 제공합니다."""
+    """영어 생각 적기 제출 시 문법 수정문과 풍부한 영어 버전만 제공합니다."""
     answer = str(student_answer).strip()
 
     if re.search(r"[가-힣]", answer):
@@ -1978,9 +1997,8 @@ def make_english_only_feedback(song_title, question, student_answer):
         return corrected_en, richer_en, advice_en
 
     corrected_en, richer_en = polish_student_english_text(answer, song_title, question)
-
     advice_en = (
-        "Good effort. I corrected your grammar and made your own ideas richer in English. "
+        "Good effort. I corrected your grammar and expanded your ideas in English. "
         "Try to include three parts in your reflection: "
         "1) what the song reminded you of, 2) how you felt, and 3) what you learned or realized."
     )
@@ -4935,8 +4953,8 @@ elif selected_tab == "✍️ 생각 적기":
     st.markdown(
         '<div class="game-card"><div class="big-guide">'
         '질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요.<br>'
-        '한국어로 쓰고 싶은 학생과 영어로 쓰고 싶은 학생을 나누어 작성할 수 있습니다.<br>'
-        '한국어로 쓴 학생에게는 한국어 다듬기와 영어 표현을 함께 제공하고, 영어로 쓴 학생에게는 영어 피드백만 제공합니다.'
+        '학생이 짧게 쓰더라도 내용을 조금 더 풍부하게 다듬어 줍니다.<br>'
+        '한국어로 쓰면 <b>다듬은 한국어 글</b>과 <b>영어 표현</b>을 함께 보여 주고, 영어로 쓰면 <b>문법을 고친 영어 문장</b>과 <b>풍부한 영어 글</b>만 보여 줍니다.'
         '</div></div>',
         unsafe_allow_html=True
     )
@@ -4960,9 +4978,9 @@ elif selected_tab == "✍️ 생각 적기":
                 st.warning("먼저 자신의 생각을 한두 문장이라도 적어 보세요.")
             else:
                 ko_feedback, en_feedback, advice = make_polished_feedback(song_choice, selected_question, answer_ko)
-                st.markdown("### 🇰🇷 다듬은 한국어 글")
+                st.markdown("### 🇰🇷 다듬고 풍부하게 만든 한국어 글")
                 st.markdown(f'<div class="feedback-ko">{clean_text_for_display(ko_feedback)}</div>', unsafe_allow_html=True)
-                st.markdown("### 🇺🇸 English Feedback")
+                st.markdown("### 🇺🇸 풍부하게 만든 영어 글")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(en_feedback)}</div>', unsafe_allow_html=True)
                 st.markdown("### ✨ 쓰기 조언")
                 st.markdown(f'<div class="advice-box">{clean_text_for_display(advice)}</div>', unsafe_allow_html=True)
@@ -4970,7 +4988,7 @@ elif selected_tab == "✍️ 생각 적기":
     with write_en_tab:
         answer_en = st.text_area(
             "Write your reflection in English.",
-            placeholder="Example: While listening to this song, I thought about my old memory. I felt a little sad, but I also learned something from it.",
+            placeholder="Example: This song make me sad. I think my friend. → 문법이 틀려도 괜찮습니다. 앱이 고쳐 줍니다.",
             height=180,
             key=f"reflect_answer_en_{reflect_key}"
         )
@@ -4980,9 +4998,9 @@ elif selected_tab == "✍️ 생각 적기":
                 st.warning("Please write at least one or two sentences first.")
             else:
                 corrected_en, richer_en, advice_en = make_english_only_feedback(song_choice, selected_question, answer_en)
-                st.markdown("### ✅ Grammar-Corrected Version")
+                st.markdown("### ✅ 문법을 고친 영어 문장")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(corrected_en)}</div>', unsafe_allow_html=True)
-                st.markdown("### 🌱 Richer English Version")
+                st.markdown("### 🌱 내용을 풍부하게 만든 영어 글")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(richer_en)}</div>', unsafe_allow_html=True)
                 st.markdown("### ✨ English Feedback")
                 st.markdown(f'<div class="advice-box">{clean_text_for_display(advice_en)}</div>', unsafe_allow_html=True)
