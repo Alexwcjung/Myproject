@@ -109,7 +109,7 @@ The app still requires teacher guidance for meaning explanation, reading support
 ## 🚀 Future Development
 
 ### What can be improved?
-Future improvements include more learner-friendly speech recognition, more sentence-level speaking tasks, better writing support, student progress tracking, and saving difficult words or expressions for review.
+Future improvements include more learner-friendly speech recognition, more sentence-level speaking tasks, better writing support, and student progress tracking.
 
 ---
 
