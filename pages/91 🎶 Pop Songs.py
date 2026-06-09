@@ -1672,44 +1672,130 @@ def try_translate_en_to_ko(english_text):
             "이 노래는 음악이 단순한 감상이 아니라 나의 삶을 돌아보게 하는 계기가 될 수 있다는 점을 느끼게 해 줍니다."
         )
 
+def clean_student_korean_answer(text):
+    """학생 한국어 원문을 보존하되, 글로 보여 줄 때 어색한 공백과 문장부호만 정리합니다."""
+    s = str(text).strip()
+    s = re.sub(r"\s+", " ", s)
+    s = re.sub(r"([.!?。！？])\s*", r"\1 ", s).strip()
+    if s and s[-1] not in ".!?。！？요다함음임됨됨다":
+        s += "."
+    return s
+
+
+def detect_korean_reflection_focus(text, question="", song_title=""):
+    """학생 글과 질문에서 중심 소재와 감정을 추출해 반복 피드백을 줄입니다."""
+    raw = f"{text} {question} {song_title}"
+
+    if any(k in raw for k in ["친구", "우정", "짝", "동료", "같이"]):
+        topic = "친구와의 관계"
+        topic_en = "my friendship"
+    elif any(k in raw for k in ["가족", "엄마", "아빠", "부모", "동생", "형", "누나", "언니"]):
+        topic = "가족과의 관계"
+        topic_en = "my family"
+    elif any(k in raw for k in ["꿈", "미래", "진로", "목표", "직업", "성공"]):
+        topic = "나의 꿈과 미래"
+        topic_en = "my dreams and future"
+    elif any(k in raw for k in ["사랑", "좋아", "고백", "이별", "관계"]):
+        topic = "사랑과 관계"
+        topic_en = "love and relationships"
+    elif any(k in raw for k in ["학교", "공부", "영어", "수업", "학생"]):
+        topic = "학교생활과 배움"
+        topic_en = "my school life and learning"
+    elif any(k in raw for k in ["기억", "추억", "옛날", "과거", "예전", "그때"]):
+        topic = "과거의 기억"
+        topic_en = "an old memory"
+    else:
+        topic = "내 마음속 감정"
+        topic_en = "my own feelings"
+
+    if any(k in raw for k in ["슬프", "아쉽", "후회", "눈물", "그립", "외롭", "힘들", "미안"]):
+        feeling = "아쉬움과 그리움"
+        feeling_en = "sad and reflective"
+    elif any(k in raw for k in ["행복", "기쁘", "좋", "신나", "즐거", "밝"]):
+        feeling = "따뜻하고 밝은 감정"
+        feeling_en = "warm and happy"
+    elif any(k in raw for k in ["위로", "편안", "괜찮", "힘", "응원"]):
+        feeling = "위로와 안정감"
+        feeling_en = "comforted and encouraged"
+    elif any(k in raw for k in ["희망", "용기", "도전", "할 수", "포기"]):
+        feeling = "희망과 용기"
+        feeling_en = "hopeful and encouraged"
+    elif any(k in raw for k in ["걱정", "불안", "무섭", "긴장"]):
+        feeling = "걱정과 불안"
+        feeling_en = "worried but thoughtful"
+    else:
+        feeling = "차분한 성찰"
+        feeling_en = "thoughtful"
+
+    return topic, topic_en, feeling, feeling_en
+
+
+def song_reflection_bridge_ko(song_title):
+    if "Let It Go" in song_title:
+        return "이 노래는 남의 시선 때문에 숨겨 두었던 마음을 조금씩 인정하고, 스스로를 받아들이는 용기를 떠올리게 합니다."
+    if "Hello" in song_title:
+        return "이 노래는 미처 전하지 못한 말과 시간이 지난 뒤에야 선명해지는 후회의 감정을 떠올리게 합니다."
+    if "A Whole New World" in song_title:
+        return "이 노래는 익숙한 곳을 벗어나 새로운 세상을 바라볼 때 느끼는 설렘과 두려움을 함께 떠올리게 합니다."
+    if "Stand By Me" in song_title:
+        return "이 노래는 힘든 순간에도 곁에 있어 주는 사람의 소중함을 생각하게 합니다."
+    if "Don't Know Why" in song_title:
+        return "이 노래는 이유를 정확히 설명하기 어려운 감정과 선택을 조용히 돌아보게 합니다."
+    if "Fix You" in song_title:
+        return "이 노래는 지치고 힘든 사람에게 건네는 위로처럼 들리며, 누군가의 응원이 얼마나 큰 힘이 되는지 느끼게 합니다."
+    if "Scientist" in song_title:
+        return "이 노래는 처음으로 돌아가고 싶은 마음, 그리고 그때 다르게 말하거나 행동했더라면 어땠을까 하는 생각을 떠올리게 합니다."
+    if "My Heart Will Go On" in song_title:
+        return "이 노래는 떠나간 뒤에도 마음속에 남아 있는 사람과 기억의 힘을 생각하게 합니다."
+    if "Counting Stars" in song_title:
+        return "이 노래는 돈이나 현실적인 걱정 너머에 있는 꿈, 선택, 미래에 대한 고민을 떠올리게 합니다."
+    if "My Universe" in song_title:
+        return "이 노래는 서로 다른 세계에 있는 사람도 누군가에게는 가장 특별한 존재가 될 수 있다는 메시지를 전합니다."
+    return "이 노래는 단순히 듣고 끝나는 음악이 아니라, 내 경험과 감정을 연결해 볼 수 있는 계기가 됩니다."
+
+
 def make_polished_feedback(song_title, question, student_answer):
-    answer = str(student_answer).strip()
+    """한국어 생각 적기: 학생 원문을 반영해 내용이 매번 달라지도록 풍부하게 고쳐 줍니다."""
+    answer = clean_student_korean_answer(student_answer)
     question = str(question).strip()
-    if len(answer) < 10:
-        polished_ko = (
-            "이 노래를 들으며 아직 생각을 길게 정리하지는 못했지만, 마음속에 떠오르는 감정이 있다는 점이 중요합니다. "
-            "노래 속 화자의 마음처럼, 나에게도 쉽게 말하지 못한 기억이나 다시 생각해 보고 싶은 순간이 있을 수 있습니다. "
-            "그 감정을 조금 더 자세히 들여다보면, 단순한 감상이 아니라 나 자신을 이해하는 글로 발전할 수 있습니다."
+    topic, topic_en, feeling, feeling_en = detect_korean_reflection_focus(answer, question, song_title)
+    bridge = song_reflection_bridge_ko(song_title)
+
+    if len(answer.replace(" ", "")) < 5:
+        core = (
+            f"이 노래를 들으며 나는 {topic}에 대해 생각해 보게 되었습니다. "
+            f"아직 긴 글로 정리하지는 못했지만, 마음속에는 {feeling}이 남았습니다."
         )
     else:
-        polished_ko = (
-            f"이 노래를 들으며 나는 다음과 같은 생각을 하게 되었습니다. {answer} "
-            "이 경험은 단순히 지나간 일을 떠올리는 데서 끝나지 않습니다. 그때의 감정과 지금의 마음을 함께 돌아보게 하며, "
-            "사람과의 관계가 언제나 쉽지만은 않다는 사실도 생각하게 합니다. 노래 속 화자의 감정처럼, 나 역시 과거의 한 장면을 다시 바라보며 "
-            "그때 미처 표현하지 못했던 마음을 생각해 볼 수 있었습니다. 이런 성찰은 나의 감정을 더 깊이 이해하고, 앞으로의 관계를 조금 더 성숙하게 바라보는 계기가 됩니다."
+        core = (
+            f"이 노래를 들으며 나는 {topic}에 대해 다시 생각하게 되었습니다. "
+            f"처음 떠오른 생각은 ‘{answer}’였습니다. "
+            f"이 짧은 생각 안에는 {feeling}이 담겨 있습니다."
         )
-    if ("Scientist" in song_title or "그리운" in question or "옛" in question or "처음" in question or "관계" in question) and len(answer) >= 10:
-        polished_ko = (
-            f"이 노래를 들으며 나는 과거의 관계와 그때의 감정을 다시 떠올리게 되었습니다. {answer} "
-            "그 기억은 단순한 추억이라기보다, 마음을 쉽게 열지 못했던 순간과 서로를 충분히 이해하지 못했던 시간을 돌아보게 합니다. "
-            "노래 속 화자가 ‘처음으로 돌아가고 싶다’고 말하는 것처럼, 나 역시 그때로 돌아간다면 조금 더 솔직하게 말하고, "
-            "상대의 마음을 더 천천히 이해하려 했을 것 같습니다. 결국 이 노래는 사랑이나 관계가 생각처럼 쉽지 않지만, "
-            "그 어려움 속에서도 우리는 자신의 감정과 선택을 배울 수 있다는 점을 느끼게 해 줍니다."
-        )
+
+    polished_ko = (
+        f"{core} "
+        f"{bridge} "
+        f"그래서 이 글은 단순히 노래가 좋았다는 감상에서 끝나지 않고, 내가 어떤 사람을 떠올렸는지, 왜 그런 감정을 느꼈는지, 그리고 지금의 나는 그 경험을 어떻게 바라보는지까지 생각해 보게 합니다. "
+        f"앞으로 비슷한 순간을 다시 만난다면, 내 마음을 조금 더 솔직하게 표현하고 상대의 마음도 더 천천히 이해하려고 노력하고 싶습니다."
+    )
+
     english_translation = try_translate_ko_to_en(polished_ko)
-    if re.search(r"[가-힣]", english_translation):
+    if re.search(r"[가-힣]", english_translation) or len(english_translation.strip()) < 40:
         english_translation = (
-            "While listening to this song, I looked back on a past relationship and the emotions I felt at that time. "
-            "The memory was not just a simple memory; it helped me think about moments when it was difficult to open my heart and when two people could not fully understand each other. "
-            "Like the speaker in the song who wants to go back to the start, I also wondered what I might say or do differently if I could return to that moment. "
-            "In the end, this song reminds me that love and relationships are not always easy, but they can help us understand our feelings and grow as a person."
+            f"While listening to this song, I thought about {topic_en}. "
+            f"My first thought was: {answer} "
+            f"This short reflection shows that I felt {feeling_en}. "
+            f"The song helped me connect the lyrics with my own life, not just enjoy the melody. "
+            f"It made me think about who came to my mind, why I felt that way, and how I understand that experience now. "
+            f"If I face a similar moment again, I want to express my feelings more honestly and try to understand the other person more carefully."
         )
+
     advice = (
-        "쓰기 조언: 글을 더 좋게 만들고 싶다면 ① 떠오른 사람이나 장면, ② 그때의 감정, ③ 지금 돌아보며 깨달은 점을 차례로 써 보세요. "
-        "영어로 쓸 때는 다음 구조를 활용하면 좋습니다: While listening to this song, I thought about ~. / At that time, I felt ~ because ~. / Looking back now, I realize that ~."
+        "쓰기 조언: 학생이 쓴 핵심 내용을 살려서 글을 더 풍부하게 만들었습니다. "
+        "더 좋은 글이 되려면 ① 떠오른 사람이나 장면, ② 그때 느낀 감정, ③ 지금 다시 생각하며 깨달은 점을 한 문장씩 추가하면 됩니다."
     )
     return polished_ko, english_translation, advice
-
 
 def sentence_case(s):
     """문장 첫 글자와 I를 정리합니다."""
@@ -1931,33 +2017,97 @@ def strong_correct_sentence(sentence):
     return s.strip() + "."
 
 
-def make_richer_expansion(corrected_text, original_text, song_title="", question=""):
-    """수정문을 바탕으로 내용이 더 풍부한 영어 반성문을 만듭니다."""
-    feeling, topic = detect_keywords_for_revision(original_text + " " + corrected_text)
+def detect_english_reflection_focus(text, question="", song_title=""):
+    """학생 영어 원문에서 소재와 감정을 잡아 풍부한 글에 반영합니다."""
+    low = f"{text} {question} {song_title}".lower()
 
-    if "Let It Go" in song_title:
-        song_context = "The song also made me think about courage and being honest with myself."
-    elif "Hello" in song_title:
-        song_context = "The song also made me think about regret and feelings that are hard to express."
-    elif "Scientist" in song_title:
-        song_context = "The song also made me look back on the past and think about what I could have done differently."
-    elif "Fix You" in song_title:
-        song_context = "The song also gave me comfort, as if someone was supporting me."
-    elif "Counting Stars" in song_title:
-        song_context = "The song also made me think about my dreams, worries, and future."
-    elif "Fly to the Moon" in song_title:
-        song_context = "The song also gave me hope and courage to keep moving forward."
+    if any(k in low for k in ["friend", "friendship", "classmate"]):
+        topic = "my friendship"
+        detail = "a person who stayed in my mind"
+    elif any(k in low for k in ["family", "mother", "father", "parents", "brother", "sister"]):
+        topic = "my family"
+        detail = "the people who have supported me"
+    elif any(k in low for k in ["dream", "future", "job", "career", "goal"]):
+        topic = "my dreams and future"
+        detail = "the kind of person I want to become"
+    elif any(k in low for k in ["love", "relationship", "break", "miss", "boyfriend", "girlfriend"]):
+        topic = "love and relationships"
+        detail = "feelings that are not always easy to say"
+    elif any(k in low for k in ["school", "study", "english", "class", "teacher"]):
+        topic = "my school life and learning"
+        detail = "my own effort and growth"
+    elif any(k in low for k in ["memory", "past", "old", "child", "remember"]):
+        topic = "an old memory"
+        detail = "a moment from the past that still feels meaningful"
     else:
-        song_context = "The song also helped me connect music with my own life."
+        topic = "my own feelings"
+        detail = "what this song made me think about"
+
+    if any(k in low for k in ["sad", "sorry", "regret", "miss", "cry", "lonely", "hard", "hurt"]):
+        feeling = "sad and reflective"
+        feeling_sentence = "It also made me think about feelings I could not express clearly before."
+    elif any(k in low for k in ["happy", "good", "joy", "smile", "fun", "bright"]):
+        feeling = "warm and happy"
+        feeling_sentence = "It also reminded me that small memories can make me feel warm and thankful."
+    elif any(k in low for k in ["comfort", "hope", "courage", "support", "strong"]):
+        feeling = "comforted and encouraged"
+        feeling_sentence = "It gave me comfort and made me want to keep going even when things are difficult."
+    elif any(k in low for k in ["worry", "nervous", "afraid", "scared", "stress"]):
+        feeling = "worried but thoughtful"
+        feeling_sentence = "It helped me look at my worries more honestly instead of hiding them."
+    else:
+        feeling = "thoughtful"
+        feeling_sentence = "It helped me look inside my mind more carefully."
+
+    return topic, detail, feeling, feeling_sentence
+
+
+def song_reflection_bridge_en(song_title):
+    if "Let It Go" in song_title:
+        return "The message of the song is connected to courage, freedom, and accepting myself."
+    if "Hello" in song_title:
+        return "The mood of the song is connected to regret and words that were not said at the right time."
+    if "A Whole New World" in song_title:
+        return "The song is connected to the excitement of seeing a new world and trying something unfamiliar."
+    if "Stand By Me" in song_title:
+        return "The song is connected to the importance of someone who stays beside me in difficult moments."
+    if "Don't Know Why" in song_title:
+        return "The quiet mood of the song is connected to choices and emotions that are hard to explain."
+    if "Fix You" in song_title:
+        return "The song sounds like comfort from someone who wants to help me when I am tired."
+    if "Scientist" in song_title:
+        return "The song is connected to the wish to go back and understand the past again."
+    if "My Heart Will Go On" in song_title:
+        return "The song is connected to memories and feelings that remain even after time passes."
+    if "Counting Stars" in song_title:
+        return "The song is connected to dreams, worries, and the future I want to choose for myself."
+    if "My Universe" in song_title:
+        return "The song is connected to the idea that one person can become a very special universe to someone else."
+    return "The song helped me connect the lyrics with my own life."
+
+
+def make_richer_expansion(corrected_text, original_text, song_title="", question=""):
+    """학생 수정문을 바탕으로, 원문 핵심어가 반복문처럼 사라지지 않게 풍부한 영어 글을 만듭니다."""
+    corrected_text = str(corrected_text).strip()
+    original_text = str(original_text).strip()
+    topic, detail, feeling, feeling_sentence = detect_english_reflection_focus(original_text + " " + corrected_text, question, song_title)
+    bridge = song_reflection_bridge_en(song_title)
+
+    if corrected_text:
+        first_part = corrected_text
+    else:
+        first_part = f"While listening to this song, I thought about {topic}."
 
     richer = (
-        f"{corrected_text} "
-        f"I wanted to express my thoughts about {topic}. "
-        f"It made me feel {feeling}, and it helped me understand my emotions more clearly. "
-        f"{song_context}"
+        f"{first_part} "
+        f"This thought is connected to {topic}, especially {detail}. "
+        f"At first, my idea was simple, but I can make it deeper by explaining why it stayed in my mind. "
+        f"I felt {feeling} because the song made my own experience feel connected to the lyrics. "
+        f"{feeling_sentence} "
+        f"{bridge} "
+        f"Because of this, my reflection is not only about the song. It is also about my memory, my emotions, and what I can learn from them now."
     )
     return re.sub(r"\s+", " ", richer).strip()
-
 
 def polish_student_english_text(student_answer, song_title="", question=""):
     """학생 원문을 문장별로 강하게 문법 수정하고, 풍부한 영어 글도 함께 생성합니다."""
