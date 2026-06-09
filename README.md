@@ -10,11 +10,11 @@ Click the image below to watch the app demo video.
 
 ---
 
-## 🔗 Streamlit App Deployment Link
+## 🔗 Project Overview and App Link
 
-<p style="margin-left: 20px; font-size: 14px;">
-  👉 <a href="https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/">Open the Streamlit app</a>
-</p>
+| Activities | Duration | Learner Level | App Link |
+|---|---:|---|---|
+| World Map Quiz → Pop Song Learning → Reading → Daily English Vocabulary → Speaking Practice → Review | 50 minutes | Low-proficiency Korean vocational high school students | [Open the Streamlit App](https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/) |
 
 ---
 
@@ -51,31 +51,27 @@ In addition, the app supports **technology-enhanced language learning**, **notic
 
 ## 📱 App Purpose
 
-### How does it work?
-The app gives students step-by-step English tasks. Students listen, read, answer quizzes, match sentences, write short responses, speak words, and review difficult items.
+### What is the purpose of the app?
+The purpose of this app is to make English learning more accessible, enjoyable, and voluntary for low-proficiency vocational high school students.
 
-### What data or content does it use?
-It uses teacher-made content for low-proficiency vocational high school students, including daily vocabulary, survival English, pop songs, short reading passages, quizzes, writing prompts, and speaking word cards.
+### Why is the app needed?
+In a regular classroom, one teacher cannot fully support every student’s listening, reading, vocabulary, writing, and speaking practice at the same time. Many students also feel anxious when they have to speak, read, or write in English in front of others.
 
-### How do learners interact with it?
-Students interact by clicking, listening, choosing answers, matching cards, typing short responses, marking difficult words, and speaking into the microphone. They can retry and review at their own pace.
+### How does the app support students?
+The app gives students more chances to practice English individually and at their own pace. It helps them listen, read, write, speak, check meanings, retry tasks, and review difficult items in a less stressful learning environment.
 
 ---
 
 ## 🧩 App Design
 
 ### How does it work?
-
 The app is a customized Streamlit-based English learning app. It provides step-by-step activities such as world map quizzes, pop song learning, short reading tasks, vocabulary cards, speaking practice, sentence matching, guided writing, and review activities.
 
 ### What data or content does it use?
-
 The app uses teacher-made content for low-proficiency vocational high school students. It includes Daily English 400 vocabulary cards, survival English expressions, familiar pop songs, short reading passages, comprehension quizzes, key expressions, sentence matching items, and guided writing prompts.
 
 ### How do learners interact with it?
-
 Learners interact with the app by clicking buttons, listening to audio, watching videos, answering quizzes, matching expressions, writing short responses, checking meanings, marking difficult items, and speaking into the microphone. They can retry tasks and review difficult items at their own pace.
-
 
 ---
 
