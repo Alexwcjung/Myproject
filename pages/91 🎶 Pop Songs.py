@@ -2155,6 +2155,336 @@ def make_english_only_feedback(song_title, question, student_answer):
 
     return corrected_en, richer_en, advice_en
 
+
+# =========================================================
+# 생각 적기 개인화 피드백 엔진 개선판
+# - 학생 글의 핵심어를 먼저 추출한 뒤, 그 내용에 맞게 문장을 확장합니다.
+# - 영어 입력: 문법 교정문 + 풍부한 영어 글 + 영어 쓰기 조언만 출력합니다.
+# - 한국어 입력: 다듬은 한국어 글 + 영어 표현 + 한국어 쓰기 조언을 출력합니다.
+# =========================================================
+
+
+def _stable_pick(options, seed_text):
+    if not options:
+        return ""
+    seed_text = str(seed_text)
+    return options[sum(ord(ch) for ch in seed_text) % len(options)]
+
+
+def _safe_original_quote(text, max_len=80):
+    s = str(text).strip()
+    s = re.sub(r"\s+", " ", s)
+    if len(s) > max_len:
+        s = s[:max_len].rstrip() + "..."
+    return s
+
+
+def _extract_ko_details(text, question="", song_title=""):
+    raw = f"{text} {question} {song_title}"
+    details = {
+        "topic": "내 마음속 감정",
+        "topic_en": "my own feelings",
+        "person": "나 자신",
+        "person_en": "myself",
+        "scene": "노래를 듣는 순간",
+        "scene_en": "the moment when I listened to the song",
+        "feeling": "차분한 감정",
+        "feeling_en": "thoughtful",
+        "realization": "내 마음을 조금 더 솔직하게 바라볼 수 있다는 점",
+        "realization_en": "I can look at my feelings more honestly",
+    }
+
+    topic_rules = [
+        (("친구", "우정", "동료", "짝", "같이", "함께"), ("친구와의 관계", "my friendship", "친구", "my friend", "친구와 함께했던 장면", "a moment I shared with my friend")),
+        (("가족", "엄마", "아빠", "부모", "동생", "형", "누나", "언니", "오빠"), ("가족과의 관계", "my family", "가족", "my family", "가족과 함께한 시간", "time with my family")),
+        (("꿈", "미래", "진로", "목표", "직업", "성공", "취업"), ("나의 꿈과 미래", "my dreams and future", "미래의 나", "my future self", "앞으로의 삶을 상상하는 순간", "the moment when I imagined my future")),
+        (("사랑", "좋아", "고백", "이별", "연애", "관계"), ("사랑과 관계", "love and relationships", "마음속에 있는 사람", "a person in my heart", "솔직하게 말하지 못했던 순간", "a moment when I could not express myself honestly")),
+        (("학교", "공부", "영어", "수업", "학생", "선생"), ("학교생활과 배움", "my school life and learning", "학교에서의 나", "myself at school", "수업이나 학교생활 속 장면", "a moment from school life")),
+        (("기억", "추억", "옛날", "과거", "예전", "그때"), ("과거의 기억", "an old memory", "예전의 나", "my past self", "아직 마음에 남아 있는 장면", "a memory that still stays in my mind")),
+    ]
+    for keys, vals in topic_rules:
+        if any(k in raw for k in keys):
+            details["topic"], details["topic_en"], details["person"], details["person_en"], details["scene"], details["scene_en"] = vals
+            break
+
+    feeling_rules = [
+        (("슬프", "아쉽", "후회", "눈물", "그립", "외롭", "힘들", "미안", "보고 싶"), ("아쉬움과 그리움", "sad and reflective", "그 감정을 피하지 않고 천천히 바라보는 것이 중요하다는 점", "it is important to face those feelings slowly instead of avoiding them")),
+        (("행복", "기쁘", "좋", "신나", "즐거", "밝", "웃"), ("따뜻하고 밝은 감정", "warm and happy", "작은 기억도 나에게 큰 힘이 될 수 있다는 점", "even a small memory can give me strength")),
+        (("위로", "편안", "괜찮", "힘", "응원", "안정"), ("위로와 안정감", "comforted and encouraged", "누군가의 말이나 노래가 지친 마음을 다시 일으킬 수 있다는 점", "a song or someone's words can lift my tired heart")),
+        (("희망", "용기", "도전", "할 수", "포기", "노력"), ("희망과 용기", "hopeful and encouraged", "쉽지 않아도 계속 앞으로 나아갈 수 있다는 점", "I can keep moving forward even when things are not easy")),
+        (("걱정", "불안", "무섭", "긴장", "스트레스"), ("걱정과 불안", "worried but thoughtful", "불안한 마음도 글로 표현하면 조금 더 정리될 수 있다는 점", "writing about my worries can help me understand them better")),
+    ]
+    for keys, vals in feeling_rules:
+        if any(k in raw for k in keys):
+            details["feeling"], details["feeling_en"], details["realization"], details["realization_en"] = vals
+            break
+
+    return details
+
+
+def _extract_en_details(text, question="", song_title=""):
+    low = f"{text} {question} {song_title}".lower()
+    details = {
+        "topic": "my own feelings",
+        "person": "myself",
+        "scene": "the moment when I listened to the song",
+        "feeling": "thoughtful",
+        "realization": "I can understand my feelings more honestly",
+        "because": "the song helped me connect the lyrics with my own life",
+    }
+
+    topic_rules = [
+        (("friend", "friendship", "classmate", "together"), ("my friendship", "my friend", "a moment I shared with my friend", "that friendship is meaningful to me")),
+        (("family", "mother", "mom", "father", "dad", "parent", "brother", "sister"), ("my family", "my family", "time with my family", "my family is important in my life")),
+        (("dream", "future", "job", "career", "goal", "success"), ("my dreams and future", "my future self", "the moment when I imagined my future", "I should keep trying for my dream")),
+        (("love", "relationship", "miss", "break", "boyfriend", "girlfriend"), ("love and relationships", "a person in my heart", "a moment when I could not express my feelings clearly", "honest feelings are not always easy to say")),
+        (("school", "study", "english", "class", "teacher"), ("my school life and learning", "myself at school", "a moment from school life", "learning can become meaningful when it connects to my life")),
+        (("memory", "past", "old", "child", "remember"), ("an old memory", "my past self", "a memory that still stays in my mind", "old memories can still teach me something")),
+        (("lyrics", "melody", "voice", "song"), ("this song", "myself as a listener", "the moment when the lyrics and melody touched me", "music can express feelings that are hard to say")),
+    ]
+    for keys, vals in topic_rules:
+        if any(k in low for k in keys):
+            details["topic"], details["person"], details["scene"], details["realization"] = vals
+            break
+
+    feeling_rules = [
+        (("sad", "sorry", "regret", "miss", "cry", "lonely", "hard", "hurt"), ("sad and reflective", "it reminded me of feelings I could not express clearly before")),
+        (("happy", "good", "joy", "smile", "fun", "bright", "excited"), ("warm and happy", "it reminded me that small moments can make me feel thankful")),
+        (("comfort", "hope", "courage", "support", "strong", "brave"), ("comforted and encouraged", "it gave me comfort and made me want to keep going")),
+        (("worry", "nervous", "afraid", "scared", "stress", "anxious"), ("worried but thoughtful", "it helped me look at my worries instead of hiding them")),
+        (("special", "universe", "star", "light"), ("special and warm", "it made me think that one person can be very important to someone else")),
+    ]
+    for keys, vals in feeling_rules:
+        if any(k in low for k in keys):
+            details["feeling"], details["because"] = vals
+            break
+    return details
+
+
+def _fix_common_english_errors(sentence):
+    s = str(sentence).strip()
+    s = re.sub(r"\s+", " ", s)
+    if not s:
+        return ""
+
+    replacements = [
+        (r"\bthis song make me\b", "This song makes me"),
+        (r"\bthis song makes me to\b", "This song makes me"),
+        (r"\bit make me\b", "It makes me"),
+        (r"\bit makes me to\b", "It makes me"),
+        (r"\bi think my friend\b", "I think of my friend"),
+        (r"\bi remember my friend\b", "I remember my friend"),
+        (r"\bi am think\b", "I think"),
+        (r"\bi think about my future\b", "I think about my future"),
+        (r"\bi feel sad because my friend\b", "I feel sad because it reminds me of my friend"),
+        (r"\bi feel happy because my friend\b", "I feel happy because it reminds me of my friend"),
+        (r"\bthis song is make me\b", "This song makes me"),
+        (r"\bthis song very good\b", "This song is very good"),
+        (r"\bthis song good\b", "This song is good"),
+        (r"\bthis song sad\b", "This song is sad"),
+        (r"\bi like this song because good\b", "I like this song because it is good"),
+        (r"\bi like this song because sad\b", "I like this song because it feels sad"),
+        (r"\bbecause good\b", "because it is good"),
+        (r"\bbecause sad\b", "because it feels sad"),
+        (r"\bbecause my friend\b", "because it reminds me of my friend"),
+        (r"\bremind me my friend\b", "reminds me of my friend"),
+        (r"\breminds me my friend\b", "reminds me of my friend"),
+        (r"\bremember old memory\b", "remember an old memory"),
+        (r"\blook back my memory\b", "look back on my memory"),
+    ]
+    for pattern, repl in replacements:
+        s = re.sub(pattern, repl, s, flags=re.IGNORECASE)
+
+    # very short fragments become complete sentences
+    low = s.lower().strip(" .!?')(")
+    fragment_map = {
+        "sad": "I felt sad while listening to this song",
+        "happy": "I felt happy while listening to this song",
+        "good": "I thought this song was good",
+        "good song": "I thought this was a good song",
+        "my friend": "This song reminded me of my friend",
+        "friend": "This song reminded me of my friend",
+        "family": "This song made me think of my family",
+        "future": "This song made me think about my future",
+        "dream": "This song made me think about my dream",
+    }
+    if low in fragment_map:
+        s = fragment_map[low]
+
+    # If the student wrote a noun-like fragment, build a sentence from detected meaning.
+    words = re.findall(r"[A-Za-z']+", s)
+    has_verbish = bool(re.search(r"\b(am|is|are|was|were|feel|felt|think|thought|like|liked|make|makes|made|remind|reminds|remember|miss|want|hope|need|love|listen|heard)\b", s, flags=re.IGNORECASE))
+    if len(words) <= 5 and not has_verbish:
+        d = _extract_en_details(s)
+        s = f"This song made me feel {d['feeling']} and think about {d['topic']}"
+
+    # Capitalization and punctuation
+    s = re.sub(r"\bi\b", "I", s)
+    s = s.strip()
+    if s:
+        s = s[0].upper() + s[1:]
+    if s and s[-1] not in ".!?":
+        s += "."
+    return s
+
+
+def polish_student_english_text(student_answer, song_title="", question=""):
+    original = str(student_answer).strip()
+    if not original:
+        return "", ""
+    parts = split_student_sentences(original)
+    if not parts:
+        parts = [original]
+    corrected_parts = [_fix_common_english_errors(p) for p in parts if str(p).strip()]
+    corrected = " ".join(p for p in corrected_parts if p).strip()
+    corrected = re.sub(r"\s+", " ", corrected)
+    richer = make_richer_expansion(corrected, original, song_title, question)
+    return corrected, richer
+
+
+def make_richer_expansion(corrected_text, original_text, song_title="", question=""):
+    original = str(original_text).strip()
+    corrected = str(corrected_text).strip()
+    d = _extract_en_details(original + " " + corrected, question, song_title)
+    bridge = song_reflection_bridge_en(song_title)
+    quote = _safe_original_quote(original, 70)
+
+    sentence_bank = {
+        "my friendship": [
+            "When I listened to the song, I thought about my friend and the time we shared.",
+            "The song made me remember a friend who is still meaningful to me.",
+        ],
+        "my family": [
+            "When I listened to the song, I thought about my family and the support they have given me.",
+            "The song reminded me of my family and made me feel thankful.",
+        ],
+        "my dreams and future": [
+            "When I listened to the song, I thought about my future and the kind of person I want to become.",
+            "The song made me think about my dream, even though the future is not always clear.",
+        ],
+        "love and relationships": [
+            "When I listened to the song, I thought about feelings that are not easy to say directly.",
+            "The song made me think about how complicated but meaningful relationships can be.",
+        ],
+        "my school life and learning": [
+            "When I listened to the song, I connected it with my school life and my own effort.",
+            "The song made me think that learning can become more meaningful when it connects to my feelings.",
+        ],
+        "an old memory": [
+            "When I listened to the song, an old memory came back to my mind.",
+            "The song made me remember a moment from the past that still feels important.",
+        ],
+        "this song": [
+            "When I listened to the song, the lyrics and melody stayed in my mind.",
+            "The song made me feel something before I could explain it clearly.",
+        ],
+    }
+    first = corrected if corrected else _stable_pick(sentence_bank.get(d["topic"], sentence_bank["this song"]), original)
+    personalized = _stable_pick(sentence_bank.get(d["topic"], sentence_bank["this song"]), original + song_title)
+
+    richer = (
+        f"{first} "
+        f"In my first writing, I wrote, '{quote}' This idea can become richer because it shows a real feeling, not just a simple answer. "
+        f"{personalized} "
+        f"I felt {d['feeling']} because {d['because']}. "
+        f"This reflection is connected to {d['scene']}, and it helped me realize that {d['realization']}. "
+        f"{bridge} "
+        f"Because of this, my writing is not only about the song. It is also about my own experience, memory, and feelings."
+    )
+    return re.sub(r"\s+", " ", richer).strip()
+
+
+def make_english_only_feedback(song_title, question, student_answer):
+    answer = str(student_answer).strip()
+    if re.search(r"[가-힣]", answer):
+        corrected_en = "Please write this part in English. For example: This song makes me think of my friend."
+        richer_en = (
+            "This song makes me think of my own feelings. "
+            "When I listen to it, I can connect the lyrics with my life. "
+            "Next time, I want to express my idea in English with more details."
+        )
+        advice_en = "Writing tip: Start with easy patterns: This song makes me feel ~. / It reminds me of ~. / I think ~ because ~."
+        return corrected_en, richer_en, advice_en
+
+    corrected_en, richer_en = polish_student_english_text(answer, song_title, question)
+    d = _extract_en_details(answer + " " + corrected_en, question, song_title)
+    advice_options = [
+        f"Writing tip: Your idea is about {d['topic']}. Add one sentence about a specific person, memory, or moment to make it clearer.",
+        f"Writing tip: You expressed a {d['feeling']} feeling. Add because + reason to make your writing stronger.",
+        "Writing tip: A good reflection has three parts: what I remembered, how I felt, and what I realized.",
+        "Writing tip: Try to use simple but complete sentences. For example: This song made me feel ~ because ~.",
+    ]
+    advice_en = _stable_pick(advice_options, answer + song_title + question)
+    return corrected_en, richer_en, advice_en
+
+
+def make_polished_feedback(song_title, question, student_answer):
+    answer = clean_student_korean_answer(student_answer)
+    d = _extract_ko_details(answer, question, song_title)
+    bridge = song_reflection_bridge_ko(song_title)
+    quote = _safe_original_quote(answer, 70)
+
+    opener_bank = {
+        "친구와의 관계": [
+            "이 노래를 들으며 나는 친구와 함께했던 장면을 떠올렸습니다.",
+            "이 노래는 나에게 친구와의 관계가 얼마나 소중한지 다시 생각하게 했습니다.",
+        ],
+        "가족과의 관계": [
+            "이 노래를 들으며 나는 가족과 함께한 시간과 고마움을 떠올렸습니다.",
+            "이 노래는 가족이 내 삶에서 어떤 의미인지 다시 생각하게 했습니다.",
+        ],
+        "나의 꿈과 미래": [
+            "이 노래를 들으며 나는 나의 꿈과 미래를 다시 생각해 보았습니다.",
+            "이 노래는 아직 분명하지 않은 미래라도 계속 노력해야겠다는 마음을 떠올리게 했습니다.",
+        ],
+        "사랑과 관계": [
+            "이 노래를 들으며 나는 쉽게 말하지 못했던 마음과 관계를 떠올렸습니다.",
+            "이 노래는 누군가를 좋아하거나 그리워하는 마음이 얼마나 복잡한지 생각하게 했습니다.",
+        ],
+        "학교생활과 배움": [
+            "이 노래를 들으며 나는 학교생활과 내가 조금씩 성장하는 과정을 떠올렸습니다.",
+            "이 노래는 공부와 배움도 내 감정과 연결될 때 더 의미 있어질 수 있다는 생각을 하게 했습니다.",
+        ],
+        "과거의 기억": [
+            "이 노래를 들으며 나는 아직 마음에 남아 있는 과거의 한 장면을 떠올렸습니다.",
+            "이 노래는 시간이 지나도 사라지지 않는 기억의 의미를 다시 생각하게 했습니다.",
+        ],
+        "내 마음속 감정": [
+            "이 노래를 들으며 나는 내 마음속에 남아 있던 감정을 바라보게 되었습니다.",
+            "이 노래는 말로 다 정리하지 못했던 내 감정을 천천히 생각하게 했습니다.",
+        ],
+    }
+    opener = _stable_pick(opener_bank.get(d["topic"], opener_bank["내 마음속 감정"]), answer + song_title)
+
+    if len(answer.replace(" ", "")) < 5:
+        source_sentence = f"처음에는 생각을 길게 쓰지 못했지만, 그 짧은 표현 안에도 {d['feeling']}이 담겨 있었습니다."
+    else:
+        source_sentence = f"처음 쓴 생각은 ‘{quote}’였습니다. 이 말 안에는 {d['person']}에 대한 생각과 {d['feeling']}이 함께 담겨 있었습니다."
+
+    polished_ko = (
+        f"{opener} "
+        f"{source_sentence} "
+        f"특히 {d['scene']}이 떠오르면서, 이 노래가 단순히 듣기 좋은 음악이 아니라 내 경험과 연결될 수 있다는 것을 느꼈습니다. "
+        f"{bridge} "
+        f"그래서 이 글은 노래에 대한 감상에서 끝나지 않고, 내가 왜 그런 감정을 느꼈는지, 그 감정이 지금의 나에게 어떤 의미가 있는지 생각해 보는 글이 되었습니다. "
+        f"이 경험을 통해 나는 {d['realization']}을 알게 되었습니다."
+    )
+
+    english_translation = (
+        f"While listening to this song, I thought about {d['topic_en']}. "
+        f"My first idea was: '{quote}' This idea shows that I felt {d['feeling_en']} and thought about {d['person_en']}. "
+        f"The song reminded me of {d['scene_en']}. It was not just a song to enjoy; it became connected to my own experience. "
+        f"It helped me think about why I felt that way and what that feeling means to me now. "
+        f"Through this reflection, I realized that {d['realization_en']}."
+    )
+
+    advice = (
+        f"쓰기 조언: 학생이 쓴 핵심 내용인 '{quote}'를 바탕으로 글을 확장했습니다. "
+        f"다음에는 ① 떠오른 사람이나 장면, ② 느낀 감정, ③ 지금 깨달은 점을 한 문장씩 더 쓰면 훨씬 자연스러운 글이 됩니다."
+    )
+    return polished_ko, english_translation, advice
+
+
 SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/watch?v=RgGRyssdJvw',
                                'bg': '\n'
                                      '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#be185d;">\n'
