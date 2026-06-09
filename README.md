@@ -63,7 +63,7 @@ Overall, this lesson gives students more chances to listen, read, write, speak, 
 ## 📱 App Purpose
 
 ### What is the purpose of the app?
-The purpose of this app is to make English learning more accessible, enjoyable, and voluntary for low-proficiency vocational high school students.
+The purpose of this app is to support more accessible, enjoyable, and effective English learning while encouraging voluntary participation among low-proficiency vocational high school students.
 
 ### Why is the app needed?
 In a regular classroom, one teacher cannot fully support every student’s listening, reading, vocabulary, writing, and speaking practice at the same time. Many students also feel anxious when they have to speak, read, or write in English in front of others.
