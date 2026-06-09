@@ -39,13 +39,15 @@ They also have low confidence and feel anxious about making mistakes. Therefore,
 This lesson teaches basic English through listening, speaking, reading, vocabulary, and short writing activities using familiar topics, pop songs, and simple tasks.
 
 ### Why is this lesson meaningful?
-This lesson is meaningful because it gives low-proficiency students more individual and self-paced opportunities to practice English while lowering speaking anxiety. It helps students build motivation, autonomy, and confidence through repeated practice, review, and small successes.
+The theoretical foundation of this app is based on several connected approaches. First, it uses **task-supported learning**, not fully task-based learning, because low-proficiency students need small and structured tasks before completing complex real-world communication tasks. Second, it reflects **skill-integrated learning**, because students practice listening, reading, vocabulary, writing, and speaking through connected activities.
 
-The lesson is based on **task-supported learning**, not fully task-based learning, because these students still need structured support with basic English skills. Instead of completing complex real-world tasks only in English, they practice through small and manageable tasks such as listening, matching, choosing answers, short writing, and speaking words aloud.
+Third, it is based on **technology-enhanced language learning** and **mobile-assisted language learning (MALL)**. Through smartphones, tablets, or computers, students can listen to English input repeatedly, receive immediate feedback, retry difficult tasks, and learn at their own pace. In this way, technology gives students more individual practice opportunities than a traditional classroom can usually provide.
 
-The lesson also reflects **skill-integrated learning**, as students practice listening, reading, vocabulary, writing, and speaking through connected activities such as pop songs, short reading passages, quizzes, sentence matching, guided writing, and speech recognition-based speaking tasks.
+The app also supports **noticing** and **inductive grammar learning** by helping students discover useful patterns from pop song lyrics and examples. In addition, it uses **caption and L1 meaning support** to help low-proficiency learners connect English sounds, spelling, and meaning. By providing English text with Korean meaning support, the app reduces comprehension burden and helps students understand input more easily.
 
-In addition, the app supports **technology-enhanced language learning**, **noticing**, **inductive grammar learning**, **learner autonomy**, and **self-paced learning**. Students can listen again, retry difficult items, notice useful patterns from songs and examples, review independently, and build motivation, confidence, and autonomy in learning English.
+It also promotes **learner autonomy** and **self-paced learning** because students can listen again, retry speaking tasks, mark difficult words, and review items at their own pace. Finally, the speech recognition function is used not as a perfect pronunciation assessment tool, but as a low-pressure speaking practice tool that can reduce speaking anxiety and increase participation.
+
+
 
 ---
 
