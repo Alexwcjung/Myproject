@@ -2,13 +2,19 @@
 
 ## 🎬 App Demo Video
 
+Click the image below to watch the app demo video.
+
 <a href="https://www.youtube.com/watch?v=mkiQJoR8sVQ">
-  <img src="https://img.youtube.com/vi/mkiQJoR8sVQ/maxresdefault.jpg" alt="재미있는 영어 놀이터 앱 소개 영상" width="500">
+  <img src="https://img.youtube.com/vi/mkiQJoR8sVQ/maxresdefault.jpg" alt="Fun English Playground App Demo Video" width="500">
 </a>
 
 ---
-## 🔗 Streamlit App Deployment Link 
-👉 [Click here to open the app](https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/)
+
+## 🔗 Streamlit App Deployment Link
+
+<p style="margin-left: 20px; font-size: 14px;">
+  👉 <a href="https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/">Open the Streamlit app</a>
+</p>
 
 ---
 
