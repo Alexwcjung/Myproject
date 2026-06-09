@@ -17,24 +17,6 @@ Click the image below to watch the app demo video.
 | World Map Quiz → Pop Song Learning → Reading → Daily English Vocabulary → Speaking Practice → Review | 50 minutes | Low-proficiency Korean vocational high school students | [Open the Streamlit App](https://myproject-uvrqthadsokzov6cqhb22p.streamlit.app/) |
 
 ---
-### Lesson Flow at a Glance
-
-| Section | Stage | Time | Student Activities | App Integration |
-|---|---|---:|---|---|
-| 🌍 Warm-up | World Map Quiz | 3 min | Answer a few simple world map quiz questions to activate interest. | World map quiz section |
-| 🎵 Pop Song Learning | Lyrics and Comprehension Quiz | 7 min | Listen to a familiar pop song, follow the lyrics, and answer simple comprehension questions. | Lyrics & comprehension quiz |
-| 🎵 Pop Song Learning | Grammar Discovery | 3 min | Notice a useful grammar pattern from the lyrics through guided examples. | Grammar tab |
-| 🎵 Pop Song Learning | Sentence Matching | 2 min | Match English sentences or expressions from the song with Korean meanings. | Sentence matching tab |
-| 🎵 Pop Song Learning | Short Reflection Writing | 2 min | Write a short guided response about the song, lyrics, or message. | Thinking/writing tab |
-| 🎵 Pop Song Learning | Key Expression Learning | 1 min | Review and practice useful expressions from the song. | Key expression learning tab |
-| 📖 Reading Learning | Intro Video, Reading Passage and Comprehension Quiz | 9 min | Watch a short video related to the reading topic for 2 minutes. Then read a short passage, such as the Ronaldo passage, and answer simple comprehension questions. | Reading intro video, reading passage and quiz |
-| 📖 Reading Learning | Reading Sentence Matching | 2 min | Match English sentences or expressions from the passage with their meanings. | Reading sentence matching activity |
-| 📖 Reading Learning | Letter Writing with Translation Support | 3 min | Write a short guided letter or response based on the reading passage and revise sentences with translation support when needed. | Letter writing activity and Google Translation support |
-| 📖 Reading Learning | Reading Key Expressions | 1 min | Review useful expressions from the reading passage. | Reading key expression learning |
-| 🎤 Vocabulary and Speaking | Speaking Cards Game | 16 min | Listen to daily vocabulary, check meanings, say selected words aloud, and retry difficult words through speaking cards. | Daily English 400 word cards and speaking quiz |
-| 🔁 Wrap-up | Self-Check | 1 min | Quickly check what they practiced and choose words or expressions to review later. | Self-check or review function |
-
----
 
 ## 🏫 Teaching Context
 
