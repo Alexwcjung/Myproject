@@ -82,7 +82,7 @@ The app is a customized Streamlit-based English learning app. It provides step-b
 The app includes Daily English 400 vocabulary cards, survival English expressions, familiar pop songs, short reading passages, comprehension quizzes, key expressions, sentence matching items, and guided writing prompts.
 
 ### How do learners interact with it?
-Learners interact with the app by clicking buttons, listening to audio, watching videos, answering quizzes, matching expressions, writing short responses, checking meanings, marking difficult items, and speaking into the microphone. They can retry tasks and review difficult items at their own pace.
+Learners interact with the app **by clicking buttons, listening to audio, watching videos, answering quizzes, matching expressions, writing short responses, checking meanings, marking difficult items, and speaking into the microphone.**
 
 ---
 
