@@ -69,7 +69,7 @@ The purpose of this app is to support more accessible, enjoyable, and effective 
 In a regular classroom, **one teacher cannot fully support every student’s listening, reading, vocabulary, writing, and speaking practice at the same time.** Many students also feel anxious when they have to speak, read, or write in English in front of others.
 
 ### How does the app support students?
-The app gives students more chances to practice English individually and at their own pace. It helps them listen, read, write, speak, check meanings, retry tasks, and review difficult items in a less stressful learning environment.
+The app gives students **more chances to practice English individually and at their own pace.** It helps them listen, read, write, speak, check meanings, retry tasks, and review difficult items in a less stressful learning environment.
 
 ---
 
