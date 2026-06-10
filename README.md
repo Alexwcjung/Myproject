@@ -66,7 +66,7 @@ Overall, this lesson gives students more chances to listen, read, write, speak, 
 The purpose of this app is to support more accessible, enjoyable, and effective English learning while encouraging voluntary participation among low-proficiency vocational high school students.
 
 ### Why is the app needed?
-In a regular classroom, one teacher cannot fully support every student’s listening, reading, vocabulary, writing, and speaking practice at the same time. Many students also feel anxious when they have to speak, read, or write in English in front of others.
+In a regular classroom, **one teacher cannot fully support every student’s listening, reading, vocabulary, writing, and speaking practice at the same time.** Many students also feel anxious when they have to speak, read, or write in English in front of others.
 
 ### How does the app support students?
 The app gives students more chances to practice English individually and at their own pace. It helps them listen, read, write, speak, check meanings, retry tasks, and review difficult items in a less stressful learning environment.
