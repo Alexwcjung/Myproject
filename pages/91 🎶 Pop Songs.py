@@ -451,16 +451,16 @@ def check_target_grammar_sentence(target, sentence):
             return ok()
         return no("I have been + -ing 모양 구조를 써 보세요. 예: I have been studying English.")
 
-    if target == "want + 대상 단어 / want to + 기본 행동 단어":
+    if target == "want + 명사 / want to + 동사":
         if re.search(r"\bwant\s+to\s+\w+", low):
-            return ok("좋아요. 행동을 말할 때 want to + 기본 행동 단어 모양을 잘 썼습니다.")
+            return ok("좋아요. 뒤에 동사가 올 때 want to + 동사 모양을 잘 썼습니다.")
         if re.search(r"\bwant\s+(love|peace|money|time|help|food|water|a\s+\w+|the\s+\w+|my\s+\w+|your\s+\w+)\b", low):
-            return ok("좋아요. 원하는 대상을 말할 때 want + 대상 단어 모양을 잘 썼습니다.")
-        if re.search(r"\bwant\s+(put|help|see|go|study|try|meet|play|make|watch|listen|eat|drink)\b", low):
-            return no("행동을 말할 때는 want 뒤에 to를 넣어 보세요. 예: I want to help you.")
+            return ok("좋아요. 뒤에 명사가 올 때 want + 명사 모양을 잘 썼습니다.")
+        if re.search(r"\bwant\s+(put|help|see|go|study|try|meet|play|make|watch|listen|eat|drink|be|do)\b", low):
+            return no("뒤에 동사가 올 때는 want 뒤에 to를 넣어 보세요. 예: I want to help you.")
         if re.search(r"\bwant\s+to\s+(love|peace|money|time|food|water)\b", low):
-            return no("love, peace, time 같은 대상 단어를 바로 원할 때는 want 뒤에 to를 쓰지 않습니다. 예: I want peace.")
-        return no("want + 대상 단어 또는 want to + 기본 행동 단어 구조를 써 보세요. 예: I want peace. / I want to help you.")
+            return no("love, peace, time 같은 명사가 바로 올 때는 want 뒤에 to를 쓰지 않습니다. 예: I want peace.")
+        return no("want + 명사 또는 want to + 동사 구조를 써 보세요. 예: I want peace. / I want to help you.")
 
     if target == "make + 사람/대상 + 형용사/기본 행동 단어":
         if re.search(r"\b(make|makes|made)\s+\w+(?:\s+\w+)?\s+to\s+\w+", low):
@@ -1375,58 +1375,58 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/대상 +
                                                             'forget our dream',
                                                             'stop trying'],
                                        'sentence_suffix': ''},
- '17. My Universe - Coldplay X BTS': {'target': 'want + 대상 단어 / want to + 기본 행동 단어',
-                                      'examples': ['I just want to put you first.',
+ '17. My Universe - Coldplay X BTS': {'target': 'want + 명사 / want to + 동사',
+                                      'examples': ['I want love.',
+                                                   'I want peace.',
+                                                   'I want time.',
+                                                   'I just want to put you first.',
                                                    'I want to help you.',
-                                                   'I want to see you.',
-                                                   'I want love.',
-                                                   'I want peace.'],
+                                                   'I want to see you.'],
                                       'frequent_options': ['I can', 'You are', 'I want / I want to', 'Let it'],
                                       'frequent_answer': 'I want / I want to',
-                                      'form_options': ['want + 대상 단어 / want to + 기본 행동 단어',
-                                                       'want to + 대상 단어',
-                                                       'want + to + 대상 단어',
-                                                       'want + 행동 단어'],
-                                      'form_answer': 'want + 대상 단어 / want to + 기본 행동 단어',
+                                      'form_options': ['want + 명사 / want to + 동사',
+                                                       'want to + 명사 / want + 동사',
+                                                       'want + to + 명사 / want + to + 동사',
+                                                       'want 뒤에는 항상 to를 쓴다'],
+                                      'form_answer': 'want + 명사 / want to + 동사',
                                       'meaning_examples': [('I want love.', '나는 사랑을 원해.'),
                                                            ('I want peace.', '나는 평화를 원해.'),
-                                                           ('I want to put you first.', '나는 너를 가장 먼저 생각하고 싶어.')],
-                                      'meaning_options': ['누군가를 ~하게 만들다', '~을 원하다 / ~하고 싶다', '~할 수 없다', '예전에 ~하곤 했다'],
-                                      'meaning_answer': '~을 원하다 / ~하고 싶다',
-                                      'rule_answer': 'want + 대상 단어 = ~을 원하다 / want to + 기본 행동 단어 = ~하고 싶다',
-                                      'rule_options': ['want 뒤에는 항상 to를 쓴다',
-                                                       'want + 대상 단어 = ~을 원하다 / want to + 기본 행동 단어 = ~하고 싶다',
-                                                       'want + 행동 단어 = ~하고 싶다 / want to + 대상 단어 = ~을 원하다',
-                                                       'want 뒤에는 항상 -ing 모양을 쓴다'],
-                                      'practice': [('맞는 문장은?',
-                                                    ['I want to love.', 'I want love.', 'I want for love.', 'I want loving.'],
-                                                    'I want love.',
-                                                    'love처럼 원하는 대상이 바로 오면 want 뒤에 to를 쓰지 않습니다.'),
-                                                   ('맞는 문장은?',
-                                                    ['I want help you.', 'I want to help you.', 'I want for help you.', 'I want helping you.'],
+                                                           ('I want time.', '나는 시간이 필요해.'),
+                                                           ('I want to put you first.', '나는 너를 가장 먼저 생각하고 싶어.'),
+                                                           ('I want to help you.', '나는 너를 돕고 싶어.')],
+                                      'meaning_options': ['명사를 원할 때도 항상 to를 쓴다',
+                                                          '동사가 올 때는 want to를 쓰고, 명사가 올 때는 want를 쓴다',
+                                                          'want 뒤에는 항상 동사만 온다',
+                                                          'want to 뒤에는 항상 명사만 온다'],
+                                      'meaning_answer': '동사가 올 때는 want to를 쓰고, 명사가 올 때는 want를 쓴다',
+                                      'rule_answer': 'want + 명사 = ~을 원하다 / want to + 동사 = ~하고 싶다',
+                                      'rule_options': ['want + 명사 = ~하고 싶다 / want to + 동사 = ~을 원하다',
+                                                       'want + 명사 = ~을 원하다 / want to + 동사 = ~하고 싶다',
+                                                       'want + 동사 = ~하고 싶다 / want to + 명사 = ~을 원하다',
+                                                       'want 뒤에는 명사와 동사 모두 항상 to를 쓴다'],
+                                      'practice': [('다음 중 뒤에 명사가 온 문장은?',
+                                                    ['I want to help you.', 'I want peace.', 'I want to see you.', 'I want to try again.'],
+                                                    'I want peace.',
+                                                    'peace는 명사입니다. 명사가 올 때는 want + 명사 모양을 씁니다.'),
+                                                   ('다음 중 뒤에 동사가 온 문장은?',
+                                                    ['I want love.', 'I want time.', 'I want to help you.', 'I want peace.'],
                                                     'I want to help you.',
-                                                    'help처럼 행동이 오면 want to + 기본 행동 단어를 씁니다.'),
-                                                   ('맞는 문장은?',
-                                                    ['I want put you first.',
-                                                     'I want to put you first.',
-                                                     'I want to you first.',
-                                                     'I want putting you first.'],
-                                                    'I want to put you first.',
-                                                    '행동을 말할 때는 want to + 기본 행동 단어를 씁니다.'),
-                                                   ('I want peace.의 뜻은?',
-                                                    ['나는 평화를 만들고 싶어.',
-                                                     '나는 평화를 원해.',
-                                                     '나는 평화롭게 노래해.',
-                                                     '나는 평화를 볼 수 없어.'],
-                                                    '나는 평화를 원해.',
-                                                    'want 뒤에 대상 단어가 오면 ~을 원하다는 뜻입니다.'),
+                                                    'help는 동사입니다. 동사가 올 때는 want to + 동사 모양을 씁니다.'),
+                                                   ('빈칸: I want _____ put you first.',
+                                                    ['', 'to', 'for', 'at'],
+                                                    'to',
+                                                    'put은 동사입니다. 동사가 올 때는 want to를 씁니다.'),
+                                                   ('빈칸: I want _____ peace.',
+                                                    ['to', 'for', 'at', ''],
+                                                    '',
+                                                    'peace는 명사입니다. 명사가 올 때는 want 뒤에 바로 씁니다.'),
                                                    ('알맞은 규칙은?',
-                                                    ['want 뒤에는 항상 to를 쓴다',
-                                                     'want 뒤에 대상 단어가 오면 to를 쓰지 않는다',
-                                                     'want to 뒤에는 대상 단어만 온다',
-                                                     'want 뒤에는 항상 -ing 모양을 쓴다'],
-                                                    'want 뒤에 대상 단어가 오면 to를 쓰지 않는다',
-                                                    'want love / want peace처럼 대상 단어가 바로 올 수 있습니다.')],
+                                                    ['뒤에 명사가 오면 want to를 쓴다',
+                                                     '뒤에 동사가 오면 want to를 쓴다',
+                                                     'want 뒤에는 항상 to를 쓴다',
+                                                     'want 뒤에는 항상 -ing를 쓴다'],
+                                                    '뒤에 동사가 오면 want to를 쓴다',
+                                                    'I want love. / I want to help you.를 비교하면 규칙을 찾을 수 있습니다.')],
                                       'sentence_prefix': 'I want to',
                                       'sentence_choices': ['put you first',
                                                            'help my friend',
