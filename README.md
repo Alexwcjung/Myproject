@@ -27,7 +27,7 @@ The learners are Korean vocational high school students with low English profici
 The lesson is designed for a regular English classroom where students use smartphones, tablets, or computers to complete app-based learning tasks.
 
 ### What challenges do learners have?
-Many students have **learning gaps** in listening, reading, vocabulary, writing, and speaking. Since most of them do not plan to enter university after graduation, they often feel that English is difficult, distant, and not directly connected to their future lives or careers.
+Many students have **learning gaps** in listening, reading, vocabulary, writing, and speaking. Since most of them **do not plan to enter university after graduation, they often feel that English is difficult, distant, and not directly connected to their future lives or careers.**
 
 They also have **low confidence and feel anxious** about making mistakes. Therefore, the app uses familiar content such as pop songs, short reading passages, daily vocabulary, guided writing, and speaking activities so that students can practice, review, and retry tasks at their own pace.
 
