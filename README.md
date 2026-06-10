@@ -50,7 +50,7 @@ Third, the app uses **mobile-assisted language learning (MALL)**, especially thr
 
 In the speaking section, students say words aloud into the microphone, check whether the app recognizes them, and retry difficult items. ASR is not used as a perfect pronunciation assessment tool. Rather, it is used as a low-pressure speaking practice tool that gives students more chances to actually speak English without the embarrassment of speaking in front of classmates.
 
-Fourth, the app provides **caption and L1 meaning support**. Many students have difficulty connecting English sounds, spelling, and meaning. By providing English text with Korean meaning support, the app reduces comprehension burden and helps students understand input more easily while still noticing the target English expressions.
+Fourth, the app provides **caption and L1 meaning support**. Many students have difficulty connecting English sounds, spelling, and meaning. By providing English text with Korean meaning support, the app **reduces comprehension burden** and **helps students understand input more easily while still noticing the target English expressions.**
 
 Fifth, the pop song grammar section supports **noticing** and **inductive grammar learning**. Instead of explaining grammar rules first, students notice repeated expressions from lyrics and examples before receiving simple explanations. This makes grammar less abstract and more meaningful for low-proficiency learners.
 
