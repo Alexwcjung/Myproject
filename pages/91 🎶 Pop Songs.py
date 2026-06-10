@@ -4760,7 +4760,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                       'reflect_questions': ['나의 세상을 밝게 만들어 주는 사람이나 존재가 있나요?',
                                                             '서로 다른 배경을 가진 사람과 가까워진 경험이 있나요?',
                                                             '내가 가장 먼저 소중히 여기고 싶은 사람이나 가치는 무엇인가요?']},
- '18. Golden - KPop Demon Hunters': {'video_url': '',
+ '18. Golden - KPop Demon Hunters': {'video_url': 'https://www.youtube.com/watch?v=-NXmMj7RQUc&list=RD-NXmMj7RQUc&start_radio=1',
                                      'bg': '\n'
                                            '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#ca8a04;">\n'
                                            '        ✨ Golden: 숨어 있던 나를 드러내고 빛나는 노래\n'
