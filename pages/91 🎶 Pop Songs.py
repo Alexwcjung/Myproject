@@ -462,6 +462,12 @@ def check_target_grammar_sentence(target, sentence):
             return no("love, peace, time 같은 명사가 바로 올 때는 want 뒤에 to를 쓰지 않습니다. 예: I want peace.")
         return no("want + 명사 또는 want to + 동사 구조를 써 보세요. 예: I want peace. / I want to help you.")
 
+
+    if target == "gonna be + 상태/모습 단어":
+        if re.search(r"\b(gonna|going\s+to)\s+be\s+\w+", low):
+            return ok("좋아요. 앞으로 어떤 모습이 될지 말하는 gonna be + 상태/모습 단어 모양을 잘 썼습니다.")
+        return no("gonna be + 상태/모습 단어 구조를 써 보세요. 예: We're gonna be golden.")
+
     if target == "make + 사람/대상 + 형용사/기본 행동 단어":
         if re.search(r"\b(make|makes|made)\s+\w+(?:\s+\w+)?\s+to\s+\w+", low):
             return no("make 뒤에는 '사람/대상 + to + 행동 단어'가 아니라 사람/대상 + 형용사 또는 기본 행동 단어를 씁니다. 예: You make me smile.")
@@ -1433,7 +1439,59 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/대상 +
                                                            'study English',
                                                            'see my family',
                                                            'try again'],
-                                      'sentence_suffix': ''}}
+                                      'sentence_suffix': ''},
+ '18. Golden - KPop Demon Hunters': {'target': 'gonna be + 상태/모습 단어',
+                                     'examples': ["We're gonna be golden.",
+                                                  'Gonna be golden.',
+                                                  "We're gonna be glowin'.",
+                                                  "You're gonna be strong.",
+                                                  "I'm gonna be brave."],
+                                     'frequent_options': ['I used to', 'gonna be', 'I have been', 'let me'],
+                                     'frequent_answer': 'gonna be',
+                                     'form_options': ['gonna be + 과거 모양',
+                                                      'gonna be + 상태/모습 단어',
+                                                      'gonna be + to + 행동 단어',
+                                                      'gonna be + can'],
+                                     'form_answer': 'gonna be + 상태/모습 단어',
+                                     'meaning_examples': [("We're gonna be golden.", '우리는 빛나는 존재가 될 거야.'),
+                                                          ("We're gonna be glowin'.", '우리는 빛나게 될 거야.'),
+                                                          ("I'm gonna be brave.", '나는 용감해질 거야.')],
+                                     'meaning_options': ['예전에 ~했다', '지금 숨어 있다', '앞으로 ~한 모습이 될 것이다', '~할 수 없다'],
+                                     'meaning_answer': '앞으로 ~한 모습이 될 것이다',
+                                     'rule_answer': 'gonna be + 상태/모습 단어 = 앞으로 ~한 모습이 될 것이다',
+                                     'rule_options': ['gonna be + 과거 모양 = 어제 ~했다',
+                                                      'gonna be + 상태/모습 단어 = 앞으로 ~한 모습이 될 것이다',
+                                                      'gonna be + can = ~할 수 있다',
+                                                      'gonna be + to + 행동 단어 = ~해야 한다'],
+                                     'practice': [("빈칸: We're gonna be _____.",
+                                                   ['golden', 'gold', 'to golden', 'golds'],
+                                                   'golden',
+                                                   'gonna be 뒤에는 어떤 모습인지 나타내는 말을 쓸 수 있습니다.'),
+                                                  ('맞는 문장은?',
+                                                   ["We're gonna to be golden.",
+                                                    "We're gonna be golden.",
+                                                    "We're gonna being golden.",
+                                                    "We're gonna golden."],
+                                                   "We're gonna be golden.",
+                                                   'gonna be + 상태/모습 단어'),
+                                                  ("Gonna be golden.의 뜻은?",
+                                                   ['빛나는 존재가 될 거야.', '어제 빛났다.', '빛나지 못한다.', '숨어 있을 거야.'],
+                                                   '빛나는 존재가 될 거야.',
+                                                   'gonna be는 앞으로 어떤 모습이 될지 말할 때 씁니다.'),
+                                                  ("빈칸: We're gonna be _____.",
+                                                   ['glow', 'glowin', 'to glow', 'glows'],
+                                                   'glowin',
+                                                   "가사에서는 glowin'처럼 말하듯 짧게 표현했습니다."),
+                                                  ('알맞은 규칙은?',
+                                                   ['gonna be 뒤에는 항상 과거 표현만 온다',
+                                                    'gonna be는 앞으로 어떤 모습이 될지 말한다',
+                                                    'gonna be 뒤에는 항상 to를 쓴다',
+                                                    'gonna be는 이유를 모른다는 뜻이다'],
+                                                   'gonna be는 앞으로 어떤 모습이 될지 말한다',
+                                                   "We're gonna be golden.을 보면 앞으로 빛나는 모습이 될 것이라는 뜻입니다.")],
+                                     'sentence_prefix': "We're gonna be",
+                                     'sentence_choices': ['golden', 'strong', 'brave', 'happy', 'ready'],
+                                     'sentence_suffix': ''}}
 
 
 
@@ -4701,7 +4759,112 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                    ('Made of each other', '서로로 이루어진')],
                                       'reflect_questions': ['나의 세상을 밝게 만들어 주는 사람이나 존재가 있나요?',
                                                             '서로 다른 배경을 가진 사람과 가까워진 경험이 있나요?',
-                                                            '내가 가장 먼저 소중히 여기고 싶은 사람이나 가치는 무엇인가요?']}}
+                                                            '내가 가장 먼저 소중히 여기고 싶은 사람이나 가치는 무엇인가요?']},
+ '18. Golden - KPop Demon Hunters': {'video_url': '',
+                                     'bg': '\n'
+                                           '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#ca8a04;">\n'
+                                           '        ✨ Golden: 숨어 있던 나를 드러내고 빛나는 노래\n'
+                                           '    </h3>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        <b>Golden</b>은 어둡고 외로웠던 과거를 지나, 이제는 자신의 목소리와 존재를 숨기지 않고 빛나겠다고 말하는 노래입니다.\n'
+                                           '    </p>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        노래 속 화자는 예전에는 ghost처럼 혼자였고, 자신의 자리를 찾지 못했습니다. 하지만 이제는 숨는 것을 멈추고 무대 위에서 자신이 태어난 모습대로 빛나려 합니다.\n'
+                                           '    </p>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        반복되는 <b>gonna be golden</b>은 앞으로 더 밝고 단단한 존재가 되겠다는 다짐입니다. <b>no fear, no lies</b>는 두려움과 거짓 없이 진짜 나로 살아가겠다는 의미로 볼 수 있습니다.\n'
+                                           '    </p>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        수업에서는 <b>ghost</b>, <b>alone</b>, <b>throne</b>, <b>queen</b>, <b>done hiding</b>, <b>shining</b>, <b>golden</b>, <b>born to be</b> 같은 표현을 중심으로 배울 수 있습니다. 학생들에게 숨기고 싶었던 모습, 자신감을 되찾은 순간, 앞으로 빛나고 싶은 나의 모습을 생각하게 할 수 있습니다.\n'
+                                           '    </p>\n'
+                                           '    ',
+                                     'lyrics': [('I was a ghost, I was alone, hah', '나는 유령 같았고, 혼자였어'),
+                                                ('어두워진, hah, 앞길속에 (Ah)', '어두워진 앞길 속에서'),
+                                                ("Given the throne, I didn't know how to believe", '왕좌를 받았지만, 어떻게 믿어야 할지 몰랐어'),
+                                                ("I was the queen that I'm meant to be", '나는 원래 되어야 했던 여왕이었어'),
+                                                ('I lived two lives, tried to play both sides', '나는 두 삶을 살며 양쪽 모두를 맞추려 했어'),
+                                                ("But I couldn't find my own place", '하지만 내 자리를 찾을 수 없었어'),
+                                                ("Called a problem child 'cause I got too wild", '너무 거칠다고 문제아라고 불렸어'),
+                                                ("But now that's how I'm getting paid, 끝없이 on stage", '하지만 이제 그 모습으로 인정받고 있어, 끝없이 무대 위에서'),
+                                                ("I'm done hidin', now I'm shinin' like I'm born to be", '나는 더 이상 숨지 않아, 태어난 모습대로 빛나고 있어'),
+                                                ("We dreamin' hard, we came so far, now I believe", '우리는 크게 꿈꿨고, 여기까지 왔고, 이제 나는 믿어'),
+                                                ("We're goin' up, up, up, it's our moment", '우리는 올라가고 있어, 지금이 우리의 순간이야'),
+                                                ("You know together we're glowing", '알잖아, 함께라서 우리는 빛나고 있어'),
+                                                ('Gonna be, gonna be golden', '우리는 빛나는 존재가 될 거야'),
+                                                ('Oh, up, up, up with our voices', '우리의 목소리로 더 높이 올라가'),
+                                                ('영원히 깨질 수 없는', '영원히 깨질 수 없는'),
+                                                ('Gonna be, gonna be golden', '우리는 빛나는 존재가 될 거야'),
+                                                ("Oh, I'm done hidin' now I'm shinin' like I'm born to be", '나는 더 이상 숨지 않아, 태어난 모습대로 빛나고 있어'),
+                                                ('Oh, our time, no fear, no lies', '지금은 우리의 시간, 두려움도 거짓도 없어'),
+                                                ("That's who we're born to be", '그것이 우리가 원래 태어난 모습이야'),
+                                                ('Waited so long to break these walls down', '이 벽들을 무너뜨리기 위해 오랫동안 기다렸어'),
+                                                ('To wake up and feel like me', '깨어나서 진짜 나처럼 느끼기 위해'),
+                                                ('Put these patterns all in the past now', '이제 이런 반복된 모습을 모두 과거에 두고'),
+                                                ('And finally live like the girl they all see', '마침내 모두가 보는 그 소녀처럼 살아가'),
+                                                ("No more hiding, I'll be shining like I'm born to be", '더 이상 숨지 않아, 태어난 모습대로 빛날 거야'),
+                                                ("'Cause we are hunters, voices strong, and I know I believe", '우리는 헌터이고, 목소리는 강하며, 나는 믿어'),
+                                                ("We're goin' up, up, up, it's our moment", '우리는 올라가고 있어, 지금이 우리의 순간이야'),
+                                                ("You know together we're glowing", '알잖아, 함께라서 우리는 빛나고 있어'),
+                                                ('Gonna be, gonna be golden', '우리는 빛나는 존재가 될 거야'),
+                                                ('Oh, up, up, up, with our voices', '우리의 목소리로 더 높이 올라가'),
+                                                ('영원히 깨질 수 없는', '영원히 깨질 수 없는'),
+                                                ('Gonna be, gonna be golden', '우리는 빛나는 존재가 될 거야'),
+                                                ("Oh, I'm done hidin', now I'm shining like I'm born to be", '나는 더 이상 숨지 않아, 태어난 모습대로 빛나고 있어'),
+                                                ('Oh, our time, no fears, no lies', '지금은 우리의 시간, 두려움도 거짓도 없어'),
+                                                ("That's who we're born to be", '그것이 우리가 원래 태어난 모습이야'),
+                                                ("You know we're gonna be, gonna be golden", '알잖아, 우리는 빛나는 존재가 될 거야'),
+                                                ("We're gonna be, gonna be", '우리는 그렇게 될 거야'),
+                                                ("Born to be, born to be glowin'", '빛나도록 태어났어'),
+                                                ('밝게 빛나는 우린', '밝게 빛나는 우리는'),
+                                                ("You know that it's our time, no fears, no lies", '알잖아, 지금은 우리의 시간, 두려움도 거짓도 없어'),
+                                                ("That's who we're born to be", '그것이 우리가 원래 태어난 모습이야')],
+                                     'quiz': [{'q': '1. 화자는 처음에 자신을 무엇 같다고 표현하나요?',
+                                               'options': ['유령', '별', '왕자', '학생'],
+                                               'answer': '유령'},
+                                              {'q': '2. 화자는 무엇을 받았지만 믿는 방법을 몰랐다고 하나요?',
+                                               'options': ['왕좌', '편지', '지도', '책'],
+                                               'answer': '왕좌'},
+                                              {'q': '3. 화자는 자신이 원래 어떤 존재였다고 말하나요?',
+                                               'options': ['여왕', '선생님', '여행자', '가수만'],
+                                               'answer': '여왕'},
+                                              {'q': '4. I could not find my own place의 뜻으로 알맞은 것은?',
+                                               'options': ['내 자리를 찾을 수 없었다', '내 집을 샀다', '내 길을 다 외웠다', '내 친구를 만났다'],
+                                               'answer': '내 자리를 찾을 수 없었다'},
+                                              {'q': '5. 이제 화자는 숨는 것을 멈추고 어떻게 된다고 하나요?',
+                                               'options': ['빛난다', '잠든다', '떠난다', '잊는다'],
+                                               'answer': '빛난다'},
+                                              {'q': '6. We came so far의 의미로 알맞은 것은?',
+                                               'options': ['우리는 여기까지 왔다', '우리는 멀리 가지 않았다', '우리는 다시 시작하지 않았다', '우리는 집에 있었다'],
+                                               'answer': '우리는 여기까지 왔다'},
+                                              {'q': '7. gonna be golden의 의미로 가장 알맞은 것은?',
+                                               'options': ['빛나는 존재가 될 것이다', '금으로 물건을 살 것이다', '혼자 숨어 있을 것이다', '다시 과거로 갈 것이다'],
+                                               'answer': '빛나는 존재가 될 것이다'},
+                                              {'q': '8. 이 노래의 중심 메시지로 가장 알맞은 것은?',
+                                               'options': ['두려움 없이 진짜 나로 빛나자는 마음', '항상 혼자 숨어 있어야 한다는 마음', '과거만 계속 생각하자는 마음', '목소리를 숨겨야 한다는 마음'],
+                                               'answer': '두려움 없이 진짜 나로 빛나자는 마음'}],
+                                     'key_expressions': [('I was alone', '나는 혼자였어'),
+                                                         ('Given the throne', '왕좌를 받았지만'),
+                                                         ('Meant to be', '원래 그렇게 될 운명의'),
+                                                         ('Find my own place', '내 자리를 찾다'),
+                                                         ('Problem child', '문제아'),
+                                                         ("I'm done hiding", '나는 숨는 것을 끝냈어'),
+                                                         ("I'm shining", '나는 빛나고 있어'),
+                                                         ("It's our moment", '지금은 우리의 순간이야'),
+                                                         ('Gonna be golden', '빛나는 존재가 될 거야'),
+                                                         ('No fear, no lies', '두려움도 거짓도 없이')],
+                                     'matching': [('I was alone', '나는 혼자였어'),
+                                                  ('Given the throne', '왕좌를 받았지만'),
+                                                  ('Find my own place', '내 자리를 찾다'),
+                                                  ("I'm done hiding", '나는 숨는 것을 끝냈어'),
+                                                  ('Gonna be golden', '빛나는 존재가 될 거야'),
+                                                  ('No fear, no lies', '두려움도 거짓도 없이')],
+                                     'reflect_questions': ['내가 예전에는 숨기고 싶었지만 이제는 드러내고 싶은 모습이 있나요?',
+                                                           '내가 내 자리를 찾았다고 느낀 순간이나 앞으로 찾고 싶은 자리는 무엇인가요?',
+                                                           '앞으로 내가 golden처럼 빛나고 싶은 모습은 어떤 모습인가요?']}}
 
 BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 숨겨 왔던 자신을 받아들이는 순간',
                                'paragraphs': ['Let It Go는 영화 Frozen의 대표곡으로, 엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 '
@@ -4927,7 +5090,12 @@ BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 
                                                      '수업에서는 my universe, put you first, light up inside, different '
                                                      'sides, without you, made of each other 같은 표현을 중심으로 배울 수 있습니다. '
                                                      '학생들은 나의 세상을 밝혀 주는 사람, 서로 다른 사람과 함께하는 경험, 그리고 내가 가장 먼저 소중히 여기고 싶은 '
-                                                     '가치를 생각해 볼 수 있습니다.']}}
+                                                     '가치를 생각해 볼 수 있습니다.']},
+ '18. Golden - KPop Demon Hunters': {'title': '✨ Golden: 숨어 있던 나를 드러내고 빛나는 노래',
+                                     'paragraphs': ['Golden은 어둡고 외로웠던 과거를 지나, 이제는 자신의 목소리와 존재를 숨기지 않고 빛나겠다고 말하는 노래입니다. 노래 속 화자는 처음에는 ghost처럼 혼자였고, 자신이 원래 어떤 존재인지 믿지 못했습니다.',
+                                                    'I lived two lives, tried to play both sides와 I could not find my own place는 다른 사람의 기대에 맞추려 했지만 자기 자리를 찾지 못했던 마음을 보여 줍니다. 하지만 이제 화자는 더 이상 숨지 않고, 자신이 태어난 모습대로 빛나려 합니다.',
+                                                    '반복되는 gonna be golden은 앞으로 더 밝고 단단한 존재가 되겠다는 다짐입니다. no fear, no lies는 두려움과 거짓 없이 진짜 나로 살아가겠다는 의미로 이해할 수 있습니다.',
+                                                    '수업에서는 I was alone, given the throne, meant to be, find my own place, problem child, done hiding, shining, gonna be golden, born to be 같은 표현을 중심으로 배울 수 있습니다. 학생들은 숨기고 싶었던 모습, 자신감을 되찾은 순간, 그리고 앞으로 빛나고 싶은 나의 모습을 주제로 생각을 적을 수 있습니다.']}}
 
 
 def show_background(song_choice, data):
