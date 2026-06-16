@@ -130,6 +130,16 @@ st.markdown("""
     margin-bottom: 12px;
 }
 
+.script-box {
+    background: #ffffff;
+    border: 1px solid #bfdbfe;
+    border-radius: 18px;
+    padding: 16px;
+    line-height: 1.75;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
 .kor {
     color: #6b7280;
     font-size: 15px;
@@ -259,6 +269,18 @@ input {
 
 key_lines = [
     {
+        "time": "0:00",
+        "en": "I killed those people. That's what I can be.",
+        "ko": "내가 그 사람들을 죽였어. 나는 그런 사람이 될 수 있어.",
+        "easy": "Batman says he can take the blame."
+    },
+    {
+        "time": "0:09",
+        "en": "No, you can't. You're not.",
+        "ko": "아니, 넌 그럴 수 없어. 넌 그런 사람이 아니야.",
+        "easy": "Someone says Batman is not a bad person."
+    },
+    {
         "time": "0:12",
         "en": "I'm whatever Gotham needs me to be.",
         "ko": "나는 고담시가 필요로 하는 무엇이든 될 거야.",
@@ -325,7 +347,6 @@ hero_questions = [
     }
 ]
 
-# 정답을 뒤쪽 번호에 오도록 선택지 순서를 조정함
 blank_questions = [
     {
         "audio": "I'm whatever Gotham needs me to be.",
@@ -416,8 +437,8 @@ if "batman_complete" not in st.session_state:
         "choice": False,
         "blank": False,
         "matching": False,
-        "order": False,
-        "grammar": False
+        "grammar": False,
+        "order": False
     }
 
 if "selected_match" not in st.session_state:
@@ -439,7 +460,7 @@ st.markdown("""
     <div class="hero-title">Hero or Villain?</div>
     <div class="hero-sub">
         Watch the Batman scene and complete five missions: choose Batman's role, listen and fill in key lines,
-        match quotes, arrange the story, and discover grammar rules.
+        match quotes, discover grammar rules, and arrange the story.
         <br>
         <span class="kor">배트맨 장면을 보고 5개의 영어 미션을 완성해 봅시다.</span>
     </div>
@@ -456,9 +477,9 @@ with c2:
 with c3:
     st.markdown(f"<span class='badge'>Matching {'✅' if st.session_state.batman_complete['matching'] else '⬜'}</span>", unsafe_allow_html=True)
 with c4:
-    st.markdown(f"<span class='badge'>Order {'✅' if st.session_state.batman_complete['order'] else '⬜'}</span>", unsafe_allow_html=True)
-with c5:
     st.markdown(f"<span class='badge'>Grammar {'✅' if st.session_state.batman_complete['grammar'] else '⬜'}</span>", unsafe_allow_html=True)
+with c5:
+    st.markdown(f"<span class='badge'>Order {'✅' if st.session_state.batman_complete['order'] else '⬜'}</span>", unsafe_allow_html=True)
 
 st.progress(completed_count / 5)
 
@@ -471,21 +492,21 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🎬 Video",
     "🦸 Hero or Villain",
     "🎧 Line Blanks",
-    "💬 Quotes",
     "🧩 Quote Matching",
+    "📘 Grammar",
     "🕵️ Story Order",
-    "📘 Grammar"
+    "💬 Quotes"
 ])
 
 
 # =========================
-# TAB 1 VIDEO
+# TAB 1 VIDEO + FULL SCRIPT
 # =========================
 
 with tab1:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🎬 Watch the Video</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영상을 보고 배트맨이 왜 나쁜 사람처럼 보이는 선택을 하는지 생각해 봅시다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상을 보면서 아래 영어 자막과 한국어 해석을 함께 확인하세요.</div>', unsafe_allow_html=True)
 
     st.video(VIDEO_URL)
 
@@ -498,6 +519,17 @@ with tab1:
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("### 📖 Full Script & Meaning")
+
+    for line in key_lines:
+        st.markdown(f"""
+        <div class="script-box">
+            <span class="time-tag">{line["time"]}</span><br>
+            <b>{line["en"]}</b><br>
+            <span class="kor">{line["ko"]}</span>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -508,7 +540,7 @@ with tab1:
 with tab2:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🦸 Hero or Villain?</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">질문은 영어와 한국어를 함께 읽고 고르세요. 3문제 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">Read the questions and choose the best answer. Get 3 or more correct to complete the mission.</div>', unsafe_allow_html=True)
 
     choice_score = 0
 
@@ -539,7 +571,7 @@ with tab2:
         else:
             st.markdown("""
             <div class="fail-box">
-                다시 생각해 봅시다. Batman은 왜 비난을 감당하려 했을까요?
+                Think again. Why does Batman take the blame?
             </div>
             """, unsafe_allow_html=True)
 
@@ -600,32 +632,10 @@ with tab3:
 
 
 # =========================
-# TAB 4 QUOTES
+# TAB 4 QUOTE MATCHING - POP SONG STYLE
 # =========================
 
 with tab4:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">💬 Key Quotes</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 뜻을 확인하세요.</div>', unsafe_allow_html=True)
-
-    for line in key_lines:
-        st.markdown(f"""
-        <div class="line-box">
-            <span class="time-tag">{line["time"]}</span><br>
-            <b>{line["en"]}</b><br>
-            <span class="kor">{line["ko"]}</span><br><br>
-            <b>Easy Meaning:</b> {line["easy"]}
-        </div>
-        """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# TAB 5 QUOTE MATCHING - POP SONG STYLE
-# =========================
-
-with tab5:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🧩 Quote Matching</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">먼저 영어 또는 한국어 박스를 하나 선택하세요. 그다음 짝이 되는 박스를 선택하세요.</div>', unsafe_allow_html=True)
@@ -748,58 +758,10 @@ with tab5:
 
 
 # =========================
-# TAB 6 STORY ORDER - A B C D E INPUT
+# TAB 5 GRAMMAR
 # =========================
 
-with tab6:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🕵️ Story Order Mission</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">아래 영어 문장 A-E를 보고, 이야기 순서대로 알파벳을 입력하세요. 예: ABCDE</div>', unsafe_allow_html=True)
-
-    st.markdown("### Story Cards")
-
-    for letter, sentence in story_order_options.items():
-        st.markdown(f"""
-        <div class="order-card">
-            <span class="choice-letter">{letter}</span>
-            <b>{sentence}</b>
-        </div>
-        """, unsafe_allow_html=True)
-
-    user_order = st.text_input(
-        "정답 순서를 입력하세요. 예: ABCDE",
-        max_chars=5,
-        key="story_order_input"
-    ).strip().upper().replace(" ", "").replace(",", "")
-
-    if st.button("Story Order 채점하기", key="check_order", type="primary"):
-        if user_order == story_order_answer:
-            st.session_state.batman_complete["order"] = True
-            st.markdown("""
-            <div class="success-box">
-                🕵️ Story Order 임무를 완성하셨습니다!
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div class="fail-box">
-                다시 생각해 봅시다. 입력한 답: {user_order}
-            </div>
-            """, unsafe_allow_html=True)
-
-    with st.expander("정답 순서 보기"):
-        st.write("A → B → C → D → E")
-        for letter, sentence in story_order_options.items():
-            st.write(f"{letter}. {sentence}")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# TAB 7 GRAMMAR
-# =========================
-
-with tab7:
+with tab5:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">📘 Grammar Discovery</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">영상 대사를 보고 문법 규칙을 발견해 봅시다. 전부 맞히면 성공입니다.</div>', unsafe_allow_html=True)
@@ -866,6 +828,76 @@ with tab7:
         예: People deserve to have more.
     </div>
     """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# =========================
+# TAB 6 STORY ORDER - A B C D E INPUT
+# =========================
+
+with tab6:
+    st.markdown('<div class="section-card">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🕵️ Story Order Mission</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">아래 영어 문장 A-E를 보고, 이야기 순서대로 알파벳을 입력하세요. 예: ABCDE</div>', unsafe_allow_html=True)
+
+    st.markdown("### Story Cards")
+
+    for letter, sentence in story_order_options.items():
+        st.markdown(f"""
+        <div class="order-card">
+            <span class="choice-letter">{letter}</span>
+            <b>{sentence}</b>
+        </div>
+        """, unsafe_allow_html=True)
+
+    user_order = st.text_input(
+        "정답 순서를 입력하세요. 예: ABCDE",
+        max_chars=5,
+        key="story_order_input"
+    ).strip().upper().replace(" ", "").replace(",", "")
+
+    if st.button("Story Order 채점하기", key="check_order", type="primary"):
+        if user_order == story_order_answer:
+            st.session_state.batman_complete["order"] = True
+            st.markdown("""
+            <div class="success-box">
+                🕵️ Story Order 임무를 완성하셨습니다!
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown(f"""
+            <div class="fail-box">
+                다시 생각해 봅시다. 입력한 답: {user_order}
+            </div>
+            """, unsafe_allow_html=True)
+
+    with st.expander("정답 순서 보기"):
+        st.write("A → B → C → D → E")
+        for letter, sentence in story_order_options.items():
+            st.write(f"{letter}. {sentence}")
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# =========================
+# TAB 7 QUOTES - LAST TAB
+# =========================
+
+with tab7:
+    st.markdown('<div class="section-card">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">💬 Key Quotes</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 뜻을 마지막으로 다시 확인하세요.</div>', unsafe_allow_html=True)
+
+    for line in key_lines:
+        st.markdown(f"""
+        <div class="line-box">
+            <span class="time-tag">{line["time"]}</span><br>
+            <b>{line["en"]}</b><br>
+            <span class="kor">{line["ko"]}</span><br><br>
+            <b>Easy Meaning:</b> {line["easy"]}
+        </div>
+        """, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
