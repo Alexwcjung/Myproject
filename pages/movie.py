@@ -6,75 +6,75 @@ st.set_page_config(page_title="Batman English Mission", page_icon="🦇", layout
 VIDEO_URL = "https://www.youtube.com/watch?v=U4fhEziQsc8"
 
 # =========================
-# CSS
+# CSS - BRIGHT STYLE
 # =========================
 st.markdown("""
 <style>
 .stApp {
-    background: #0b1020;
-    color: #f9fafb;
+    background: #ffffff;
+    color: #111827;
 }
 
 .main-title {
     font-size: 46px;
     font-weight: 1000;
-    color: #facc15;
+    color: #111827;
     margin-bottom: 4px;
 }
 
 .sub-title {
     font-size: 17px;
-    color: #d1d5db;
+    color: #6b7280;
     margin-bottom: 24px;
 }
 
 .hero-box {
-    background: linear-gradient(135deg,#111827 0%,#1f2937 50%,#92400e 100%);
-    border: 1px solid #374151;
+    background: linear-gradient(135deg,#fef3c7 0%,#e0f2fe 55%,#f3e8ff 100%);
+    border: 1px solid #fde68a;
     border-radius: 28px;
     padding: 28px 32px;
     margin-bottom: 24px;
-    box-shadow: 0 8px 26px rgba(0,0,0,0.45);
+    box-shadow: 0 8px 24px rgba(251,191,36,0.18);
 }
 
 .hero-title {
     font-size: 31px;
     font-weight: 1000;
-    color: #facc15;
+    color: #0f172a;
     margin-bottom: 8px;
 }
 
 .hero-sub {
     font-size: 17px;
-    color: #e5e7eb;
+    color: #475569;
     line-height: 1.7;
 }
 
 .section-card {
-    background: #111827;
-    border: 1px solid #374151;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 24px;
     padding: 24px;
     margin: 18px 0;
-    box-shadow: 0 6px 22px rgba(0,0,0,0.35);
+    box-shadow: 0 6px 18px rgba(15,23,42,0.06);
 }
 
 .section-title {
     font-size: 26px;
     font-weight: 900;
-    color: #facc15;
+    color: #111827;
     margin-bottom: 10px;
 }
 
 .small-guide {
-    color: #d1d5db;
+    color: #6b7280;
     font-size: 15px;
     margin-bottom: 14px;
 }
 
 .line-box {
-    background: #1f2937;
-    border: 1px solid #4b5563;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
     border-radius: 18px;
     padding: 18px;
     line-height: 1.8;
@@ -83,7 +83,7 @@ st.markdown("""
 }
 
 .kor {
-    color: #d1d5db;
+    color: #6b7280;
     font-size: 15px;
 }
 
@@ -99,28 +99,28 @@ st.markdown("""
 }
 
 .success-box {
-    background: #064e3b;
-    border: 1px solid #34d399;
+    background: #dcfce7;
+    border: 1px solid #86efac;
     border-radius: 18px;
     padding: 16px;
-    color: #d1fae5;
+    color: #166534;
     font-weight: 900;
     margin-top: 14px;
 }
 
 .fail-box {
-    background: #7f1d1d;
-    border: 1px solid #fca5a5;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
     border-radius: 18px;
     padding: 16px;
-    color: #fee2e2;
+    color: #991b1b;
     font-weight: 900;
     margin-top: 14px;
 }
 
 .exp-box {
-    background: #1f2937;
-    border: 1px solid #facc15;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
     border-radius: 18px;
     padding: 16px;
     margin-bottom: 12px;
@@ -129,18 +129,18 @@ st.markdown("""
 .exp-title {
     font-size: 18px;
     font-weight: 900;
-    color: #fde68a;
+    color: #92400e;
 }
 
 .exp-meaning {
-    color: #e5e7eb;
+    color: #374151;
     font-size: 15px;
     margin-top: 4px;
 }
 
 .mission-box {
-    background: #0f172a;
-    border: 1px solid #475569;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
     border-radius: 18px;
     padding: 18px;
     margin-bottom: 12px;
@@ -148,21 +148,14 @@ st.markdown("""
 
 .badge {
     display:inline-block;
-    background:#facc15;
-    color:#111827;
-    padding:5px 10px;
+    background:#fef3c7;
+    color:#92400e;
+    border:1px solid #fde68a;
+    padding:7px 12px;
     border-radius:999px;
-    font-size:13px;
+    font-size:14px;
     font-weight:900;
     margin-right:6px;
-}
-
-div[data-testid="stRadio"] label {
-    color: #f9fafb !important;
-}
-
-div[data-testid="stSelectbox"] label {
-    color: #f9fafb !important;
 }
 
 .stButton button {
@@ -186,151 +179,88 @@ div[data-testid="stSelectbox"] label {
 # DATA
 # =========================
 
-lines = [
-    {
-        "time": "0:00",
-        "en": "I killed those people. That's what I can be.",
-        "ko": "내가 그 사람들을 죽였어. 나는 그런 사람이 될 수 있어.",
-        "simple": "Batman says he can take the blame."
-    },
-    {
-        "time": "0:09",
-        "en": "No, you can't. You're not.",
-        "ko": "아니, 넌 그럴 수 없어. 넌 그런 사람이 아니야.",
-        "simple": "Someone says Batman is not a bad person."
-    },
+key_lines = [
     {
         "time": "0:12",
         "en": "I'm whatever Gotham needs me to be.",
         "ko": "나는 고담시가 필요로 하는 무엇이든 될 거야.",
-        "simple": "Batman will become what Gotham needs."
+        "easy": "Batman will become what Gotham needs."
     },
     {
         "time": "0:16",
-        "en": "A hero. Not the hero we deserved, but the hero we needed.",
-        "ko": "영웅. 우리가 받을 자격이 있던 영웅은 아니지만, 우리에게 필요했던 영웅.",
-        "simple": "Batman is the hero Gotham needs."
+        "en": "Not the hero we deserved, but the hero we needed.",
+        "ko": "우리가 받을 자격이 있던 영웅은 아니지만, 우리에게 필요했던 영웅.",
+        "easy": "Batman is not a perfect public hero, but he is necessary."
     },
     {
         "time": "0:48",
         "en": "Sometimes people deserve more.",
         "ko": "때로 사람들은 더 많은 것을 받을 자격이 있다.",
-        "simple": "People sometimes need more than truth."
+        "easy": "People sometimes need hope, not only truth."
     },
     {
         "time": "0:57",
         "en": "Sometimes people deserve to have their faith rewarded.",
         "ko": "때로 사람들은 자신의 믿음이 보상받을 자격이 있다.",
-        "simple": "People's hope should be rewarded."
-    },
-    {
-        "time": "1:42",
-        "en": "He's the hero Gotham deserves, but not the one it needs right now.",
-        "ko": "그는 고담시가 받을 자격이 있는 영웅이지만, 지금 필요한 영웅은 아니다.",
-        "simple": "Batman cannot be seen as the public hero now."
+        "easy": "People's hope should be protected."
     },
     {
         "time": "1:52",
         "en": "Because he can take it.",
-        "ko": "왜냐하면 그는 그것을 견딜 수 있으니까.",
-        "simple": "Batman can endure blame."
+        "ko": "왜냐하면 그는 그것을 감당할 수 있으니까.",
+        "easy": "Batman can endure blame."
     },
     {
         "time": "2:06",
         "en": "He's a silent guardian, a watchful protector.",
         "ko": "그는 조용한 수호자이자, 늘 지켜보는 보호자이다.",
-        "simple": "Batman protects Gotham quietly."
+        "easy": "Batman protects Gotham quietly."
     }
 ]
 
-quiz_questions = [
+hero_questions = [
     {
-        "q": "What does Batman say he can be?",
-        "options": [
-            "Whatever Gotham needs him to be",
-            "A singer",
-            "A student",
-            "A police officer only"
-        ],
-        "answer": "Whatever Gotham needs him to be",
-        "explain": "Batman says, 'I'm whatever Gotham needs me to be.'"
+        "q": "At first, what do people think Batman is?",
+        "options": ["A hero", "A criminal", "A singer", "A teacher"],
+        "answer": "A criminal"
     },
     {
-        "q": "What kind of hero is Batman in this scene?",
-        "options": [
-            "The hero Gotham needs",
-            "The hero who wants money",
-            "The hero who gives up",
-            "The hero who runs away"
-        ],
-        "answer": "The hero Gotham needs",
-        "explain": "The line says, 'Not the hero we deserved, but the hero we needed.'"
+        "q": "What is Batman really doing?",
+        "options": ["Running away", "Taking the blame", "Looking for money", "Making music"],
+        "answer": "Taking the blame"
     },
     {
-        "q": "What does Batman decide to take?",
-        "options": [
-            "Blame",
-            "A prize",
-            "A vacation",
-            "A new car"
-        ],
-        "answer": "Blame",
-        "explain": "Batman chooses to be hunted because he can take it."
-    },
-    {
-        "q": "Which word is closest to 'protector'?",
-        "options": [
-            "Guardian",
-            "Enemy",
-            "Singer",
-            "Runner"
-        ],
-        "answer": "Guardian",
-        "explain": "A guardian is someone who protects others."
-    },
-    {
-        "q": "What is the mood of this scene?",
-        "options": [
-            "Dark and heroic",
-            "Funny and silly",
-            "Bright and romantic",
-            "Lazy and boring"
-        ],
-        "answer": "Dark and heroic",
-        "explain": "The scene shows sacrifice, blame, and heroism."
+        "q": "What kind of person is Batman in this scene?",
+        "options": ["Selfish", "Lazy", "Sacrificing", "Funny"],
+        "answer": "Sacrificing"
     }
 ]
 
-key_expressions = [
+blank_questions = [
     {
-        "exp": "whatever Gotham needs me to be",
-        "meaning": "고담시가 내가 되기를 필요로 하는 무엇이든",
-        "point": "whatever는 '무엇이든'이라는 뜻입니다."
+        "sentence": "I'm whatever Gotham ______ me to be.",
+        "options": ["need", "needs", "needed"],
+        "answer": "needs"
     },
     {
-        "exp": "the hero we needed",
-        "meaning": "우리에게 필요했던 영웅",
-        "point": "needed는 need의 과거형입니다."
+        "sentence": "Not the hero we ______, but the hero we ______.",
+        "options": ["deserved / needed", "need / deserve", "needs / deserved"],
+        "answer": "deserved / needed"
     },
     {
-        "exp": "deserve",
-        "meaning": "~을 받을 자격이 있다",
-        "point": "deserve 뒤에는 명사나 to부정사가 올 수 있습니다."
+        "sentence": "Sometimes people ______ more.",
+        "options": ["deserve", "deserves", "deserved"],
+        "answer": "deserve"
     },
     {
-        "exp": "take it",
-        "meaning": "그것을 견디다 / 감당하다",
-        "point": "여기서 take는 '받아들이다, 견디다'에 가깝습니다."
+        "sentence": "Because he can ______ it.",
+        "options": ["takes", "take", "took"],
+        "answer": "take"
     },
     {
-        "exp": "silent guardian",
-        "meaning": "조용한 수호자",
-        "point": "silent는 '조용한', guardian은 '수호자'입니다."
-    },
-    {
-        "exp": "watchful protector",
-        "meaning": "늘 지켜보는 보호자",
-        "point": "watchful은 '주의 깊게 지켜보는'이라는 뜻입니다."
+        "sentence": "A silent ______, a watchful ______.",
+        "options": ["guardian / protector", "student / teacher", "singer / dancer"],
+        "answer": "guardian / protector"
     }
 ]
 
@@ -339,42 +269,43 @@ matching_items = [
     ("Not the hero we deserved.", "우리가 받을 자격이 있던 영웅은 아니다."),
     ("The hero we needed.", "우리에게 필요했던 영웅."),
     ("Sometimes people deserve more.", "때로 사람들은 더 많은 것을 받을 자격이 있다."),
-    ("Because he can take it.", "왜냐하면 그는 그것을 견딜 수 있으니까."),
-    ("A silent guardian.", "조용한 수호자.")
+    ("Because he can take it.", "왜냐하면 그는 그것을 감당할 수 있으니까."),
+    ("A silent guardian.", "조용한 수호자."),
+    ("A watchful protector.", "늘 지켜보는 보호자.")
 ]
 
-order_answer = [
-    "Batman takes the blame.",
-    "People think he is not a hero.",
-    "Gotham hunts him.",
-    "But he still protects Gotham.",
-    "He becomes a silent guardian."
+story_order_answer = [
+    "Batman decides to take the blame.",
+    "People think Batman is bad.",
+    "Gotham starts to hunt Batman.",
+    "Batman still protects Gotham.",
+    "Batman becomes a silent guardian."
 ]
 
 grammar_questions = [
     {
-        "q": "I'm whatever Gotham ___ me to be.",
-        "options": ["need", "needs", "needed"],
-        "answer": "needs",
-        "explain": "Gotham은 단수 주어이므로 현재시제에서 needs를 씁니다."
-    },
-    {
-        "q": "The hero we ___.",
-        "options": ["need", "needed", "needs"],
-        "answer": "needed",
-        "explain": "영상에서는 과거의 상황을 말하므로 needed를 씁니다."
-    },
-    {
-        "q": "Sometimes people deserve ___ more.",
-        "options": ["have", "to have", "having"],
-        "answer": "to have",
-        "explain": "deserve 뒤에 동사가 올 때는 to + 동사 형태를 쓸 수 있습니다."
-    },
-    {
         "q": "He can ___ it.",
         "options": ["take", "takes", "took"],
         "answer": "take",
-        "explain": "can 뒤에는 동사원형 take를 씁니다."
+        "explain": "can 뒤에는 동사원형을 씁니다. 그래서 can take가 맞습니다."
+    },
+    {
+        "q": "You can't ___ that.",
+        "options": ["do", "does", "did"],
+        "answer": "do",
+        "explain": "can't 뒤에도 동사원형을 씁니다."
+    },
+    {
+        "q": "Gotham ___ me.",
+        "options": ["need", "needs", "needed"],
+        "answer": "needs",
+        "explain": "Gotham은 단수 주어이므로 현재시제에서는 needs를 씁니다."
+    },
+    {
+        "q": "People deserve ___ more.",
+        "options": ["have", "to have", "having"],
+        "answer": "to have",
+        "explain": "deserve 뒤에 동사가 올 때는 deserve to + 동사 형태를 쓸 수 있습니다."
     }
 ]
 
@@ -383,19 +314,19 @@ grammar_questions = [
 # SESSION STATE
 # =========================
 
-if "mission_complete" not in st.session_state:
-    st.session_state.mission_complete = {
-        "quiz": False,
-        "key": False,
+if "batman_complete" not in st.session_state:
+    st.session_state.batman_complete = {
+        "choice": False,
+        "blank": False,
         "matching": False,
         "order": False,
         "grammar": False
     }
 
-if "order_options" not in st.session_state:
-    temp = order_answer.copy()
+if "story_options" not in st.session_state:
+    temp = story_order_answer.copy()
     random.shuffle(temp)
-    st.session_state.order_options = temp
+    st.session_state.story_options = temp
 
 
 # =========================
@@ -403,32 +334,34 @@ if "order_options" not in st.session_state:
 # =========================
 
 st.markdown('<div class="main-title">🦇 Batman English Mission</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-title">Video-based English Activity · No Writing Task</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub-title">Video-based English Activity · Bright Classroom Version</div>', unsafe_allow_html=True)
 
 st.markdown("""
 <div class="hero-box">
-    <div class="hero-title">The Dark Knight: Hero or Outlaw?</div>
+    <div class="hero-title">Hero or Villain?</div>
     <div class="hero-sub">
-        Watch the scene, understand Batman's sacrifice, learn powerful expressions, 
-        match sentences, arrange the story, and discover grammar rules.
+        Watch the Batman scene and complete five missions: choose Batman's role, fill in key lines,
+        match quotes, arrange the story, and discover grammar rules.
+        <br>
+        <span class="kor">배트맨 장면을 보고 5개의 영어 미션을 완성해 봅시다.</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-col_a, col_b, col_c, col_d, col_e = st.columns(5)
+completed_count = sum(st.session_state.batman_complete.values())
 
-with col_a:
-    st.markdown(f"<span class='badge'>Quiz {'✅' if st.session_state.mission_complete['quiz'] else '⬜'}</span>", unsafe_allow_html=True)
-with col_b:
-    st.markdown(f"<span class='badge'>Key {'✅' if st.session_state.mission_complete['key'] else '⬜'}</span>", unsafe_allow_html=True)
-with col_c:
-    st.markdown(f"<span class='badge'>Matching {'✅' if st.session_state.mission_complete['matching'] else '⬜'}</span>", unsafe_allow_html=True)
-with col_d:
-    st.markdown(f"<span class='badge'>Order {'✅' if st.session_state.mission_complete['order'] else '⬜'}</span>", unsafe_allow_html=True)
-with col_e:
-    st.markdown(f"<span class='badge'>Grammar {'✅' if st.session_state.mission_complete['grammar'] else '⬜'}</span>", unsafe_allow_html=True)
+c1, c2, c3, c4, c5 = st.columns(5)
+with c1:
+    st.markdown(f"<span class='badge'>Choice {'✅' if st.session_state.batman_complete['choice'] else '⬜'}</span>", unsafe_allow_html=True)
+with c2:
+    st.markdown(f"<span class='badge'>Blanks {'✅' if st.session_state.batman_complete['blank'] else '⬜'}</span>", unsafe_allow_html=True)
+with c3:
+    st.markdown(f"<span class='badge'>Matching {'✅' if st.session_state.batman_complete['matching'] else '⬜'}</span>", unsafe_allow_html=True)
+with c4:
+    st.markdown(f"<span class='badge'>Order {'✅' if st.session_state.batman_complete['order'] else '⬜'}</span>", unsafe_allow_html=True)
+with c5:
+    st.markdown(f"<span class='badge'>Grammar {'✅' if st.session_state.batman_complete['grammar'] else '⬜'}</span>", unsafe_allow_html=True)
 
-completed_count = sum(st.session_state.mission_complete.values())
 st.progress(completed_count / 5)
 
 
@@ -438,10 +371,10 @@ st.progress(completed_count / 5)
 
 tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🎬 Video",
-    "📖 Lines & Meaning",
-    "✅ Comprehension Quiz",
-    "🔑 Key Expressions",
-    "🧩 Sentence Matching",
+    "🦸 Hero or Villain",
+    "🎧 Line Blanks",
+    "💬 Quotes",
+    "🧩 Quote Matching",
     "🕵️ Story Order",
     "📘 Grammar"
 ])
@@ -454,16 +387,16 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 with tab1:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🎬 Watch the Video</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영상을 보고 배트맨이 왜 스스로 비난을 감당하려 하는지 생각해 봅시다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상을 보고 배트맨이 왜 나쁜 사람처럼 보이는 선택을 하는지 생각해 봅시다.</div>', unsafe_allow_html=True)
 
     st.video(VIDEO_URL)
 
     st.markdown("""
     <div class="line-box">
-        <b>Today's Mission</b><br>
-        Is Batman a criminal, a hero, or something more complicated?
+        <b>Today's Question</b><br>
+        Is Batman a hero, a villain, or both?
         <br>
-        <span class="kor">오늘의 미션: 배트맨은 범죄자인가, 영웅인가, 아니면 더 복잡한 존재인가?</span>
+        <span class="kor">오늘의 질문: 배트맨은 영웅인가, 악당인가, 아니면 둘 다인가?</span>
     </div>
     """, unsafe_allow_html=True)
 
@@ -471,69 +404,44 @@ with tab1:
 
 
 # =========================
-# TAB 2 LINES & MEANING
+# TAB 2 HERO OR VILLAIN
 # =========================
 
 with tab2:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">📖 Lines & Meaning</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 의미를 확인하세요.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🦸 Hero or Villain?</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상 속 배트맨의 역할을 추리해 봅시다. 2문제 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
 
-    for line in lines:
-        st.markdown(f"""
-        <div class="line-box">
-            <span class="time-tag">{line["time"]}</span><br>
-            <b>{line["en"]}</b><br>
-            <span class="kor">{line["ko"]}</span><br><br>
-            <b>Easy Meaning:</b> {line["simple"]}
-        </div>
-        """, unsafe_allow_html=True)
+    choice_score = 0
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# TAB 3 QUIZ
-# =========================
-
-with tab3:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">✅ Comprehension Quiz</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영상과 핵심 대사를 바탕으로 알맞은 답을 고르세요. 4개 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
-
-    quiz_score = 0
-
-    for i, item in enumerate(quiz_questions, start=1):
+    for i, item in enumerate(hero_questions, start=1):
         st.markdown(f"**Q{i}. {item['q']}**")
         user_answer = st.radio(
             "Choose one.",
             item["options"],
-            key=f"quiz_{i}",
-            horizontal=False
+            key=f"hero_{i}",
+            horizontal=True
         )
 
         if user_answer == item["answer"]:
-            quiz_score += 1
-
-        with st.expander("Hint / Explanation"):
-            st.write(item["explain"])
+            choice_score += 1
 
         st.write("")
 
-    if st.button("퀴즈 채점하기", key="check_quiz"):
-        st.markdown(f"### 점수: {quiz_score} / {len(quiz_questions)}")
+    if st.button("Hero or Villain 채점하기", key="check_hero"):
+        st.markdown(f"### 점수: {choice_score} / {len(hero_questions)}")
 
-        if quiz_score >= 4:
-            st.session_state.mission_complete["quiz"] = True
+        if choice_score >= 2:
+            st.session_state.batman_complete["choice"] = True
             st.markdown("""
             <div class="success-box">
-                🎉 이해도 퀴즈 임무를 완성하셨습니다!
+                🦸 Hero or Villain 임무를 완성하셨습니다!
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
             <div class="fail-box">
-                조금만 더! Lines & Meaning을 다시 보고 도전해 봅시다.
+                다시 생각해 봅시다. Batman은 왜 비난을 감당하려 했을까요?
             </div>
             """, unsafe_allow_html=True)
 
@@ -541,28 +449,71 @@ with tab3:
 
 
 # =========================
-# TAB 4 KEY EXPRESSIONS
+# TAB 3 LINE BLANKS
+# =========================
+
+with tab3:
+    st.markdown('<div class="section-card">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🎧 Line Blanks</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상 속 핵심 대사를 듣고 빈칸에 들어갈 말을 고르세요. 4개 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
+
+    blank_score = 0
+
+    for i, item in enumerate(blank_questions, start=1):
+        st.markdown(f"""
+        <div class="mission-box">
+            <b>Q{i}. {item["sentence"]}</b>
+        </div>
+        """, unsafe_allow_html=True)
+
+        user_answer = st.radio(
+            "Choose one.",
+            item["options"],
+            key=f"blank_{i}",
+            horizontal=True
+        )
+
+        if user_answer == item["answer"]:
+            blank_score += 1
+
+        st.write("")
+
+    if st.button("빈칸 채점하기", key="check_blank"):
+        st.markdown(f"### 점수: {blank_score} / {len(blank_questions)}")
+
+        if blank_score >= 4:
+            st.session_state.batman_complete["blank"] = True
+            st.markdown("""
+            <div class="success-box">
+                🎧 대사 빈칸 채우기 임무를 완성하셨습니다!
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            st.markdown("""
+            <div class="fail-box">
+                조금만 더! 영상을 다시 보고 핵심 대사를 확인해 봅시다.
+            </div>
+            """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# =========================
+# TAB 4 QUOTES
 # =========================
 
 with tab4:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🔑 Key Expressions</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">배트맨 장면에서 나온 강한 표현들을 익혀 봅시다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">💬 Key Quotes</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 뜻을 확인하세요.</div>', unsafe_allow_html=True)
 
-    for i, item in enumerate(key_expressions, start=1):
+    for line in key_lines:
         st.markdown(f"""
-        <div class="exp-box">
-            <div class="exp-title">{i}. {item["exp"]}</div>
-            <div class="exp-meaning">뜻: {item["meaning"]}</div>
-            <div class="exp-meaning">포인트: {item["point"]}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    if st.button("Key Expressions 학습 완료", key="key_complete"):
-        st.session_state.mission_complete["key"] = True
-        st.markdown("""
-        <div class="success-box">
-            🔑 Key Expressions 임무를 완성하셨습니다!
+        <div class="line-box">
+            <span class="time-tag">{line["time"]}</span><br>
+            <b>{line["en"]}</b><br>
+            <span class="kor">{line["ko"]}</span><br><br>
+            <b>Easy Meaning:</b> {line["easy"]}
         </div>
         """, unsafe_allow_html=True)
 
@@ -570,16 +521,16 @@ with tab4:
 
 
 # =========================
-# TAB 5 SENTENCE MATCHING
+# TAB 5 QUOTE MATCHING
 # =========================
 
 with tab5:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🧩 Sentence Matching</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영어 문장과 알맞은 한국어 뜻을 연결하세요. 5개 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🧩 Quote Matching</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영어 대사와 알맞은 한국어 뜻을 연결하세요. 6개 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
 
     korean_options = [ko for en, ko in matching_items]
-    match_score = 0
+    matching_score = 0
 
     for i, (en, ko) in enumerate(matching_items, start=1):
         st.markdown(f"""
@@ -595,22 +546,22 @@ with tab5:
         )
 
         if user_match == ko:
-            match_score += 1
+            matching_score += 1
 
-    if st.button("문장 매칭 채점하기", key="check_matching"):
-        st.markdown(f"### 점수: {match_score} / {len(matching_items)}")
+    if st.button("Quote Matching 채점하기", key="check_matching"):
+        st.markdown(f"### 점수: {matching_score} / {len(matching_items)}")
 
-        if match_score >= 5:
-            st.session_state.mission_complete["matching"] = True
+        if matching_score >= 6:
+            st.session_state.batman_complete["matching"] = True
             st.markdown("""
             <div class="success-box">
-                🧩 문장 매칭 임무를 완성하셨습니다!
+                🧩 Quote Matching 임무를 완성하셨습니다!
             </div>
             """, unsafe_allow_html=True)
         else:
             st.markdown("""
             <div class="fail-box">
-                다시 한 번 문장과 뜻을 천천히 확인해 봅시다.
+                다시 한 번 영어 대사와 한국어 뜻을 천천히 확인해 봅시다.
             </div>
             """, unsafe_allow_html=True)
 
@@ -626,26 +577,26 @@ with tab6:
     st.markdown('<div class="section-title">🕵️ Story Order Mission</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">배트맨의 선택을 이야기 순서대로 배열하세요.</div>', unsafe_allow_html=True)
 
-    order_score = 0
     user_order = []
+    order_score = 0
 
-    for i in range(len(order_answer)):
+    for i in range(len(story_order_answer)):
         choice = st.selectbox(
             f"{i+1}번째 순서",
-            ["선택하세요"] + st.session_state.order_options,
+            ["선택하세요"] + st.session_state.story_options,
             key=f"order_{i}"
         )
         user_order.append(choice)
 
-    for i, ans in enumerate(order_answer):
+    for i, ans in enumerate(story_order_answer):
         if user_order[i] == ans:
             order_score += 1
 
-    if st.button("이야기 순서 채점하기", key="check_order"):
-        st.markdown(f"### 점수: {order_score} / {len(order_answer)}")
+    if st.button("Story Order 채점하기", key="check_order"):
+        st.markdown(f"### 점수: {order_score} / {len(story_order_answer)}")
 
-        if order_score == len(order_answer):
-            st.session_state.mission_complete["order"] = True
+        if order_score == len(story_order_answer):
+            st.session_state.batman_complete["order"] = True
             st.markdown("""
             <div class="success-box">
                 🕵️ Story Order 임무를 완성하셨습니다!
@@ -654,12 +605,12 @@ with tab6:
         else:
             st.markdown("""
             <div class="fail-box">
-                순서를 다시 생각해 봅시다. Batman이 먼저 무엇을 선택했는지 떠올려 보세요.
+                순서를 다시 생각해 봅시다. Batman은 먼저 어떤 선택을 했을까요?
             </div>
             """, unsafe_allow_html=True)
 
     with st.expander("정답 순서 보기"):
-        for i, sent in enumerate(order_answer, start=1):
+        for i, sent in enumerate(story_order_answer, start=1):
             st.write(f"{i}. {sent}")
 
     st.markdown('</div>', unsafe_allow_html=True)
@@ -672,17 +623,17 @@ with tab6:
 with tab7:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">📘 Grammar Discovery</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">문장을 보고 규칙을 스스로 발견해 봅시다. 전부 맞히면 성공입니다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영상 대사를 보고 문법 규칙을 발견해 봅시다. 전부 맞히면 성공입니다.</div>', unsafe_allow_html=True)
 
     st.markdown("""
     <div class="line-box">
-        <b>Look at these sentences.</b><br><br>
-        1. Gotham <b>needs</b> me.<br>
-        2. The hero we <b>needed</b>.<br>
-        3. People deserve <b>to have</b> their faith rewarded.<br>
-        4. He can <b>take</b> it.<br><br>
+        <b>Look at these lines.</b><br><br>
+        1. He <b>can take</b> it.<br>
+        2. You <b>can't do</b> that.<br>
+        3. Gotham <b>needs</b> me.<br>
+        4. People deserve <b>to have</b> more.<br><br>
         <span class="kor">
-        생각해 봅시다: 왜 needs, needed, to have, take가 쓰였을까요?
+        생각해 봅시다: can/can't 뒤에는 어떤 모양의 동사가 올까요?
         </span>
     </div>
     """, unsafe_allow_html=True)
@@ -710,7 +661,7 @@ with tab7:
         st.markdown(f"### 점수: {grammar_score} / {len(grammar_questions)}")
 
         if grammar_score == len(grammar_questions):
-            st.session_state.mission_complete["grammar"] = True
+            st.session_state.batman_complete["grammar"] = True
             st.markdown("""
             <div class="success-box">
                 📘 Grammar 임무를 완성하셨습니다!
@@ -719,21 +670,21 @@ with tab7:
         else:
             st.markdown("""
             <div class="fail-box">
-                거의 다 왔습니다! 단수 주어 + 동사 -s, 과거형, deserve to, can + 동사원형을 다시 확인하세요.
+                거의 다 왔습니다! can/can't + 동사원형 규칙을 다시 확인하세요.
             </div>
             """, unsafe_allow_html=True)
 
     st.markdown("""
     <div class="line-box">
         <b>Grammar Rule</b><br><br>
-        1. 단수 주어 현재동사에는 보통 <b>-s</b>를 붙입니다.<br>
+        1. <b>can + 동사원형</b><br>
+        예: He can take it.<br><br>
+        2. <b>can't + 동사원형</b><br>
+        예: You can't do that.<br><br>
+        3. 단수 주어 현재동사에는 보통 <b>-s</b>를 붙입니다.<br>
         예: Gotham needs me.<br><br>
-        2. 과거의 일을 말할 때는 과거형을 씁니다.<br>
-        예: The hero we needed.<br><br>
-        3. <b>deserve to + 동사</b>는 '~할 자격이 있다'라는 뜻입니다.<br>
-        예: People deserve to have their faith rewarded.<br><br>
-        4. <b>can + 동사원형</b>을 씁니다.<br>
-        예: He can take it.
+        4. <b>deserve to + 동사</b>는 '~할 자격이 있다'라는 뜻입니다.<br>
+        예: People deserve to have more.
     </div>
     """, unsafe_allow_html=True)
 
@@ -741,10 +692,12 @@ with tab7:
 
 
 # =========================
-# FINAL MISSION STATUS
+# FINAL STATUS
 # =========================
 
 st.markdown("---")
+
+completed_count = sum(st.session_state.batman_complete.values())
 
 if completed_count == 5:
     st.markdown("""
