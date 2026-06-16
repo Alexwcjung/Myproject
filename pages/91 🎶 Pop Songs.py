@@ -245,7 +245,8 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
 
     c.setFillColor(colors.HexColor("#14532d"))
     c.setFont(bold_font_name, 24)
-    c.drawCentredString(width / 2, height - 96 * mm, "임무를 완성하셨습니다")
+    mission_title = f"{activity_name} 임무를 완성하셨습니다"
+    c.drawCentredString(width / 2, height - 96 * mm, mission_title)
 
     c.setFillColor(colors.HexColor("#1e293b"))
     c.setFont(font_name, 15)
@@ -277,11 +278,12 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
 
 def show_mission_pdf_download(song_choice, activity_name, mission_key, detail_text=""):
     """완료 메시지와 인증 PDF 다운로드 버튼을 보여 줍니다."""
+    activity_label = clean_text_for_display(activity_name)
     st.markdown(
-        """
+        f"""
         <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d0); padding:20px; border-radius:18px; border:2px solid #86efac; margin-top:18px; text-align:center;">
-            <div style="font-size:1.45rem; font-weight:1000; color:#14532d;">🎉 임무를 완성하셨습니다.</div>
-            <div style="font-size:1.02rem; font-weight:850; color:#166534; margin-top:6px;">아래 버튼을 눌러 완료 인증 PDF를 저장하고, 나중에 선생님께 보여 주세요.</div>
+            <div style="font-size:1.45rem; font-weight:1000; color:#14532d;">🎉 {activity_label} 임무를 완성하셨습니다.</div>
+            <div style="font-size:1.02rem; font-weight:850; color:#166534; margin-top:6px;">PDF에는 완료한 활동명이 <b>{activity_label}</b>로 기록됩니다. 아래 버튼을 눌러 완료 인증 PDF를 저장하고, 나중에 선생님께 보여 주세요.</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -447,8 +449,14 @@ def show_integrated_quiz_tab(song_choice, data):
         if score >= pass_score:
             st.success(f"통과했습니다! {len(questions)}문제 중 {score}문제를 맞혔습니다.")
             st.session_state[f"mission_{key_key}_lyrics_quiz"] = True
-            st.session_state[f"mission_{key_key}_lyrics_quiz_detail"] = f"점수: {score}/{len(questions)}"
+            st.session_state[f"mission_{key_key}_lyrics_quiz_detail"] = f"가사 이해도 퀴즈 완료 / 점수: {score}/{len(questions)}"
             st.balloons()
+            show_mission_pdf_download(
+                song_choice,
+                "가사 이해도 퀴즈",
+                f"{key_key}_lyrics_quiz_now",
+                st.session_state.get(f"mission_{key_key}_lyrics_quiz_detail", "")
+            )
         else:
             st.warning(f"아직 통과 기준에 부족합니다. 통과 기준은 {pass_score}/{len(questions)} 이상입니다.")
 
@@ -466,14 +474,6 @@ def show_integrated_quiz_tab(song_choice, data):
                     unsafe_allow_html=True
                 )
 
-
-    if st.session_state.get(f"mission_{key_key}_lyrics_quiz"):
-        show_mission_pdf_download(
-            song_choice,
-            "가사 이해도 퀴즈",
-            f"{key_key}_lyrics_quiz",
-            st.session_state.get(f"mission_{key_key}_lyrics_quiz_detail", "")
-        )
 
 
 def check_target_grammar_sentence(target, sentence):
@@ -1914,7 +1914,7 @@ def show_song_grammar_tab(song_choice, data):
             song_choice,
             "Grammar",
             f"{grammar_key}_grammar",
-            f"Grammar Practice 점수: {score}/{len(questions)}"
+            f"Grammar 활동 완료 / Grammar Practice 점수: {score}/{len(questions)}"
         )
 
 def try_translate_ko_to_en(korean_text):
@@ -5922,8 +5922,8 @@ elif selected_tab == "🧩 문장 매칭 게임":
     )
 
     st.markdown("---")
-    st.markdown("### 📄 문장 매칭 완료 인증")
-    st.info("문장 매칭 게임을 끝까지 완료한 뒤 아래 버튼을 누르면 완료 인증 PDF를 저장할 수 있습니다.")
+    st.markdown("### 📄 문장 매칭 게임 완료 인증")
+    st.info("문장 매칭 게임을 끝까지 완료한 뒤 아래 버튼을 누르면 ‘문장 매칭 게임 임무를 완성하셨습니다’ PDF를 저장할 수 있습니다.")
     if st.button("문장 매칭을 모두 끝냈습니다", key=f"matching_done_{match_key}", use_container_width=True):
         st.session_state[f"mission_{match_key}_matching"] = True
 
@@ -5932,7 +5932,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
             song_choice,
             "문장 매칭 게임",
             f"{match_key}_matching",
-            "문장 매칭 게임 완료"
+            "문장 매칭 게임 활동 완료"
         )
     
 elif selected_tab == "✍️ 생각 적기":
@@ -5966,13 +5966,19 @@ elif selected_tab == "✍️ 생각 적기":
             else:
                 ko_feedback, en_feedback, advice = make_polished_feedback(song_choice, selected_question, answer_ko)
                 st.session_state[f"mission_{reflect_key}_reflection"] = True
-                st.session_state[f"mission_{reflect_key}_reflection_detail"] = "한국어 생각 적기 제출 완료"
+                st.session_state[f"mission_{reflect_key}_reflection_detail"] = "생각 적기 활동 완료 / 한국어 생각 적기 제출 완료"
                 st.markdown("### 🇰🇷 다듬고 풍부하게 만든 한국어 글")
                 st.markdown(f'<div class="feedback-ko">{clean_text_for_display(ko_feedback)}</div>', unsafe_allow_html=True)
                 st.markdown("### 🇺🇸 풍부하게 만든 영어 글")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(en_feedback)}</div>', unsafe_allow_html=True)
                 st.markdown("### ✨ 쓰기 조언")
                 st.markdown(f'<div class="advice-box">{clean_text_for_display(advice)}</div>', unsafe_allow_html=True)
+                show_mission_pdf_download(
+                    song_choice,
+                    "생각 적기",
+                    f"{reflect_key}_reflection_ko_now",
+                    st.session_state.get(f"mission_{reflect_key}_reflection_detail", "")
+                )
 
     with write_en_tab:
         answer_en = st.text_area(
@@ -5988,21 +5994,20 @@ elif selected_tab == "✍️ 생각 적기":
             else:
                 corrected_en, richer_en, advice_en = make_english_only_feedback(song_choice, selected_question, answer_en)
                 st.session_state[f"mission_{reflect_key}_reflection"] = True
-                st.session_state[f"mission_{reflect_key}_reflection_detail"] = "영어 생각 적기 제출 완료"
+                st.session_state[f"mission_{reflect_key}_reflection_detail"] = "생각 적기 활동 완료 / 영어 생각 적기 제출 완료"
                 st.markdown("### ✅ 문법을 고친 영어 문장")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(corrected_en)}</div>', unsafe_allow_html=True)
                 st.markdown("### 🌱 내용을 풍부하게 만든 영어 글")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(richer_en)}</div>', unsafe_allow_html=True)
                 st.markdown("### ✨ English Feedback")
                 st.markdown(f'<div class="advice-box">{clean_text_for_display(advice_en)}</div>', unsafe_allow_html=True)
+                show_mission_pdf_download(
+                    song_choice,
+                    "생각 적기",
+                    f"{reflect_key}_reflection_en_now",
+                    st.session_state.get(f"mission_{reflect_key}_reflection_detail", "")
+                )
 
-    if st.session_state.get(f"mission_{reflect_key}_reflection"):
-        show_mission_pdf_download(
-            song_choice,
-            "생각 적기",
-            f"{reflect_key}_reflection",
-            st.session_state.get(f"mission_{reflect_key}_reflection_detail", "")
-        )
 
 
 elif selected_tab == "⭐ Key Expression 학습":
