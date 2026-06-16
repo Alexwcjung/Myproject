@@ -209,6 +209,7 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
         from reportlab.lib.units import mm
         from reportlab.pdfbase import pdfmetrics
         from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.pdfbase.cidfonts import UnicodeCIDFont
         from reportlab.pdfgen import canvas
     except Exception:
         return None
@@ -217,17 +218,28 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
 
+    # PDF에서 한글이 네모(□□□)로 깨지지 않도록 ReportLab 내장 CJK CID 폰트를 먼저 사용합니다.
+    # Streamlit Cloud에 별도 한글 폰트 파일이 없어도 HYGothic-Medium은 한글 표시가 안정적입니다.
     font_name = "Helvetica"
     bold_font_name = "Helvetica-Bold"
-    font_path = get_korean_font_path()
-    if font_path:
-        try:
-            pdfmetrics.registerFont(TTFont("KoreanFont", font_path))
-            font_name = "KoreanFont"
-            bold_font_name = "KoreanFont"
-        except Exception:
-            font_name = "Helvetica"
-            bold_font_name = "Helvetica-Bold"
+    try:
+        pdfmetrics.registerFont(UnicodeCIDFont("HYGothic-Medium"))
+        font_name = "HYGothic-Medium"
+        bold_font_name = "HYGothic-Medium"
+    except Exception:
+        font_path = get_korean_font_path()
+        if font_path and "DejaVuSans" not in font_path:
+            try:
+                pdfmetrics.registerFont(TTFont("KoreanFont", font_path))
+                font_name = "KoreanFont"
+                bold_font_name = "KoreanFont"
+            except Exception:
+                font_name = "Helvetica"
+                bold_font_name = "Helvetica-Bold"
+
+    activity_name = str(activity_name).strip()
+    mission_title = f"{activity_name} 임무 완성"
+    mission_sentence = f"{activity_name} 임무를 완성하셨습니다."
 
     c.setFillColor(colors.HexColor("#eef2ff"))
     c.roundRect(18 * mm, 24 * mm, width - 36 * mm, height - 48 * mm, 10 * mm, fill=1, stroke=0)
@@ -239,25 +251,30 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
     c.setLineWidth(2)
     c.roundRect(28 * mm, 38 * mm, width - 56 * mm, height - 76 * mm, 8 * mm, fill=0, stroke=1)
 
+    # 학생이 저장한 PDF만 봐도 어떤 활동 완료증인지 바로 알 수 있도록
+    # 영어 MISSION COMPLETE보다 활동명을 가장 크게 보여 줍니다.
+    c.setFillColor(colors.HexColor("#14532d"))
+    c.setFont(bold_font_name, 27)
+    c.drawCentredString(width / 2, height - 72 * mm, mission_title)
+
     c.setFillColor(colors.HexColor("#3730a3"))
-    c.setFont(bold_font_name, 28)
-    c.drawCentredString(width / 2, height - 72 * mm, "MISSION COMPLETE")
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(width / 2, height - 86 * mm, "MISSION COMPLETE")
 
     c.setFillColor(colors.HexColor("#14532d"))
-    c.setFont(bold_font_name, 24)
-    mission_title = f"{activity_name} 임무를 완성하셨습니다"
-    c.drawCentredString(width / 2, height - 96 * mm, mission_title)
+    c.setFont(bold_font_name, 18)
+    c.drawCentredString(width / 2, height - 103 * mm, mission_sentence)
 
     c.setFillColor(colors.HexColor("#1e293b"))
     c.setFont(font_name, 15)
-    c.drawCentredString(width / 2, height - 122 * mm, f"노래: {song_title}")
-    c.drawCentredString(width / 2, height - 135 * mm, f"활동: {activity_name}")
+    c.drawCentredString(width / 2, height - 126 * mm, f"노래: {song_title}")
+    c.drawCentredString(width / 2, height - 139 * mm, f"완료 활동: {activity_name}")
 
     if detail_text:
         c.setFillColor(colors.HexColor("#475569"))
         c.setFont(font_name, 12)
         safe_detail = str(detail_text).replace("\n", " ")[:90]
-        c.drawCentredString(width / 2, height - 150 * mm, safe_detail)
+        c.drawCentredString(width / 2, height - 154 * mm, safe_detail)
 
     c.setFillColor(colors.HexColor("#64748b"))
     c.setFont(font_name, 11)
@@ -265,10 +282,12 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
     c.drawCentredString(width / 2, 62 * mm, f"완료 시간: {now_text}")
     c.drawCentredString(width / 2, 52 * mm, "이 PDF를 저장한 뒤 선생님께 보여 주세요.")
 
-    c.setFillColor(colors.HexColor("#6366f1"))
+    c.setStrokeColor(colors.HexColor("#6366f1"))
+    c.setLineWidth(2.5)
     c.circle(width / 2, 86 * mm, 16 * mm, fill=0, stroke=1)
-    c.setFont(bold_font_name, 28)
-    c.drawCentredString(width / 2, 79 * mm, "✓")
+    # 폰트와 관계없이 체크 표시가 보이도록 선으로 직접 그립니다.
+    c.line(width / 2 - 7 * mm, 86 * mm, width / 2 - 2 * mm, 80 * mm)
+    c.line(width / 2 - 2 * mm, 80 * mm, width / 2 + 8 * mm, 93 * mm)
 
     c.showPage()
     c.save()
