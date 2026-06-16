@@ -325,35 +325,36 @@ hero_questions = [
     }
 ]
 
+# 정답을 뒤쪽 번호에 오도록 선택지 순서를 조정함
 blank_questions = [
     {
         "audio": "I'm whatever Gotham needs me to be.",
         "sentence": "I'm whatever Gotham ______ me to be.",
-        "options": ["need", "needs", "needed"],
+        "options": ["need", "needed", "needs"],
         "answer": "needs"
     },
     {
         "audio": "Not the hero we deserved, but the hero we needed.",
         "sentence": "Not the hero we ______, but the hero we ______.",
-        "options": ["deserved / needed", "need / deserve", "needs / deserved"],
+        "options": ["need / deserve", "needs / deserved", "deserved / needed"],
         "answer": "deserved / needed"
     },
     {
         "audio": "Sometimes people deserve more.",
         "sentence": "Sometimes people ______ more.",
-        "options": ["deserve", "deserves", "deserved"],
+        "options": ["deserves", "deserved", "deserve"],
         "answer": "deserve"
     },
     {
         "audio": "Because he can take it.",
         "sentence": "Because he can ______ it.",
-        "options": ["takes", "take", "took"],
+        "options": ["takes", "took", "take"],
         "answer": "take"
     },
     {
         "audio": "A silent guardian, a watchful protector.",
         "sentence": "A silent ______, a watchful ______.",
-        "options": ["guardian / protector", "student / teacher", "singer / dancer"],
+        "options": ["student / teacher", "singer / dancer", "guardian / protector"],
         "answer": "guardian / protector"
     }
 ]
