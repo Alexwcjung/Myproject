@@ -12,3 +12,4 @@ openpyxl
 
 wordcloud
 streamlit-drawable-canvas
+reportlab>=4.0.0
