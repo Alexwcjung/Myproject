@@ -304,24 +304,24 @@ key_lines = [
 
 hero_questions = [
     {
-        "q": "Q1. 영상 초반 사람들은 Batman을 어떤 사람처럼 보게 되나요? / At first, what do people think Batman is?",
-        "options": ["A hero 영웅", "A criminal 범죄자", "A singer 가수", "A teacher 선생님"],
-        "answer": "A criminal 범죄자"
+        "q": "Q1. At first, what do people think Batman is?",
+        "options": ["A hero", "A criminal", "A singer", "A teacher"],
+        "answer": "A criminal"
     },
     {
-        "q": "Q2. Batman은 실제로 무엇을 감당하려 하나요? / What is Batman really doing?",
-        "options": ["Taking the blame 비난을 감당하기", "Running away 도망가기", "Making money 돈 벌기", "Singing a song 노래하기"],
-        "answer": "Taking the blame 비난을 감당하기"
+        "q": "Q2. What is Batman really doing?",
+        "options": ["Taking the blame", "Running away", "Making money", "Singing a song"],
+        "answer": "Taking the blame"
     },
     {
-        "q": "Q3. 이 장면에서 Batman은 어떤 인물에 가장 가깝나요? / What kind of person is Batman in this scene?",
-        "options": ["Sacrificing 희생하는 사람", "Lazy 게으른 사람", "Selfish 이기적인 사람", "Funny 웃긴 사람"],
-        "answer": "Sacrificing 희생하는 사람"
+        "q": "Q3. What kind of person is Batman in this scene?",
+        "options": ["Sacrificing", "Lazy", "Selfish", "Funny"],
+        "answer": "Sacrificing"
     },
     {
-        "q": "Q4. Batman은 왜 사람들이 자신을 오해해도 견딜 수 있나요? / Why can Batman endure it?",
-        "options": ["Because he can take it 감당할 수 있기 때문에", "Because he is tired 피곤해서", "Because he wants money 돈을 원해서", "Because he forgot 잊어버려서"],
-        "answer": "Because he can take it 감당할 수 있기 때문에"
+        "q": "Q4. Why can Batman endure it?",
+        "options": ["Because he can take it", "Because he is tired", "Because he wants money", "Because he forgot"],
+        "answer": "Because he can take it"
     }
 ]
 
