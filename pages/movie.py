@@ -53,7 +53,7 @@ def speak_button(text, key):
 
 
 # =========================
-# CSS - BRIGHT CLASSROOM STYLE
+# CSS
 # =========================
 
 st.markdown("""
@@ -267,19 +267,105 @@ input {
 # DATA
 # =========================
 
-key_lines = [
+full_script = [
     {
-        "time": "0:00",
+        "time": "0:02",
         "en": "I killed those people. That's what I can be.",
-        "ko": "내가 그 사람들을 죽였어. 나는 그런 사람이 될 수 있어.",
-        "easy": "Batman says he can take the blame."
+        "ko": "내가 그 사람들을 죽였어. 나는 그런 사람이 될 수 있어."
     },
     {
         "time": "0:09",
-        "en": "No, you can't. You're not.",
-        "ko": "아니, 넌 그럴 수 없어. 넌 그런 사람이 아니야.",
-        "easy": "Someone says Batman is not a bad person."
+        "en": "No, no. You can't. You're not.",
+        "ko": "아니, 안 돼. 넌 그럴 수 없어. 넌 그런 사람이 아니야."
     },
+    {
+        "time": "0:12",
+        "en": "I'm whatever Gotham needs me to be.",
+        "ko": "나는 고담시가 필요로 하는 무엇이든 될 거야."
+    },
+    {
+        "time": "0:16",
+        "en": "A hero. Not the hero we deserved, but the hero we needed.",
+        "ko": "영웅. 우리가 받을 자격이 있던 영웅은 아니지만, 우리에게 필요했던 영웅."
+    },
+    {
+        "time": "0:20",
+        "en": "Nothing less than a knight.",
+        "ko": "그는 진정한 기사와 같은 존재야."
+    },
+    {
+        "time": "0:26",
+        "en": "[Music]",
+        "ko": "[음악]"
+    },
+    {
+        "time": "0:28",
+        "en": "You heard me. You can tell them.",
+        "ko": "내 말 들었지. 사람들에게 그렇게 말해."
+    },
+    {
+        "time": "0:32",
+        "en": "You said the dogs on me.",
+        "ko": "개들을 나에게 풀어."
+    },
+    {
+        "time": "0:37",
+        "en": "The truth isn't good enough.",
+        "ko": "진실만으로는 충분하지 않아."
+    },
+    {
+        "time": "0:48",
+        "en": "Sometimes people deserve more.",
+        "ko": "때로 사람들은 더 많은 것을 받을 자격이 있어."
+    },
+    {
+        "time": "0:53",
+        "en": "Sometimes people deserve to have their faith rewarded.",
+        "ko": "때로 사람들은 자신의 믿음이 보상받을 자격이 있어."
+    },
+    {
+        "time": "1:00",
+        "en": "[Music]",
+        "ko": "[음악]"
+    },
+    {
+        "time": "1:14",
+        "en": "[Foreign]",
+        "ko": "[외국어 / 알아듣기 어려운 말]"
+    },
+    {
+        "time": "1:16",
+        "en": "[Music]",
+        "ko": "[음악]"
+    },
+    {
+        "time": "1:42",
+        "en": "He's the hero Gotham deserves, but not the one it needs right now.",
+        "ko": "그는 고담시가 받을 자격이 있는 영웅이지만, 지금 고담시에 필요한 영웅은 아니야."
+    },
+    {
+        "time": "1:48",
+        "en": "So we'll hunt him.",
+        "ko": "그래서 우리는 그를 쫓을 거야."
+    },
+    {
+        "time": "1:52",
+        "en": "Because he can take it.",
+        "ko": "왜냐하면 그는 그것을 감당할 수 있으니까."
+    },
+    {
+        "time": "1:56",
+        "en": "Because he's not our hero.",
+        "ko": "왜냐하면 그는 우리의 영웅이 아니니까."
+    },
+    {
+        "time": "2:06",
+        "en": "He's a silent guardian, a watchful protector.",
+        "ko": "그는 조용한 수호자이자, 늘 지켜보는 보호자야."
+    }
+]
+
+key_lines = [
     {
         "time": "0:12",
         "en": "I'm whatever Gotham needs me to be.",
@@ -293,13 +379,19 @@ key_lines = [
         "easy": "Batman is not a perfect public hero, but he is necessary."
     },
     {
+        "time": "0:37",
+        "en": "The truth isn't good enough.",
+        "ko": "진실만으로는 충분하지 않아.",
+        "easy": "Sometimes truth alone is not enough."
+    },
+    {
         "time": "0:48",
         "en": "Sometimes people deserve more.",
         "ko": "때로 사람들은 더 많은 것을 받을 자격이 있다.",
-        "easy": "People sometimes need hope, not only truth."
+        "easy": "People sometimes need more than truth."
     },
     {
-        "time": "0:57",
+        "time": "0:53",
         "en": "Sometimes people deserve to have their faith rewarded.",
         "ko": "때로 사람들은 자신의 믿음이 보상받을 자격이 있다.",
         "easy": "People's hope should be protected."
@@ -384,6 +476,7 @@ correct_map = {
     "I'm whatever Gotham needs me to be.": "나는 고담시가 필요로 하는 무엇이든 될 거야.",
     "Not the hero we deserved.": "우리가 받을 자격이 있던 영웅은 아니다.",
     "The hero we needed.": "우리에게 필요했던 영웅.",
+    "The truth isn't good enough.": "진실만으로는 충분하지 않아.",
     "Sometimes people deserve more.": "때로 사람들은 더 많은 것을 받을 자격이 있다.",
     "Because he can take it.": "왜냐하면 그는 그것을 감당할 수 있으니까.",
     "A silent guardian.": "조용한 수호자.",
@@ -459,8 +552,8 @@ st.markdown("""
 <div class="hero-box">
     <div class="hero-title">Hero or Villain?</div>
     <div class="hero-sub">
-        Watch the Batman scene and complete five missions: choose Batman's role, listen and fill in key lines,
-        match quotes, discover grammar rules, and arrange the story.
+        Watch the Batman scene, read the subtitles, answer the first mission,
+        listen and fill in key lines, match quotes, discover grammar rules, and arrange the story.
         <br>
         <span class="kor">배트맨 장면을 보고 5개의 영어 미션을 완성해 봅시다.</span>
     </div>
@@ -488,9 +581,8 @@ st.progress(completed_count / 5)
 # TABS
 # =========================
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🎬 Video",
-    "🦸 Hero or Villain",
     "🎧 Line Blanks",
     "🧩 Quote Matching",
     "📘 Grammar",
@@ -500,7 +592,7 @@ tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
 
 
 # =========================
-# TAB 1 VIDEO + FULL SCRIPT
+# TAB 1 VIDEO + FULL SCRIPT + HERO QUESTIONS
 # =========================
 
 with tab1:
@@ -521,7 +613,7 @@ with tab1:
 
     st.markdown("### 📖 Full Script & Meaning")
 
-    for line in key_lines:
+    for line in full_script:
         st.markdown(f"""
         <div class="script-box">
             <span class="time-tag">{line["time"]}</span><br>
@@ -530,16 +622,8 @@ with tab1:
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# TAB 2 HERO OR VILLAIN
-# =========================
-
-with tab2:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🦸 Hero or Villain?</div>', unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### 🦸 Hero or Villain Mission")
     st.markdown('<div class="small-guide">Read the questions and choose the best answer. Get 3 or more correct to complete the mission.</div>', unsafe_allow_html=True)
 
     choice_score = 0
@@ -579,10 +663,10 @@ with tab2:
 
 
 # =========================
-# TAB 3 LINE BLANKS WITH LISTENING BUTTON
+# TAB 2 LINE BLANKS
 # =========================
 
-with tab3:
+with tab2:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🎧 Line Blanks</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">각 문장의 듣기 버튼을 누르고, 빈칸에 들어갈 말을 고르세요. 4개 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
@@ -632,10 +716,10 @@ with tab3:
 
 
 # =========================
-# TAB 4 QUOTE MATCHING - POP SONG STYLE
+# TAB 3 QUOTE MATCHING
 # =========================
 
-with tab4:
+with tab3:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🧩 Quote Matching</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">먼저 영어 또는 한국어 박스를 하나 선택하세요. 그다음 짝이 되는 박스를 선택하세요.</div>', unsafe_allow_html=True)
@@ -740,7 +824,7 @@ with tab4:
                 handle_match_click(ko, "ko")
                 st.rerun()
 
-    if len(st.session_state.matched_pairs) >= 6:
+    if len(st.session_state.matched_pairs) >= 7:
         st.session_state.batman_complete["matching"] = True
         st.markdown("""
         <div class="success-box">
@@ -758,10 +842,10 @@ with tab4:
 
 
 # =========================
-# TAB 5 GRAMMAR
+# TAB 4 GRAMMAR
 # =========================
 
-with tab5:
+with tab4:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">📘 Grammar Discovery</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">영상 대사를 보고 문법 규칙을 발견해 봅시다. 전부 맞히면 성공입니다.</div>', unsafe_allow_html=True)
@@ -833,10 +917,10 @@ with tab5:
 
 
 # =========================
-# TAB 6 STORY ORDER - A B C D E INPUT
+# TAB 5 STORY ORDER
 # =========================
 
-with tab6:
+with tab5:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🕵️ Story Order Mission</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">아래 영어 문장 A-E를 보고, 이야기 순서대로 알파벳을 입력하세요. 예: ABCDE</div>', unsafe_allow_html=True)
@@ -881,10 +965,10 @@ with tab6:
 
 
 # =========================
-# TAB 7 QUOTES - LAST TAB
+# TAB 6 QUOTES
 # =========================
 
-with tab7:
+with tab6:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">💬 Key Quotes</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 뜻을 마지막으로 다시 확인하세요.</div>', unsafe_allow_html=True)
