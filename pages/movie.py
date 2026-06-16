@@ -305,7 +305,7 @@ full_script = [
     },
     {
         "time": "0:32",
-        "en": "You said the dogs on me.",
+        "en": "You set the dogs on me.",
         "ko": "개들을 나에게 풀어."
     },
     {
