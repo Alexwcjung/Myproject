@@ -5094,7 +5094,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                      'reflect_questions': ['내가 예전에는 숨기고 싶었지만 이제는 드러내고 싶은 모습이 있나요?',
                                                            '내가 내 자리를 찾았다고 느낀 순간이나 앞으로 찾고 싶은 자리는 무엇인가요?',
                                                            '앞으로 내가 golden처럼 빛나고 싶은 모습은 어떤 모습인가요?']},
- '19. Cowboy in LA - LANY': {'video_url': 'https://www.youtube.com/watch?v=zkWT0MjE8iw',
+ '19. Cowboy in LA - LANY': {'video_url': 'https://www.youtube.com/watch?v=_P0XDjaZAAA&list=RD_P0XDjaZAAA&start_radio=1',
                              'lyrics': [('Palm trees, square dancing under the moon', '야자수, 달빛 아래에서 추는 스퀘어 댄스'),
                                         ("Sunsets, they ain't got nothing on you", '노을도 너와는 비교가 안 돼'),
                                         ("And the purple in the sky ain't as pretty as your eyes", '하늘의 보랏빛도 네 눈만큼 예쁘지는 않아'),
