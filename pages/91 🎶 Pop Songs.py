@@ -6,6 +6,8 @@ import re
 import json
 import uuid
 import io
+import os
+from datetime import datetime
 from gtts import gTTS
 from urllib.parse import quote
 
@@ -179,6 +181,125 @@ def show_key_expression_audio(text, lang="en"):
         st.caption(f"오류 내용: {e}")
 
 
+
+
+def get_korean_font_path():
+    """Streamlit Cloud/리눅스 환경에서 사용할 수 있는 한글 폰트를 찾습니다."""
+    candidates = [
+        "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ]
+    for path in candidates:
+        try:
+            if os.path.exists(path):
+                return path
+        except Exception:
+            pass
+    return None
+
+
+def make_mission_pdf(song_title, activity_name, detail_text=""):
+    """활동 완료 인증 PDF를 만듭니다. reportlab이 없으면 앱 화면에 안내를 띄웁니다."""
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib import colors
+        from reportlab.lib.units import mm
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.pdfgen import canvas
+    except Exception:
+        return None
+
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    font_name = "Helvetica"
+    bold_font_name = "Helvetica-Bold"
+    font_path = get_korean_font_path()
+    if font_path:
+        try:
+            pdfmetrics.registerFont(TTFont("KoreanFont", font_path))
+            font_name = "KoreanFont"
+            bold_font_name = "KoreanFont"
+        except Exception:
+            font_name = "Helvetica"
+            bold_font_name = "Helvetica-Bold"
+
+    c.setFillColor(colors.HexColor("#eef2ff"))
+    c.roundRect(18 * mm, 24 * mm, width - 36 * mm, height - 48 * mm, 10 * mm, fill=1, stroke=0)
+
+    c.setFillColor(colors.white)
+    c.roundRect(28 * mm, 38 * mm, width - 56 * mm, height - 76 * mm, 8 * mm, fill=1, stroke=0)
+
+    c.setStrokeColor(colors.HexColor("#6366f1"))
+    c.setLineWidth(2)
+    c.roundRect(28 * mm, 38 * mm, width - 56 * mm, height - 76 * mm, 8 * mm, fill=0, stroke=1)
+
+    c.setFillColor(colors.HexColor("#3730a3"))
+    c.setFont(bold_font_name, 28)
+    c.drawCentredString(width / 2, height - 72 * mm, "MISSION COMPLETE")
+
+    c.setFillColor(colors.HexColor("#14532d"))
+    c.setFont(bold_font_name, 24)
+    c.drawCentredString(width / 2, height - 96 * mm, "임무를 완성하셨습니다")
+
+    c.setFillColor(colors.HexColor("#1e293b"))
+    c.setFont(font_name, 15)
+    c.drawCentredString(width / 2, height - 122 * mm, f"노래: {song_title}")
+    c.drawCentredString(width / 2, height - 135 * mm, f"활동: {activity_name}")
+
+    if detail_text:
+        c.setFillColor(colors.HexColor("#475569"))
+        c.setFont(font_name, 12)
+        safe_detail = str(detail_text).replace("\n", " ")[:90]
+        c.drawCentredString(width / 2, height - 150 * mm, safe_detail)
+
+    c.setFillColor(colors.HexColor("#64748b"))
+    c.setFont(font_name, 11)
+    now_text = datetime.now().strftime("%Y-%m-%d %H:%M")
+    c.drawCentredString(width / 2, 62 * mm, f"완료 시간: {now_text}")
+    c.drawCentredString(width / 2, 52 * mm, "이 PDF를 저장한 뒤 선생님께 보여 주세요.")
+
+    c.setFillColor(colors.HexColor("#6366f1"))
+    c.circle(width / 2, 86 * mm, 16 * mm, fill=0, stroke=1)
+    c.setFont(bold_font_name, 28)
+    c.drawCentredString(width / 2, 79 * mm, "✓")
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+    return buffer.getvalue()
+
+
+def show_mission_pdf_download(song_choice, activity_name, mission_key, detail_text=""):
+    """완료 메시지와 인증 PDF 다운로드 버튼을 보여 줍니다."""
+    st.markdown(
+        """
+        <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d0); padding:20px; border-radius:18px; border:2px solid #86efac; margin-top:18px; text-align:center;">
+            <div style="font-size:1.45rem; font-weight:1000; color:#14532d;">🎉 임무를 완성하셨습니다.</div>
+            <div style="font-size:1.02rem; font-weight:850; color:#166534; margin-top:6px;">아래 버튼을 눌러 완료 인증 PDF를 저장하고, 나중에 선생님께 보여 주세요.</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    pdf_bytes = make_mission_pdf(song_choice, activity_name, detail_text)
+    if pdf_bytes:
+        file_name = f"mission_complete_{safe_key(song_choice)}_{safe_key(activity_name)}.pdf"
+        st.download_button(
+            "📄 완료 인증 PDF 저장",
+            data=pdf_bytes,
+            file_name=file_name,
+            mime="application/pdf",
+            key=f"download_{mission_key}",
+            use_container_width=True
+        )
+    else:
+        st.warning("PDF 저장 기능을 사용하려면 requirements.txt에 reportlab을 추가해 주세요. 예: reportlab>=4.0.0")
+
 def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
     """Key Expression을 문제 없이 학습 자료로 보여주고 듣기를 제공합니다."""
     expressions = list(data.get("key_expressions", []))[:max_words]
@@ -325,6 +446,8 @@ def show_integrated_quiz_tab(song_choice, data):
 
         if score >= pass_score:
             st.success(f"통과했습니다! {len(questions)}문제 중 {score}문제를 맞혔습니다.")
+            st.session_state[f"mission_{key_key}_lyrics_quiz"] = True
+            st.session_state[f"mission_{key_key}_lyrics_quiz_detail"] = f"점수: {score}/{len(questions)}"
             st.balloons()
         else:
             st.warning(f"아직 통과 기준에 부족합니다. 통과 기준은 {pass_score}/{len(questions)} 이상입니다.")
@@ -342,6 +465,15 @@ def show_integrated_quiz_tab(song_choice, data):
                     f'{clean_text_for_display(explain)}</div>',
                     unsafe_allow_html=True
                 )
+
+
+    if st.session_state.get(f"mission_{key_key}_lyrics_quiz"):
+        show_mission_pdf_download(
+            song_choice,
+            "가사 이해도 퀴즈",
+            f"{key_key}_lyrics_quiz",
+            st.session_state.get(f"mission_{key_key}_lyrics_quiz_detail", "")
+        )
 
 
 def check_target_grammar_sentence(target, sentence):
@@ -1764,6 +1896,26 @@ def show_song_grammar_tab(song_choice, data):
         else:
             st.error(result["feedback"])
         st.info(result["advice"])
+
+    grammar_complete = (
+        st.session_state.get(f"{prefix}frequent") == g["frequent_answer"]
+        and st.session_state.get(f"{prefix}form") == g["form_answer"]
+        and st.session_state.get(f"{prefix}meaning") == g["meaning_answer"]
+        and st.session_state.get(f"{prefix}rule") == g["rule_answer"]
+        and checked == len(questions)
+        and score >= 4
+        and st.session_state.get(result_key, {}).get("is_ok")
+    )
+    if grammar_complete:
+        st.session_state[f"mission_{grammar_key}_grammar"] = True
+
+    if st.session_state.get(f"mission_{grammar_key}_grammar"):
+        show_mission_pdf_download(
+            song_choice,
+            "Grammar",
+            f"{grammar_key}_grammar",
+            f"Grammar Practice 점수: {score}/{len(questions)}"
+        )
 
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
@@ -5280,7 +5432,7 @@ if "current_tab" not in st.session_state:
 
 def sync_song():
     for k in list(st.session_state.keys()):
-        if k.startswith(("quiz_", "keygame_", "match_", "reflect_", "integrated_quiz_", "song_grammar_")):
+        if k.startswith(("quiz_", "keygame_", "match_", "reflect_", "integrated_quiz_", "song_grammar_", "mission_")):
             del st.session_state[k]
 
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
@@ -5768,6 +5920,20 @@ elif selected_tab == "🧩 문장 매칭 게임":
         height=760,
         scrolling=True
     )
+
+    st.markdown("---")
+    st.markdown("### 📄 문장 매칭 완료 인증")
+    st.info("문장 매칭 게임을 끝까지 완료한 뒤 아래 버튼을 누르면 완료 인증 PDF를 저장할 수 있습니다.")
+    if st.button("문장 매칭을 모두 끝냈습니다", key=f"matching_done_{match_key}", use_container_width=True):
+        st.session_state[f"mission_{match_key}_matching"] = True
+
+    if st.session_state.get(f"mission_{match_key}_matching"):
+        show_mission_pdf_download(
+            song_choice,
+            "문장 매칭 게임",
+            f"{match_key}_matching",
+            "문장 매칭 게임 완료"
+        )
     
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
@@ -5799,6 +5965,8 @@ elif selected_tab == "✍️ 생각 적기":
                 st.warning("먼저 자신의 생각을 한두 문장이라도 적어 보세요.")
             else:
                 ko_feedback, en_feedback, advice = make_polished_feedback(song_choice, selected_question, answer_ko)
+                st.session_state[f"mission_{reflect_key}_reflection"] = True
+                st.session_state[f"mission_{reflect_key}_reflection_detail"] = "한국어 생각 적기 제출 완료"
                 st.markdown("### 🇰🇷 다듬고 풍부하게 만든 한국어 글")
                 st.markdown(f'<div class="feedback-ko">{clean_text_for_display(ko_feedback)}</div>', unsafe_allow_html=True)
                 st.markdown("### 🇺🇸 풍부하게 만든 영어 글")
@@ -5819,12 +5987,22 @@ elif selected_tab == "✍️ 생각 적기":
                 st.warning("Please write at least one or two sentences first.")
             else:
                 corrected_en, richer_en, advice_en = make_english_only_feedback(song_choice, selected_question, answer_en)
+                st.session_state[f"mission_{reflect_key}_reflection"] = True
+                st.session_state[f"mission_{reflect_key}_reflection_detail"] = "영어 생각 적기 제출 완료"
                 st.markdown("### ✅ 문법을 고친 영어 문장")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(corrected_en)}</div>', unsafe_allow_html=True)
                 st.markdown("### 🌱 내용을 풍부하게 만든 영어 글")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(richer_en)}</div>', unsafe_allow_html=True)
                 st.markdown("### ✨ English Feedback")
                 st.markdown(f'<div class="advice-box">{clean_text_for_display(advice_en)}</div>', unsafe_allow_html=True)
+
+    if st.session_state.get(f"mission_{reflect_key}_reflection"):
+        show_mission_pdf_download(
+            song_choice,
+            "생각 적기",
+            f"{reflect_key}_reflection",
+            st.session_state.get(f"mission_{reflect_key}_reflection_detail", "")
+        )
 
 
 elif selected_tab == "⭐ Key Expression 학습":
