@@ -294,11 +294,6 @@ full_script = [
         "ko": "그는 진정한 기사와 같은 존재야."
     },
     {
-        "time": "0:26",
-        "en": "[Music]",
-        "ko": "[음악]"
-    },
-    {
         "time": "0:28",
         "en": "You heard me. You can tell them.",
         "ko": "내 말 들었지. 사람들에게 그렇게 말해."
@@ -322,21 +317,6 @@ full_script = [
         "time": "0:53",
         "en": "Sometimes people deserve to have their faith rewarded.",
         "ko": "때로 사람들은 자신의 믿음이 보상받을 자격이 있어."
-    },
-    {
-        "time": "1:00",
-        "en": "[Music]",
-        "ko": "[음악]"
-    },
-    {
-        "time": "1:14",
-        "en": "[Foreign]",
-        "ko": "[외국어 / 알아듣기 어려운 말]"
-    },
-    {
-        "time": "1:16",
-        "en": "[Music]",
-        "ko": "[음악]"
     },
     {
         "time": "1:42",
