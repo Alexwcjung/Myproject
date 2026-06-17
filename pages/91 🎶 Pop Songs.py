@@ -5257,7 +5257,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                              'reflect_questions': ['화려한 장소보다 조용하고 진심 있는 시간이 더 좋았던 경험이 있나요?',
                                                    '내가 누군가에게 예의나 배려를 보여 줄 수 있는 작은 행동은 무엇인가요?',
                                                    '다른 사람들과 조금 다르지만 내가 소중하게 생각하는 나만의 마음이나 태도는 무엇인가요?']},
- '20. Every Breath You Take - The Police': {'video_url': 'https://www.youtube.com/watch?v=OMOGaugKpzs',
+ '20. Every Breath You Take - The Police': {'video_url': 'https://www.youtube.com/watch?v=9Q6JHcquDUQ&list=RD9Q6JHcquDUQ&start_radio=1',
                                             'lyrics': [('Every breath you take', '네가 쉬는 모든 숨'),
                                                        ('And every move you make', '네가 하는 모든 움직임'),
                                                        ('Every bond you break', '네가 끊는 모든 관계'),
