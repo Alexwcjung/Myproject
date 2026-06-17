@@ -223,783 +223,156 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
 
 
 
-
-GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동사원형',
-                               'examples': ['Let it go.',
-                                            'Let the storm rage on.',
-                                            "Don't let them in.",
-                                            "Don't let them see.",
-                                            "Don't let them know."],
-                               'frequent_options': ['let', 'will', 'can', 'have been'],
-                               'frequent_answer': 'let',
-                               'form_options': ['Let + 목적어 + 동사원형', 'Let + 목적어 + 과거형', 'Let + 목적어 + to 동사', 'Let + 목적어 + 동사-ing'],
-                               'form_answer': 'Let + 목적어 + 동사원형',
-                               'meaning_examples': [('Let it go.', '그것을 놓아버려.'),
-                                                    ('Let them in.', '그들을 들어오게 해.'),
-                                                    ('Let the storm rage on.', '폭풍이 계속 몰아치게 둬.')],
-                               'meaning_options': ['~가 ...하게 두다 / ...하게 하다', '어제 ...했다', '곧 ...할 것이다', '...하고 있는 중이다'],
-                               'meaning_answer': '~가 ...하게 두다 / ...하게 하다',
-                               'rule_answer': 'Let + 목적어 + 동사원형 = ~가 ...하게 두다 / ...하게 하다',
-                               'rule_options': ['Let + 목적어 + 동사원형 = ~가 ...하게 두다 / ...하게 하다',
-                                                'Let + 목적어 + 과거형 = 어제 ~했다',
-                                                'Let + 목적어 + to 동사 = 반드시 ~해야 한다',
-                                                'Let + 목적어 + ing = ~하는 중이다'],
-                               'practice': [('빈칸에 알맞은 것은? Let it _____.', ['go', 'goes', 'went', 'going'], 'go', 'Let 뒤에는 동사원형이 옵니다.'),
-                                            ('맞는 문장은?',
-                                             ['Let the storm rage on.',
-                                              'Let the storm rages on.',
-                                              'Let the storm to rage on.',
-                                              'Let the storm raging on.'],
-                                             'Let the storm rage on.',
-                                             'Let + 목적어 + 동사원형'),
-                                            ("Don't let them _____.", ['see', 'sees', 'saw', 'seeing'], 'see', "Don't let + 목적어 + 동사원형"),
-                                            ('Let it go.의 뜻은?',
-                                             ['그것을 놓아버려.', '그것은 갔다.', '그것이 가고 있다.', '그것은 갈 것이다.'],
-                                             '그것을 놓아버려.',
-                                             'let it go는 놓아버리라는 뜻입니다.'),
-                                            ('문장 완성: Let me _____.', ['try', 'tries', 'tried', 'trying'], 'try', 'Let me + 동사원형')],
-                               'sentence_prefix': 'Let me',
-                               'sentence_choices': ['try', 'speak', 'think', 'go', 'help you'],
-                               'sentence_suffix': ''},
- '2. Hello - Adele': {'target': "I'm sorry for + 명사/동사-ing",
-                      'examples': ["I'm sorry for everything that I've done.",
-                                   "I'm sorry for breaking your heart.",
-                                   "I'm sorry for being late.",
-                                   "I'm sorry for making a mistake.",
-                                   "I'm sorry for calling you late."],
-                      'frequent_options': ["I'm sorry for", 'I can', 'I will', 'Let it'],
-                      'frequent_answer': "I'm sorry for",
-                      'form_options': ["I'm sorry for + 명사/동사-ing", "I'm sorry for + 동사원형", "I'm sorry for + will", "I'm sorry for + can"],
-                      'form_answer': "I'm sorry for + 명사/동사-ing",
-                      'meaning_examples': [("I'm sorry for breaking your heart.", '네 마음을 아프게 해서 미안해.'),
-                                           ("I'm sorry for being late.", '늦어서 미안해.'),
-                                           ("I'm sorry for everything.", '모든 것에 대해 미안해.')],
-                      'meaning_options': ['미안한 이유를 말한다', '미래 계획을 말한다', '능력을 말한다', '명령을 말한다'],
-                      'meaning_answer': '미안한 이유를 말한다',
-                      'rule_answer': "I'm sorry for + 명사/동사-ing = ~해서 미안해",
-                      'rule_options': ["I'm sorry for + 명사/동사-ing = ~해서 미안해",
-                                       "I'm sorry for + 동사원형 = 나는 곧 ~할 거야",
-                                       "I'm sorry for + can = 나는 ~할 수 있어",
-                                       "I'm sorry for + will = 나는 ~해야 해"],
-                      'practice': [("빈칸에 알맞은 것은? I'm sorry for _____ your heart.",
-                                    ['breaking', 'break', 'broke', 'breaks'],
-                                    'breaking',
-                                    'for 뒤에 행동을 넣을 때 동사-ing를 씁니다.'),
-                                   ('맞는 문장은?',
-                                    ["I'm sorry for being late.",
-                                     "I'm sorry for be late.",
-                                     "I'm sorry for was late.",
-                                     "I'm sorry for am late."],
-                                    "I'm sorry for being late.",
-                                    'be는 being으로 씁니다.'),
-                                   ("I'm sorry for everything.의 뜻은?",
-                                    ['모든 것에 대해 미안해.', '나는 모든 것을 원해.', '모든 것이 좋아.', '나는 모든 것을 할 수 있어.'],
-                                    '모든 것에 대해 미안해.',
-                                    'sorry for는 미안한 이유를 나타냅니다.'),
-                                   ("빈칸: I'm sorry for _____ you late.", ['calling', 'call', 'called', 'calls'], 'calling', 'for + 동사-ing'),
-                                   ('가장 알맞은 구조는?',
-                                    ["I'm sorry for + 동사-ing", "I'm sorry for + 동사원형", "I'm sorry for + will", "I'm sorry for + 과거형만"],
-                                    "I'm sorry for + 동사-ing",
-                                    '미안한 행동은 동사-ing로 표현할 수 있습니다.')],
-                      'sentence_prefix': "I'm sorry for",
-                      'sentence_choices': ['being late', 'making a mistake', 'calling you late', 'breaking the rule', 'not listening'],
-                      'sentence_suffix': ''},
- '3. A Whole New World - Aladdin OST': {'target': 'can + 동사원형',
-                                        'examples': ['I can show you the world.',
-                                                     'I can open your eyes.',
-                                                     'I can take you there.',
-                                                     'I can help you.',
-                                                     'I can see a whole new world.'],
-                                        'frequent_options': ['I can', 'I was', 'I have', 'I used to'],
-                                        'frequent_answer': 'I can',
-                                        'form_options': ['can + 동사원형', 'can + 과거형', 'can + to 동사', 'can + 동사-ing'],
-                                        'form_answer': 'can + 동사원형',
-                                        'meaning_examples': [('I can show you the world.', '나는 너에게 세상을 보여 줄 수 있어.'),
-                                                             ('I can open your eyes.', '나는 너의 눈을 뜨게 해 줄 수 있어.'),
-                                                             ('I can help you.', '나는 너를 도울 수 있어.')],
-                                        'meaning_options': ['~할 수 있다', '~했었다', '~하고 있는 중이다', '~하지 마라'],
-                                        'meaning_answer': '~할 수 있다',
-                                        'rule_answer': 'can + 동사원형 = ~할 수 있다',
-                                        'rule_options': ['can + 동사원형 = ~할 수 있다',
-                                                         'can + 과거형 = 어제 ~했다',
-                                                         'can + to 동사 = ~해야 한다',
-                                                         'can + ing = ~하고 있다'],
-                                        'practice': [('빈칸: I can _____ you the world.',
-                                                      ['show', 'shows', 'showed', 'showing'],
-                                                      'show',
-                                                      'can 뒤에는 동사원형이 옵니다.'),
-                                                     ('맞는 문장은?',
-                                                      ['I can open your eyes.',
-                                                       'I can opens your eyes.',
-                                                       'I can to open your eyes.',
-                                                       'I can opening your eyes.'],
-                                                      'I can open your eyes.',
-                                                      'can + 동사원형'),
-                                                     ('I can help you.의 뜻은?',
-                                                      ['나는 너를 도울 수 있어.', '나는 너를 도왔다.', '나는 너를 돕고 있다.', '나는 너를 도울 수 없다.'],
-                                                      '나는 너를 도울 수 있어.',
-                                                      'can은 능력/가능을 나타냅니다.'),
-                                                     ('빈칸: We can _____ together.', ['go', 'goes', 'went', 'going'], 'go', 'can + 동사원형'),
-                                                     ('알맞은 구조는?',
-                                                      ['can + 동사원형', 'can + to 동사', 'can + 과거형', 'can + ing'],
-                                                      'can + 동사원형',
-                                                      'can 뒤에는 동사원형입니다.')],
-                                        'sentence_prefix': 'I can',
-                                        'sentence_choices': ['show you the world',
-                                                             'help you',
-                                                             'open the door',
-                                                             'speak English',
-                                                             'try again'],
-                                        'sentence_suffix': ''},
- '4. Stand By Me - Ben E. King': {'target': "won't + 동사원형",
-                                  'examples': ["I won't be afraid.",
-                                               "I won't cry.",
-                                               "I won't shed a tear.",
-                                               "I won't give up.",
-                                               "I won't run away."],
-                                  'frequent_options': ["I won't", 'I was', 'I have', 'I used to'],
-                                  'frequent_answer': "I won't",
-                                  'form_options': ["won't + 동사원형", "won't + 과거형", "won't + to 동사", "won't + 동사-ing"],
-                                  'form_answer': "won't + 동사원형",
-                                  'meaning_examples': [("I won't be afraid.", '나는 두려워하지 않을 거야.'),
-                                                       ("I won't cry.", '나는 울지 않을 거야.'),
-                                                       ("I won't give up.", '나는 포기하지 않을 거야.')],
-                                  'meaning_options': ['~하지 않을 것이다', '~할 수 있다', '~했었다', '~하는 중이다'],
-                                  'meaning_answer': '~하지 않을 것이다',
-                                  'rule_answer': "won't + 동사원형 = ~하지 않을 것이다",
-                                  'rule_options': ["won't + 동사원형 = ~하지 않을 것이다",
-                                                   "won't + 과거형 = 어제 ~하지 않았다",
-                                                   "won't + ing = ~하지 않는 중이다",
-                                                   "won't + to 동사 = ~할 수 있다"],
-                                  'practice': [("빈칸: I won't _____ afraid.", ['be', 'am', 'was', 'being'], 'be', "won't 뒤에는 동사원형 be가 옵니다."),
-                                               ('맞는 문장은?',
-                                                ["I won't cry.", "I won't cried.", "I won't crying.", "I won't to cry."],
-                                                "I won't cry.",
-                                                "won't + 동사원형"),
-                                               ("I won't shed a tear.의 뜻은?",
-                                                ['나는 눈물 한 방울도 흘리지 않을 거야.', '나는 지금 울고 있다.', '나는 어제 울었다.', '나는 울 수 있다.'],
-                                                '나는 눈물 한 방울도 흘리지 않을 거야.',
-                                                "won't는 미래 부정입니다."),
-                                               ("빈칸: I won't _____ up.", ['give', 'gave', 'gives', 'giving'], 'give', "won't + 동사원형"),
-                                               ('알맞은 구조는?',
-                                                ["won't + 동사원형", "won't + 과거형", "won't + ing", "won't + to 동사"],
-                                                "won't + 동사원형",
-                                                '미래에 하지 않을 일을 말합니다.')],
-                                  'sentence_prefix': "I won't",
-                                  'sentence_choices': ['be afraid', 'cry', 'give up', 'run away', 'forget you'],
-                                  'sentence_suffix': ''},
- "5. Don't Know Why - Norah Jones": {'target': "I don't know why + 문장",
-                                     'examples': ["I don't know why I didn't come.",
-                                                  "Don't know why I didn't come.",
-                                                  "I don't know why I feel this way.",
-                                                  "I don't know why I waited.",
-                                                  "I don't know why she left."],
-                                     'frequent_options': ["I don't know why", 'I can', 'I will', 'Let me'],
-                                     'frequent_answer': "I don't know why",
-                                     'form_options': ["I don't know why + 주어 + 동사",
-                                                      "I don't know why + 동사원형만",
-                                                      "I don't know why + can만",
-                                                      "I don't know why + 명사만"],
-                                     'form_answer': "I don't know why + 주어 + 동사",
-                                     'meaning_examples': [("I don't know why I didn't come.", '나는 왜 내가 가지 않았는지 모르겠어.'),
-                                                          ("I don't know why I feel this way.", '나는 왜 이렇게 느끼는지 모르겠어.'),
-                                                          ("I don't know why she left.", '나는 왜 그녀가 떠났는지 모르겠어.')],
-                                     'meaning_options': ['이유를 모른다고 말한다', '능력을 말한다', '명령한다', '미래 계획을 말한다'],
-                                     'meaning_answer': '이유를 모른다고 말한다',
-                                     'rule_answer': "I don't know why + 주어 + 동사 = 왜 ~인지 모르겠다",
-                                     'rule_options': ["I don't know why + 주어 + 동사 = 왜 ~인지 모르겠다",
-                                                      "I don't know why + 동사원형 = ~할 수 있다",
-                                                      "I don't know why + will = ~할 것이다",
-                                                      "I don't know why + ing = ~하는 중이다"],
-                                     'practice': [("빈칸: I don't know why I _____ come.",
-                                                   ["didn't", "don't", 'can', 'will'],
-                                                   "didn't",
-                                                   'why 뒤에는 하나의 문장이 올 수 있습니다.'),
-                                                  ('맞는 문장은?',
-                                                   ["I don't know why I feel sad.",
-                                                    "I don't know why feel sad.",
-                                                    "I don't know why to feel sad.",
-                                                    "I don't know why feeling sad."],
-                                                   "I don't know why I feel sad.",
-                                                   'why 뒤에 주어+동사를 넣습니다.'),
-                                                  ("I don't know why she left.의 뜻은?",
-                                                   ['나는 왜 그녀가 떠났는지 모르겠어.', '나는 그녀가 떠날 수 있어.', '나는 그녀를 떠나게 했다.', '나는 그녀가 떠나길 원해.'],
-                                                   '나는 왜 그녀가 떠났는지 모르겠어.',
-                                                   '이유를 모른다는 뜻입니다.'),
-                                                  ("빈칸: I don't know why he _____ angry.",
-                                                   ['is', 'be', 'to be', 'being'],
-                                                   'is',
-                                                   'why 뒤에는 문장 형태가 옵니다.'),
-                                                  ('알맞은 구조는?',
-                                                   ["I don't know why + 주어 + 동사",
-                                                    "I don't know why + 동사원형만",
-                                                    "I don't know why + to 동사",
-                                                    "I don't know why + 명사만"],
-                                                   "I don't know why + 주어 + 동사",
-                                                   '왜 ~인지 모르겠다고 말합니다.')],
-                                     'sentence_prefix': "I don't know why",
-                                     'sentence_choices': ['I feel this way', 'I waited', 'she left', 'I am tired', 'he is angry'],
-                                     'sentence_suffix': ''},
- '6. Fix You - Coldplay': {'target': 'When + 주어 + 동사',
-                           'examples': ['When you try your best.',
-                                        'When you get what you want.',
-                                        'When you feel so tired.',
-                                        'When you lose something.',
-                                        'When you love someone.'],
-                           'frequent_options': ['When you', 'I can', 'I will', 'Let it'],
-                           'frequent_answer': 'When you',
-                           'form_options': ['When + 주어 + 동사', 'When + 동사원형만', 'When + will만', 'When + 명사만'],
-                           'form_answer': 'When + 주어 + 동사',
-                           'meaning_examples': [('When you try your best.', '네가 최선을 다할 때.'),
-                                                ('When you feel tired.', '네가 피곤함을 느낄 때.'),
-                                                ('When you lose something.', '네가 무언가를 잃을 때.')],
-                           'meaning_options': ['~할 때', '~할 수 있다', '~하지 않을 것이다', '~해야 한다'],
-                           'meaning_answer': '~할 때',
-                           'rule_answer': 'When + 주어 + 동사 = ~할 때',
-                           'rule_options': ['When + 주어 + 동사 = ~할 때',
-                                            'When + 동사원형 = ~할 수 있다',
-                                            'When + will = ~하지 않을 것이다',
-                                            'When + ing = ~하고 있다'],
-                           'practice': [('빈칸: When you _____ your best.',
-                                         ['try', 'tries', 'tried', 'trying'],
-                                         'try',
-                                         'you 뒤에는 동사 try가 옵니다.'),
-                                        ('맞는 문장은?',
-                                         ['When you feel tired.', 'When feel tired.', 'When you to feel tired.', 'When you feeling tired.'],
-                                         'When you feel tired.',
-                                         'When + 주어 + 동사'),
-                                        ('When you lose something.의 뜻은?',
-                                         ['네가 무언가를 잃을 때', '너는 무언가를 잃을 수 있다', '너는 무언가를 잃지 않을 것이다', '너는 무언가를 잃었다'],
-                                         '네가 무언가를 잃을 때',
-                                         'When은 ~할 때입니다.'),
-                                        ('빈칸: When you _____ someone.', ['love', 'loves', 'loved', 'loving'], 'love', 'When you + 동사'),
-                                        ('알맞은 구조는?',
-                                         ['When + 주어 + 동사', 'When + 동사원형만', 'When + to 동사', 'When + 과거분사'],
-                                         'When + 주어 + 동사',
-                                         '상황을 말할 때 씁니다.')],
-                           'sentence_prefix': 'When I',
-                           'sentence_choices': ['try my best', 'feel tired', 'need help', 'lose something', 'love someone'],
-                           'sentence_suffix': ''},
- '7. The Scientist - Coldplay': {'target': 'Tell + 사람 + 내용',
-                                 'examples': ["Tell you I'm sorry.",
-                                              'Tell you I need you.',
-                                              'Tell me your secrets.',
-                                              'Tell me your questions.',
-                                              'Tell me you love me.'],
-                                 'frequent_options': ['Tell me / Tell you', 'I will', 'I can', 'I used to'],
-                                 'frequent_answer': 'Tell me / Tell you',
-                                 'form_options': ['Tell + 사람 + 내용', 'Tell + 사람 + to be만', 'Tell + 과거형만', 'Tell + ing만'],
-                                 'form_answer': 'Tell + 사람 + 내용',
-                                 'meaning_examples': [("Tell you I'm sorry.", '너에게 미안하다고 말하다.'),
-                                                      ('Tell you I need you.', '너에게 네가 필요하다고 말하다.'),
-                                                      ('Tell me your secrets.', '나에게 너의 비밀을 말해 줘.')],
-                                 'meaning_options': ['누구에게 어떤 내용을 말하다', '누군가를 볼 수 있다', '미래에 하지 않을 것이다', '계속 하고 있다'],
-                                 'meaning_answer': '누구에게 어떤 내용을 말하다',
-                                 'rule_answer': 'Tell + 사람 + 내용 = 누구에게 ~을 말하다',
-                                 'rule_options': ['Tell + 사람 + 내용 = 누구에게 ~을 말하다',
-                                                  'Tell + 사람 + ing = ~하는 중이다',
-                                                  'Tell + 사람 + will = ~할 것이다',
-                                                  'Tell + 사람 + can = ~할 수 있다'],
-                                 'practice': [('빈칸: Tell me your _____.',
-                                               ['secrets', 'secretly', 'secreted', 'secreting'],
-                                               'secrets',
-                                               'Tell me + 내용'),
-                                              ('맞는 문장은?',
-                                               ["Tell you I'm sorry.",
-                                                'Tell you am sorry.',
-                                                "Tell you to I'm sorry.",
-                                                'Tell you sorrying.'],
-                                               "Tell you I'm sorry.",
-                                               'Tell + 사람 + 내용'),
-                                              ('Tell me your secrets.의 뜻은?',
-                                               ['나에게 너의 비밀을 말해 줘.', '나에게 노래를 불러 줘.', '나를 도와줄 수 있어.', '나는 비밀을 몰라.'],
-                                               '나에게 너의 비밀을 말해 줘.',
-                                               'Tell me는 나에게 말해 줘입니다.'),
-                                              ('빈칸: Tell me you _____ me.', ['love', 'loves', 'loving', 'to love'], 'love', 'Tell me + 문장'),
-                                              ('알맞은 구조는?',
-                                               ['Tell + 사람 + 내용', 'Tell + 사람 + ing만', 'Tell + 과거형만', 'Tell + will만'],
-                                               'Tell + 사람 + 내용',
-                                               '말하는 상대와 내용을 함께 씁니다.')],
-                                 'sentence_prefix': 'Tell me',
-                                 'sentence_choices': ['your name', 'your dream', 'you need help', 'you are okay', 'the truth'],
-                                 'sentence_suffix': ''},
- '8. My Heart Will Go On - Celine Dion': {'target': 'will + 동사원형',
-                                          'examples': ['My heart will go on.',
-                                                       'We will stay forever.',
-                                                       'I will remember you.',
-                                                       'Love will last.',
-                                                       'I will see you in my dreams.'],
-                                          'frequent_options': ['will', 'can', 'used to', 'let'],
-                                          'frequent_answer': 'will',
-                                          'form_options': ['will + 동사원형', 'will + 과거형', 'will + to 동사', 'will + 동사-ing'],
-                                          'form_answer': 'will + 동사원형',
-                                          'meaning_examples': [('My heart will go on.', '내 마음은 계속될 거야.'),
-                                                               ('We will stay forever.', '우리는 영원히 머물 거야.'),
-                                                               ('I will remember you.', '나는 너를 기억할 거야.')],
-                                          'meaning_options': ['앞으로 ~할 것이다', '~할 수 있다', '예전에 ~하곤 했다', '~하지 마라'],
-                                          'meaning_answer': '앞으로 ~할 것이다',
-                                          'rule_answer': 'will + 동사원형 = 앞으로 ~할 것이다',
-                                          'rule_options': ['will + 동사원형 = 앞으로 ~할 것이다',
-                                                           'will + 과거형 = 어제 ~했다',
-                                                           'will + ing = ~하고 있다',
-                                                           'will + to 동사 = ~할 수 있다'],
-                                          'practice': [('빈칸: My heart will _____ on.',
-                                                        ['go', 'goes', 'went', 'going'],
-                                                        'go',
-                                                        'will 뒤에는 동사원형입니다.'),
-                                                       ('맞는 문장은?',
-                                                        ['We will stay forever.',
-                                                         'We will stays forever.',
-                                                         'We will stayed forever.',
-                                                         'We will to stay forever.'],
-                                                        'We will stay forever.',
-                                                        'will + 동사원형'),
-                                                       ('I will remember you.의 뜻은?',
-                                                        ['나는 너를 기억할 거야.', '나는 너를 기억했다.', '나는 너를 기억하고 있다.', '나는 너를 기억할 수 없다.'],
-                                                        '나는 너를 기억할 거야.',
-                                                        'will은 미래를 나타냅니다.'),
-                                                       ('빈칸: Love will _____.',
-                                                        ['last', 'lasts', 'lasted', 'lasting'],
-                                                        'last',
-                                                        'will + 동사원형'),
-                                                       ('알맞은 구조는?',
-                                                        ['will + 동사원형', 'will + 과거형', 'will + ing', 'will + to 동사'],
-                                                        'will + 동사원형',
-                                                        '미래 표현입니다.')],
-                                          'sentence_prefix': 'I will',
-                                          'sentence_choices': ['remember you', 'try again', 'study English', 'help my friend', 'go on'],
-                                          'sentence_suffix': ''},
- '9. Alex Sampson - Play Pretend': {'target': "It's hard to + 동사원형",
-                                    'examples': ["It's hard to watch you fall again.",
-                                                 "It's hard to play pretend.",
-                                                 "It's hard to say goodbye.",
-                                                 "It's hard to wait.",
-                                                 "It's hard to tell the truth."],
-                                    'frequent_options': ["It's hard to", 'I can', 'I will', 'Let me'],
-                                    'frequent_answer': "It's hard to",
-                                    'form_options': ["It's hard to + 동사원형",
-                                                     "It's hard to + 과거형",
-                                                     "It's hard to + ing",
-                                                     "It's hard to + can"],
-                                    'form_answer': "It's hard to + 동사원형",
-                                    'meaning_examples': [("It's hard to watch you fall again.", '네가 다시 상처받는 걸 보는 것은 힘들어.'),
-                                                         ("It's hard to say goodbye.", '작별 인사를 하는 것은 힘들어.'),
-                                                         ("It's hard to wait.", '기다리는 것은 힘들어.')],
-                                    'meaning_options': ['~하는 것은 힘들다', '~할 수 있다', '~하지 않을 것이다', '~하곤 했다'],
-                                    'meaning_answer': '~하는 것은 힘들다',
-                                    'rule_answer': "It's hard to + 동사원형 = ~하는 것은 힘들다",
-                                    'rule_options': ["It's hard to + 동사원형 = ~하는 것은 힘들다",
-                                                     "It's hard to + ing = ~하고 있다",
-                                                     "It's hard to + 과거형 = 어제 ~했다",
-                                                     "It's hard to + will = ~할 것이다"],
-                                    'practice': [("빈칸: It's hard to _____ you fall again.",
-                                                  ['watch', 'watches', 'watched', 'watching'],
-                                                  'watch',
-                                                  'to 뒤에는 동사원형이 옵니다.'),
-                                                 ('맞는 문장은?',
-                                                  ["It's hard to say goodbye.",
-                                                   "It's hard to saying goodbye.",
-                                                   "It's hard to said goodbye.",
-                                                   "It's hard to says goodbye."],
-                                                  "It's hard to say goodbye.",
-                                                  'hard to + 동사원형'),
-                                                 ("It's hard to wait.의 뜻은?",
-                                                  ['기다리는 것은 힘들다.', '기다릴 수 있다.', '기다리지 않을 것이다.', '기다리곤 했다.'],
-                                                  '기다리는 것은 힘들다.',
-                                                  'It is hard to는 ~하기 어렵다는 뜻입니다.'),
-                                                 ("빈칸: It's hard to _____ the truth.",
-                                                  ['tell', 'tells', 'told', 'telling'],
-                                                  'tell',
-                                                  'to + 동사원형'),
-                                                 ('알맞은 구조는?',
-                                                  ["It's hard to + 동사원형", "It's hard to + ing", "It's hard to + 과거형", "It's hard to + can"],
-                                                  "It's hard to + 동사원형",
-                                                  '어려운 행동을 말할 때 씁니다.')],
-                                    'sentence_prefix': "It's hard to",
-                                    'sentence_choices': ['say goodbye', 'wait', 'study every day', 'tell the truth', 'play pretend'],
-                                    'sentence_suffix': ''},
- '10. Older - Sasha Alex Sloan': {'target': 'used to + 동사원형',
-                                  'examples': ['I used to shut my door.',
-                                               'I used to listen to music.',
-                                               'I used to be a kid.',
-                                               'I used to play outside.',
-                                               'I used to cry sometimes.'],
-                                  'frequent_options': ['used to', 'will', 'can', 'let'],
-                                  'frequent_answer': 'used to',
-                                  'form_options': ['used to + 동사원형', 'used to + 과거형', 'used to + ing', 'used to + will'],
-                                  'form_answer': 'used to + 동사원형',
-                                  'meaning_examples': [('I used to shut my door.', '나는 예전에 방문을 닫곤 했다.'),
-                                                       ('I used to play outside.', '나는 예전에 밖에서 놀곤 했다.'),
-                                                       ('I used to be a kid.', '나는 예전에는 아이였다.')],
-                                  'meaning_options': ['예전에 ~하곤 했다', '지금 ~하고 있다', '앞으로 ~할 것이다', '~할 수 있다'],
-                                  'meaning_answer': '예전에 ~하곤 했다',
-                                  'rule_answer': 'used to + 동사원형 = 예전에 ~하곤 했다',
-                                  'rule_options': ['used to + 동사원형 = 예전에 ~하곤 했다',
-                                                   'used to + ing = 지금 ~하고 있다',
-                                                   'used to + 과거형 = 내일 ~할 것이다',
-                                                   'used to + can = ~할 수 있다'],
-                                  'practice': [('빈칸: I used to _____ my door.',
-                                                ['shut', 'shuts', 'shutting', 'shutted'],
-                                                'shut',
-                                                'used to 뒤에는 동사원형이 옵니다.'),
-                                               ('맞는 문장은?',
-                                                ['I used to play outside.',
-                                                 'I used to played outside.',
-                                                 'I used to playing outside.',
-                                                 'I used to plays outside.'],
-                                                'I used to play outside.',
-                                                'used to + 동사원형'),
-                                               ('I used to be a kid.의 뜻은?',
-                                                ['나는 예전에는 아이였다.', '나는 지금 아이가 되고 있다.', '나는 아이가 될 것이다.', '나는 아이일 수 있다.'],
-                                                '나는 예전에는 아이였다.',
-                                                'used to는 과거의 습관/상태입니다.'),
-                                               ('빈칸: I used to _____ music.',
-                                                ['listen to', 'listened to', 'listening to', 'listens to'],
-                                                'listen to',
-                                                'used to + 동사원형'),
-                                               ('알맞은 구조는?',
-                                                ['used to + 동사원형', 'used to + 과거형', 'used to + ing', 'used to + will'],
-                                                'used to + 동사원형',
-                                                '예전 습관을 말합니다.')],
-                                  'sentence_prefix': 'I used to',
-                                  'sentence_choices': ['play outside', 'listen to music', 'be shy', 'watch cartoons', 'cry sometimes'],
-                                  'sentence_suffix': ''},
- '11. No One Else Like You - Adam Levine': {'target': 'like + 명사',
-                                            'examples': ['Looks like you.',
-                                                         'Feels like you.',
-                                                         'Smiles like you.',
-                                                         'Someone just like you.',
-                                                         'No one else like you.'],
-                                            'frequent_options': ['like you', 'will be', 'have been', 'used to'],
-                                            'frequent_answer': 'like you',
-                                            'form_options': ['like + 명사', 'like + 과거형', 'like + to 동사', 'like + will'],
-                                            'form_answer': 'like + 명사',
-                                            'meaning_examples': [('Looks like you.', '너처럼 보여.'),
-                                                                 ('Feels like you.', '너 같은 느낌이야.'),
-                                                                 ('Someone just like you.', '너와 꼭 같은 사람.')],
-                                            'meaning_options': ['~처럼 / ~같은', '~할 것이다', '~하지 않을 것이다', '예전에 ~했다'],
-                                            'meaning_answer': '~처럼 / ~같은',
-                                            'rule_answer': 'like + 명사 = ~처럼 / ~같은',
-                                            'rule_options': ['like + 명사 = ~처럼 / ~같은',
-                                                             'like + 동사원형 = ~해야 한다',
-                                                             'like + will = ~할 것이다',
-                                                             'like + 과거형 = ~했다'],
-                                            'practice': [('빈칸: Someone just _____ you.',
-                                                          ['like', 'likes', 'liked', 'liking'],
-                                                          'like',
-                                                          'like you는 너 같은이라는 뜻입니다.'),
-                                                         ('맞는 표현은?',
-                                                          ['Looks like you.', 'Looks likes you.', 'Looks liked you.', 'Looks liking you.'],
-                                                          'Looks like you.',
-                                                          'like + 명사'),
-                                                         ('No one else like you.의 뜻은?',
-                                                          ['너 같은 사람은 아무도 없어.', '너는 다른 사람을 좋아해.', '너는 곧 올 거야.', '너는 예전에 그랬어.'],
-                                                          '너 같은 사람은 아무도 없어.',
-                                                          'like는 ~같은의 뜻입니다.'),
-                                                         ('빈칸: It feels _____ home.',
-                                                          ['like', 'likes', 'liked', 'liking'],
-                                                          'like',
-                                                          'like + 명사'),
-                                                         ('알맞은 구조는?',
-                                                          ['like + 명사', 'like + will', 'like + 과거형', 'like + to 동사'],
-                                                          'like + 명사',
-                                                          '비슷함을 말할 때 씁니다.')],
-                                            'sentence_prefix': 'It feels like',
-                                            'sentence_choices': ['home', 'a dream', 'a movie', 'summer', 'a new start'],
-                                            'sentence_suffix': ''},
- '12. Out of Time - The Weeknd': {'target': "I'll + 동사원형",
-                                  'examples': ["I'll treat you right.",
-                                               "I'll love you.",
-                                               "I'll care for you.",
-                                               "I'll be there for you.",
-                                               "I'll try again."],
-                                  'frequent_options': ["I'll", 'I used to', 'Let me', "I don't know why"],
-                                  'frequent_answer': "I'll",
-                                  'form_options': ["I'll + 동사원형", "I'll + 과거형", "I'll + to 동사", "I'll + 동사-ing"],
-                                  'form_answer': "I'll + 동사원형",
-                                  'meaning_examples': [("I'll treat you right.", '나는 너를 잘 대해 줄 거야.'),
-                                                       ("I'll love you.", '나는 너를 사랑할 거야.'),
-                                                       ("I'll care for you.", '나는 너를 아껴 줄 거야.')],
-                                  'meaning_options': ['앞으로 ~할 것이다', '예전에 ~하곤 했다', '~할 수 있다', '~하지 마라'],
-                                  'meaning_answer': '앞으로 ~할 것이다',
-                                  'rule_answer': "I'll + 동사원형 = 나는 ~할 것이다",
-                                  'rule_options': ["I'll + 동사원형 = 나는 ~할 것이다",
-                                                   "I'll + 과거형 = 나는 어제 ~했다",
-                                                   "I'll + ing = 나는 ~하고 있다",
-                                                   "I'll + to 동사 = 나는 ~할 수 있다"],
-                                  'practice': [("빈칸: I'll _____ you right.",
-                                                ['treat', 'treats', 'treated', 'treating'],
-                                                'treat',
-                                                "I'll 뒤에는 동사원형입니다."),
-                                               ('맞는 문장은?',
-                                                ["I'll love you.", "I'll loves you.", "I'll loved you.", "I'll loving you."],
-                                                "I'll love you.",
-                                                "I'll + 동사원형"),
-                                               ("I'll care for you.의 뜻은?",
-                                                ['나는 너를 아껴 줄 거야.', '나는 너를 아꼈어.', '나는 너를 아끼고 있어.', '나는 너를 아낄 수 없어.'],
-                                                '나는 너를 아껴 줄 거야.',
-                                                "I'll은 I will의 짧은 형태입니다."),
-                                               ("빈칸: I'll _____ again.", ['try', 'tries', 'tried', 'trying'], 'try', "I'll + 동사원형"),
-                                               ('알맞은 구조는?',
-                                                ["I'll + 동사원형", "I'll + 과거형", "I'll + ing", "I'll + to 동사"],
-                                                "I'll + 동사원형",
-                                                '미래의 약속/의지를 말합니다.')],
-                                  'sentence_prefix': "I'll",
-                                  'sentence_choices': ['try again', 'help you', 'study hard', 'be there', 'care for you'],
-                                  'sentence_suffix': ''},
- "13. I Don't Think So - Priscilla Ahn": {'target': "I think + 문장 / I don't think so",
-                                          'examples': ["I don't think so.",
-                                                       'I think I should go.',
-                                                       'I think you know it.',
-                                                       "I don't think I can stay.",
-                                                       'I think this is wrong.'],
-                                          'frequent_options': ['I think', 'I will', 'Let it', 'used to'],
-                                          'frequent_answer': 'I think',
-                                          'form_options': ['I think + 문장', 'I think + 동사원형만', 'I think + to 동사', 'I think + ing만'],
-                                          'form_answer': 'I think + 문장',
-                                          'meaning_examples': [("I don't think so.", '나는 그렇게 생각하지 않아.'),
-                                                               ('I think I should go.', '나는 가야 할 것 같아.'),
-                                                               ('I think this is wrong.', '나는 이것이 잘못됐다고 생각해.')],
-                                          'meaning_options': ['내 생각을 말한다', '능력을 말한다', '과거 습관을 말한다', '명령한다'],
-                                          'meaning_answer': '내 생각을 말한다',
-                                          'rule_answer': 'I think + 문장 = 나는 ~라고 생각한다',
-                                          'rule_options': ['I think + 문장 = 나는 ~라고 생각한다',
-                                                           'I think + 동사원형 = ~할 수 있다',
-                                                           'I think + ing = ~하는 중이다',
-                                                           'I think + will만 = ~하지 마라'],
-                                          'practice': [('빈칸: I think I _____ go.',
-                                                        ['should', 'can to', 'am to', 'going'],
-                                                        'should',
-                                                        'I think 뒤에 문장이 올 수 있습니다.'),
-                                                       ('맞는 문장은?',
-                                                        ['I think this is wrong.',
-                                                         'I think this wrong.',
-                                                         'I think to this is wrong.',
-                                                         'I think wronging.'],
-                                                        'I think this is wrong.',
-                                                        'I think + 문장'),
-                                                       ("I don't think so.의 뜻은?",
-                                                        ['나는 그렇게 생각하지 않아.', '나는 그렇게 할 수 있어.', '나는 그렇게 했어.', '나는 그렇게 할 거야.'],
-                                                        '나는 그렇게 생각하지 않아.',
-                                                        '의견을 말하는 표현입니다.'),
-                                                       ("빈칸: I don't think I _____ stay.",
-                                                        ['can', 'to can', 'canning', 'canned'],
-                                                        'can',
-                                                        'I think 뒤에는 문장을 씁니다.'),
-                                                       ('알맞은 구조는?',
-                                                        ['I think + 문장', 'I think + 동사원형만', 'I think + to 동사', 'I think + ing만'],
-                                                        'I think + 문장',
-                                                        '생각/의견을 말합니다.')],
-                                          'sentence_prefix': 'I think',
-                                          'sentence_choices': ['I should go',
-                                                               'this is important',
-                                                               'English is fun',
-                                                               'I can do it',
-                                                               'we need time'],
-                                          'sentence_suffix': ''},
- '14. New York City - Norah Jones': {'target': "can't + 동사원형",
-                                     'examples': ["I can't remember what I planned.",
-                                                  "I can't remember when it's time to go.",
-                                                  "I can't sleep tonight.",
-                                                  "I can't forget the city.",
-                                                  "I can't find my way."],
-                                     'frequent_options': ["I can't", 'I used to', 'I will', 'Let me'],
-                                     'frequent_answer': "I can't",
-                                     'form_options': ["can't + 동사원형", "can't + 과거형", "can't + to 동사", "can't + 동사-ing"],
-                                     'form_answer': "can't + 동사원형",
-                                     'meaning_examples': [("I can't remember.", '나는 기억할 수 없어.'),
-                                                          ("I can't sleep.", '나는 잠을 잘 수 없어.'),
-                                                          ("I can't forget the city.", '나는 그 도시를 잊을 수 없어.')],
-                                     'meaning_options': ['~할 수 없다', '~할 것이다', '~하곤 했다', '~하게 두다'],
-                                     'meaning_answer': '~할 수 없다',
-                                     'rule_answer': "can't + 동사원형 = ~할 수 없다",
-                                     'rule_options': ["can't + 동사원형 = ~할 수 없다",
-                                                      "can't + 과거형 = 어제 ~하지 않았다",
-                                                      "can't + ing = ~하는 중이 아니다",
-                                                      "can't + to 동사 = ~해야 한다"],
-                                     'practice': [("빈칸: I can't _____ what I planned.",
-                                                   ['remember', 'remembers', 'remembered', 'remembering'],
-                                                   'remember',
-                                                   "can't 뒤에는 동사원형입니다."),
-                                                  ('맞는 문장은?',
-                                                   ["I can't sleep tonight.",
-                                                    "I can't sleeps tonight.",
-                                                    "I can't slept tonight.",
-                                                    "I can't sleeping tonight."],
-                                                   "I can't sleep tonight.",
-                                                   "can't + 동사원형"),
-                                                  ("I can't forget the city.의 뜻은?",
-                                                   ['나는 그 도시를 잊을 수 없어.', '나는 그 도시를 잊었어.', '나는 그 도시를 잊을 거야.', '나는 그 도시를 좋아해.'],
-                                                   '나는 그 도시를 잊을 수 없어.',
-                                                   "can't는 할 수 없다는 뜻입니다."),
-                                                  ("빈칸: I can't _____ my way.",
-                                                   ['find', 'finds', 'found', 'finding'],
-                                                   'find',
-                                                   "can't + 동사원형"),
-                                                  ('알맞은 구조는?',
-                                                   ["can't + 동사원형", "can't + 과거형", "can't + ing", "can't + to 동사"],
-                                                   "can't + 동사원형",
-                                                   '불가능을 말합니다.')],
-                                     'sentence_prefix': "I can't",
-                                     'sentence_choices': ['remember', 'sleep', 'forget you', 'find my way', 'stop thinking'],
-                                     'sentence_suffix': ''},
- '15. Counting Stars - OneRepublic': {'target': 'I have been + 동사-ing',
-                                      'examples': ["Lately, I've been losing sleep.",
-                                                   "Baby, I've been praying hard.",
-                                                   "I've been dreaming about the things that we could be.",
-                                                   "Lately, I've been thinking about my future.",
-                                                   "Lately, I've been practicing English."],
-                                      'frequent_options': ["I've been", 'I can', 'I will', 'I used to'],
-                                      'frequent_answer': "I've been",
-                                      'form_options': ['I have been + 동사-ing',
-                                                       'I have been + 동사원형',
-                                                       'I have been + 과거형',
-                                                       'I have been + 명사'],
-                                      'form_answer': 'I have been + 동사-ing',
-                                      'meaning_examples': [('Lately, I have been losing sleep.', '요즘 잠을 잘 못 자고 있다.'),
-                                                           ('Lately, I have been thinking about my dream.', '요즘 내 꿈에 대해 계속 생각하고 있다.'),
-                                                           ('Lately, I have been practicing English.', '요즘 영어를 계속 연습하고 있다.')],
-                                      'meaning_options': ['최근부터 지금까지 이어지는 행동이나 상태', '어제 한 번 끝난 행동', '내일 새로 시작할 행동', '항상 변하지 않는 일반 사실'],
-                                      'meaning_answer': '최근부터 지금까지 이어지는 행동이나 상태',
-                                      'rule_answer': 'I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다',
-                                      'rule_options': ['I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다',
-                                                       'I have been + 동사원형 = 내일 ~할 것이다',
-                                                       'I am + 동사-ing = 어제 ~했다',
-                                                       'I will + 동사원형 = 지금까지 계속 ~하고 있다'],
-                                      'practice': [('I’ve been의 긴 형태로 알맞은 것은?',
-                                                    ['I am been', 'I have been', 'I will been', 'I did been'],
-                                                    'I have been',
-                                                    'I’ve been = I have been'),
-                                                   ('맞는 문장은?',
-                                                    ['I have been study English.',
-                                                     'I have been studying English.',
-                                                     'I have studying English.',
-                                                     'I been studying English.'],
-                                                    'I have been studying English.',
-                                                    'have been + 동사-ing'),
-                                                   ('빈칸: Lately, I have been _____ soccer.',
-                                                    ['playing', 'play', 'played', 'plays'],
-                                                    'playing',
-                                                    'I have been playing soccer.'),
-                                                   ('I have been losing sleep.의 뜻은?',
-                                                    ['나는 요즘 잠을 잘 못 자고 있다.', '나는 지금 자고 있다.', '나는 어제 잠을 많이 잤다.', '나는 내일 일찍 잘 것이다.'],
-                                                    '나는 요즘 잠을 잘 못 자고 있다.',
-                                                    '최근부터 지금까지 이어지는 상태입니다.'),
-                                                   ('빈칸: I’ve been _____ about my future.',
-                                                    ['thinking', 'think', 'thought', 'thinks'],
-                                                    'thinking',
-                                                    'I’ve been thinking about my future.')],
-                                      'sentence_prefix': 'Lately, I have been',
-                                      'sentence_choices': ['studying English',
-                                                           'playing soccer',
-                                                           'thinking about my dream',
-                                                           'feeling tired',
-                                                           'practicing singing'],
-                                      'sentence_suffix': ''}}
-
-
-def show_song_grammar_tab(song_choice, data):
-    """각 노래별로 자주 등장하고 쉬운 문법 포인트를 발견하게 하는 탭입니다."""
+def show_ive_been_grammar_tab(song_choice, data):
+    """Counting Stars를 활용한 간단한 inductive grammar learning 탭입니다."""
     grammar_key = safe_key(song_choice)
-    prefix = f"song_grammar_{grammar_key}_"
-    g = GRAMMAR_POINTS.get(song_choice, GRAMMAR_POINTS["15. Counting Stars - OneRepublic"])
+    prefix = f"have_been_grammar_{grammar_key}_"
 
     st.subheader("🎯 Grammar")
 
-    st.markdown("### 1. 표현 찾기")
-    example_html = "<br>".join(clean_text_for_display(x) for x in g["examples"])
+    st.markdown("### 1. 자주 나오는 표현 찾기")
     st.markdown(
-        f"""
+        """
         <div style="background:#f8fafc; padding:22px; border-radius:18px; border-left:6px solid #6366f1; line-height:2.15; font-size:1.22rem;">
-            {example_html}
+            Lately, I’ve been losing sleep.<br>
+            Baby, I’ve been praying hard.<br>
+            I’ve been dreaming about the things that we could be.<br>
+            Lately, I’ve been thinking about my future.<br>
+            Lately, I’ve been practicing English.
         </div>
         """,
         unsafe_allow_html=True
     )
 
     frequent = st.radio(
-        "자주 등장하거나 비슷하게 반복되는 표현은 무엇인가요?",
-        g["frequent_options"],
+        "자주 등장하는 표현은 무엇인가요?",
+        ["I will", "I’ve been", "I can", "I was"],
         key=f"{prefix}frequent",
         horizontal=True
     )
 
     if st.button("확인", key=f"{prefix}frequent_check", use_container_width=True):
-        if frequent == g["frequent_answer"]:
+        if frequent == "I’ve been":
             st.success("정답입니다.")
         else:
             st.error("다시 보세요. 여러 문장에 반복되는 표현이 있습니다.")
 
     st.markdown("---")
-    st.markdown("### 2. 공통점 찾기")
+    st.markdown("### 2. 짧은 형태와 긴 형태")
 
-    form = st.radio(
-        "위 표현들의 공통 구조는 무엇인가요?",
-        g["form_options"],
-        key=f"{prefix}form",
-        horizontal=False
+    full_form = st.radio(
+        "I’ve been의 긴 형태는 무엇인가요?",
+        ["I am been", "I have been", "I will been", "I did been"],
+        key=f"{prefix}full_form",
+        horizontal=True
     )
 
-    if st.button("확인", key=f"{prefix}form_check", use_container_width=True):
-        if form == g["form_answer"]:
-            st.success("정답입니다.")
+    if st.button("확인", key=f"{prefix}full_form_check", use_container_width=True):
+        if full_form == "I have been":
+            st.success("정답입니다. I’ve been = I have been")
         else:
-            st.error("다시 보세요. 반복되는 표현 뒤의 단어 모양을 비교해 보세요.")
+            st.error("다시 생각해 보세요. ’ve는 have의 짧은 형태입니다.")
 
     st.markdown("---")
-    st.markdown("### 3. 의미 찾기")
-    meaning_lines = "<br>".join(
-        f"{clean_text_for_display(en)} → {clean_text_for_display(ko)}"
-        for en, ko in g["meaning_examples"]
-    )
+    st.markdown("### 3. 공통점 찾기")
     st.markdown(
-        f"""
-        <div style="background:#f0f9ff; padding:22px; border-radius:18px; border:1px solid #bae6fd; line-height:2.1; font-size:1.12rem;">
-            {meaning_lines}
+        """
+        <div style="background:#f0f9ff; padding:22px; border-radius:18px; border:1px solid #bae6fd; line-height:2.15; font-size:1.18rem;">
+            I have been losing sleep.<br>
+            I have been praying hard.<br>
+            I have been dreaming about the things that we could be.<br>
+            I have been thinking about my future.<br>
+            I have been practicing English.
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    meaning = st.radio(
-        "위 문장들의 공통 의미로 가장 알맞은 것은 무엇인가요?",
-        g["meaning_options"],
-        key=f"{prefix}meaning",
+    common_form = st.radio(
+        "위 문장들의 공통점은 무엇인가요?",
+        [
+            "I have been + 동사-ing",
+            "I have been + 동사원형",
+            "I have been + 과거형 동사",
+            "I have been + 명사"
+        ],
+        key=f"{prefix}common_form",
         horizontal=False
     )
 
-    if st.button("확인", key=f"{prefix}meaning_check", use_container_width=True):
-        if meaning == g["meaning_answer"]:
+    if st.button("확인", key=f"{prefix}common_form_check", use_container_width=True):
+        if common_form == "I have been + 동사-ing":
             st.success("정답입니다.")
         else:
-            st.error("다시 생각해 보세요. 영어 문장과 한국어 뜻을 함께 비교해 보세요.")
+            st.error("다시 보세요. have been 뒤에 오는 단어의 모양을 비교해 보세요.")
 
     st.markdown("---")
-    st.markdown("### 4. 규칙 정리")
+    st.markdown("### 4. 의미의 공통점 찾기")
+    st.markdown(
+        """
+        <div style="background:#f8fafc; padding:22px; border-radius:18px; border:1px solid #cbd5e1; line-height:2.1; font-size:1.12rem;">
+            Lately, I have been losing sleep. → 요즘 잠을 잘 못 자고 있다.<br>
+            Lately, I have been thinking about my dream. → 요즘 내 꿈에 대해 계속 생각하고 있다.<br>
+            Lately, I have been practicing English. → 요즘 영어를 계속 연습하고 있다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    rule = st.radio(
-        "지금까지 발견한 규칙을 가장 잘 정리한 것은 무엇인가요?",
-        g["rule_options"],
-        key=f"{prefix}rule",
+    common_meaning = st.radio(
+        "위 문장들의 공통 의미로 가장 알맞은 것은 무엇인가요?",
+        [
+            "어제 한 번 끝난 행동을 말한다.",
+            "최근부터 지금까지 이어지는 행동이나 상태를 말한다.",
+            "내일 새로 시작할 행동을 말한다.",
+            "항상 변하지 않는 일반 사실만 말한다."
+        ],
+        key=f"{prefix}common_meaning",
         horizontal=False
     )
 
-    if st.button("확인", key=f"{prefix}rule_check", use_container_width=True):
-        if rule == g["rule_answer"]:
+    if st.button("확인", key=f"{prefix}common_meaning_check", use_container_width=True):
+        if common_meaning == "최근부터 지금까지 이어지는 행동이나 상태를 말한다.":
+            st.success("정답입니다.")
+        else:
+            st.error("다시 생각해 보세요. Lately의 뜻도 함께 보세요.")
+
+    st.markdown("---")
+    st.markdown("### 5. 발견한 규칙 정리")
+
+    rule_choice = st.radio(
+        "지금까지 발견한 규칙을 가장 잘 정리한 것은 무엇인가요?",
+        [
+            "I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다",
+            "I have been + 동사원형 = 내일 ~할 것이다",
+            "I am + 동사-ing = 어제 ~했다",
+            "I will + 동사원형 = 지금까지 계속 ~하고 있다"
+        ],
+        key=f"{prefix}rule_choice",
+        horizontal=False
+    )
+
+    if st.button("확인", key=f"{prefix}rule_choice_check", use_container_width=True):
+        if rule_choice == "I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다":
             st.success("정답입니다.")
             st.balloons()
         else:
-            st.error("다시 보세요. 앞에서 찾은 표현과 의미를 연결해 보세요.")
+            st.error("다시 보세요. I’ve been = I have been입니다.")
 
-    if st.session_state.get(f"{prefix}rule") == g["rule_answer"]:
+    if st.session_state.get(f"{prefix}rule_choice") == "I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다":
         st.markdown(
-            f"""
+            """
             <div style="background:#f0fdf4; padding:22px; border-radius:20px; border:2px solid #bbf7d0; margin-top:18px;">
-                <div style="font-size:1.35rem; font-weight:900; color:#166534; margin-bottom:10px;">
-                    발견한 규칙
+                <div style="font-size:1.45rem; font-weight:900; color:#166534; margin-bottom:10px;">
+                    🌟 발견한 규칙
                 </div>
-                <div style="font-size:1.2rem; line-height:1.8; color:#1e293b; font-weight:850;">
-                    {clean_text_for_display(g['rule_answer'])}
+                <div style="font-size:1.25rem; line-height:1.8; color:#1e293b; font-weight:850;">
+                    I’ve been = I have been<br>
+                    I have been + 동사-ing<br>
+                    = 최근부터 지금까지 계속 ~하고 있다
+                </div>
+                <div style="font-size:0.95rem; color:#64748b; margin-top:8px;">
+                    문법 이름: 현재완료진행형
                 </div>
             </div>
             """,
@@ -1009,45 +382,94 @@ def show_song_grammar_tab(song_choice, data):
     st.markdown("---")
     st.markdown("### 📝 Controlled Practice")
 
+    questions = [
+        {
+            "q": "1. I’ve been의 긴 형태로 알맞은 것은?",
+            "options": ["I am been", "I have been", "I will been", "I did been"],
+            "answer": "I have been",
+            "explain": "I’ve been = I have been"
+        },
+        {
+            "q": "2. 맞는 문장은?",
+            "options": ["I have been study English.", "I have been studying English.", "I have studying English.", "I been studying English."],
+            "answer": "I have been studying English.",
+            "explain": "have been + 동사-ing"
+        },
+        {
+            "q": "3. Lately, I have been ______ soccer.",
+            "options": ["play", "playing", "played", "plays"],
+            "answer": "playing",
+            "explain": "I have been playing soccer."
+        },
+        {
+            "q": "4. I have been losing sleep. 의 뜻은?",
+            "options": ["나는 지금 자고 있다.", "나는 요즘 잠을 잘 못 자고 있다.", "나는 어제 잠을 많이 잤다.", "나는 내일 일찍 잘 것이다."],
+            "answer": "나는 요즘 잠을 잘 못 자고 있다.",
+            "explain": "최근부터 지금까지 이어지는 상태입니다."
+        },
+        {
+            "q": "5. 빈칸에 알맞은 것은? I’ve been ______ about my future.",
+            "options": ["thinking", "think", "thought", "thinks"],
+            "answer": "thinking",
+            "explain": "I’ve been thinking about my future."
+        },
+        {
+            "q": "6. '요즘 계속 영어를 연습하고 있어.'에 가장 가까운 문장은?",
+            "options": ["I practiced English yesterday.", "I have been practicing English.", "I will practice English.", "I am practice English."],
+            "answer": "I have been practicing English.",
+            "explain": "요즘 계속 이어지는 행동입니다."
+        },
+        {
+            "q": "7. 노래 문장에 가장 알맞은 것은? Lately, I’ve been ______ sleep.",
+            "options": ["lose", "losing", "lost", "loses"],
+            "answer": "losing",
+            "explain": "I’ve been losing sleep."
+        },
+        {
+            "q": "8. 다음 중 have been + 동사-ing 구조가 맞는 것은?",
+            "options": ["I have been pray hard.", "I have been praying hard.", "I have prayed hard yesterday.", "I am been praying hard."],
+            "answer": "I have been praying hard.",
+            "explain": "have been + 동사-ing"
+        },
+    ]
+
     score = 0
     checked = 0
-    questions = g["practice"]
 
     for i, item in enumerate(questions, start=1):
-        q, options, answer, explain = item
         q_key = f"{prefix}cp_{i}"
         check_key = f"{prefix}cp_checked_{i}"
         st.markdown(
             f"""
             <div style="background:#ffffff; padding:16px 18px; border-radius:18px; border:1px solid #e2e8f0; margin-top:16px;">
-                <div style="font-size:1.12rem; font-weight:900; color:#1e293b;">{clean_text_for_display(q)}</div>
+                <div style="font-size:1.15rem; font-weight:900; color:#1e293b;">{item['q']}</div>
             </div>
             """,
             unsafe_allow_html=True
         )
         choice = st.radio(
             "정답을 고르세요.",
-            options,
+            item["options"],
             key=q_key,
             label_visibility="collapsed"
         )
         if st.button("정답 확인", key=f"{prefix}cp_check_btn_{i}"):
             if check_key not in st.session_state:
-                st.session_state[check_key] = choice == answer
+                st.session_state[check_key] = choice == item["answer"]
 
         if check_key in st.session_state:
             checked += 1
             if st.session_state[check_key]:
                 score += 1
-                st.success(f"정답입니다. {explain}")
+                st.success(f"정답입니다. {item['explain']}")
             else:
-                st.error(f"정답: {answer} / {explain}")
+                st.error(f"정답: {item['answer']} / {item['explain']}")
 
     st.markdown(f"### 📊 Grammar Practice 점수: {score}/{len(questions)}")
-    st.caption(f"정답 확인을 누른 문제: {checked}/{len(questions)} · 통과 기준: 4/{len(questions)} 이상")
+    st.caption(f"정답 확인을 누른 문제: {checked}/{len(questions)} · 통과 기준: 6/{len(questions)} 이상")
 
     if checked == len(questions):
-        if score >= 4:
+        if score >= 6:
             st.success("통과했습니다.")
         else:
             st.warning("다시 풀기로 한 번 더 도전해 보세요.")
@@ -1064,16 +486,24 @@ def show_song_grammar_tab(song_choice, data):
 
     sentence_choice = st.selectbox(
         "표현을 골라 문장을 완성하세요.",
-        g["sentence_choices"],
+        [
+            "studying English",
+            "playing soccer",
+            "thinking about my dream",
+            "feeling tired",
+            "watching YouTube",
+            "practicing singing",
+            "working hard"
+        ],
         key=f"{prefix}sentence_choice"
     )
 
-    final_sentence = f"{g['sentence_prefix']} {sentence_choice}{g.get('sentence_suffix', '')}."
     st.markdown(
         f"""
         <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff); padding:22px; border-radius:20px; border:1px solid #bfdbfe;">
-            <div style="font-size:1.35rem; font-weight:900; color:#1e3a8a;">
-                {clean_text_for_display(final_sentence)}
+            <div style="font-size:1.45rem; font-weight:900; color:#1e3a8a;">
+                Lately, I have been {clean_text_for_display(sentence_choice)}.<br>
+                <span style="font-size:1.05rem; color:#475569;">= Lately, I’ve been {clean_text_for_display(sentence_choice)}.</span>
             </div>
         </div>
         """,
@@ -1082,15 +512,24 @@ def show_song_grammar_tab(song_choice, data):
 
     user_sentence = st.text_input(
         "직접 문장을 써 보세요.",
-        placeholder=final_sentence,
+        placeholder="예: Lately, I have been studying English.",
         key=f"{prefix}user_sentence"
     )
 
     if st.button("내 문장 확인", key=f"{prefix}my_sentence_check", use_container_width=True):
-        if not user_sentence.strip():
+        sentence_norm = user_sentence.strip().lower().replace("i’ve", "i've")
+        has_have_been = ("i have been" in sentence_norm) or ("i've been" in sentence_norm)
+        has_ing_after_been = bool(re.search(r"been\s+\w+ing\b", sentence_norm))
+        if not sentence_norm:
             st.warning("먼저 문장을 써 보세요.")
+        elif has_have_been and has_ing_after_been:
+            st.success("좋아요. have been + 동사-ing 구조를 사용했습니다.")
+        elif has_have_been:
+            st.info("have been 뒤에 동사-ing가 왔는지 확인해 보세요.")
+        elif "been" in sentence_norm:
+            st.info("have been + 동사-ing 구조를 확인해 보세요.")
         else:
-            st.success("좋아요. 오늘 발견한 표현을 활용해 문장을 만들었습니다.")
+            st.warning("I have been 또는 I’ve been을 넣어서 다시 써 보세요.")
 
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
@@ -3130,7 +2569,7 @@ elif selected_tab == "📝 Key Expression 뜻 맞추기":
 
 
 elif selected_tab == "🎯 Grammar":
-    show_song_grammar_tab(song_choice, data)
+    show_ive_been_grammar_tab(song_choice, data)
 
 
 elif selected_tab == "🧩 문장 매칭 게임":
