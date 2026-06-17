@@ -615,6 +615,14 @@ def check_target_grammar_sentence(target, sentence):
 
 
 
+
+    if target == "Every + 명사 + 주어 + 동사":
+        if re.search(r"^every\s+\w+(?:\s+\w+)?\s+(i|you|we|they|he|she|it|[a-z]+)\s+\w+", low):
+            return ok("좋아요. Every + 명사 + 주어 + 동사 형태를 잘 썼습니다.")
+        if re.search(r"^every\s+\w+\s+to\s+\w+", low):
+            return no("Every 뒤에는 'to + 동사'가 아니라 명사와 문장 형태를 이어 씁니다. 예: Every word you say.")
+        return no("Every + 명사 + 주어 + 동사 구조를 써 보세요. 예: Every word you say.")
+
     if target == "Let's + 동사":
         if re.search(r"\blet's\s+(?!to\b)\w+", low) or re.search(r"\blet\s+us\s+(?!to\b)\w+", low):
             return ok("좋아요. 함께 하자고 제안하는 Let's + 동사 형태를 잘 썼습니다.")
@@ -1700,7 +1708,69 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/명사 +
                                                   'go on a date',
                                                   'dance under the moon',
                                                   'study English'],
-                             'sentence_suffix': ''}}
+                             'sentence_suffix': ''},
+ '20. Every Breath You Take - The Police': {'target': 'Every + 명사 + 주어 + 동사',
+                                            'examples': ['Every breath you take.',
+                                                         'Every move you make.',
+                                                         'Every step you take.',
+                                                         'Every word you say.',
+                                                         'Every game you play.'],
+                                            'frequent_options': ['Every', 'Let', 'I used to', "Let's"],
+                                            'frequent_answer': 'Every',
+                                            'form_options': ['Every + 과거형 + 명사',
+                                                             'Every + 명사 + 주어 + 동사',
+                                                             'Every + to + 동사',
+                                                             'Every + ing 형태'],
+                                            'form_answer': 'Every + 명사 + 주어 + 동사',
+                                            'meaning_examples': [('Every breath you take.', '네가 쉬는 모든 숨.'),
+                                                                 ('Every move you make.', '네가 하는 모든 움직임.'),
+                                                                 ('Every word you say.', '네가 하는 모든 말.')],
+                                            'meaning_options': ['하나도 없다는 뜻',
+                                                                '모든/매 ~마다',
+                                                                '어제 한 일',
+                                                                '함께 하자는 제안'],
+                                            'meaning_answer': '모든/매 ~마다',
+                                            'rule_answer': 'Every + 명사 + 주어 + 동사 = 주어가 ~하는 모든 ...',
+                                            'rule_options': ['Every + 명사 + 주어 + 동사 = 주어가 ~하는 모든 ...',
+                                                             'Every + 명사 + to + 동사 = 반드시 ~해야 한다',
+                                                             'Every + 과거형 = 어제 ~했다',
+                                                             'Every + ing = ~하고 있는 중이다'],
+                                            'practice': [('빈칸: Every breath you _____.',
+                                                          ['takes', 'took', 'take', 'taking'],
+                                                          'take',
+                                                          'you 뒤에는 동사 take가 옵니다.'),
+                                                         ('맞는 표현은?',
+                                                          ['Every move you makes.',
+                                                           'Every move you made.',
+                                                           'Every move you make.',
+                                                           'Every move to make.'],
+                                                          'Every move you make.',
+                                                          'Every + 명사 + 주어 + 동사'),
+                                                         ('Every word you say.의 뜻은?',
+                                                          ['네가 하는 모든 말',
+                                                           '네가 들은 모든 노래',
+                                                           '네가 걷는 모든 길',
+                                                           '네가 쓴 모든 편지'],
+                                                          '네가 하는 모든 말',
+                                                          'Every는 모든/매 ~마다의 뜻입니다.'),
+                                                         ('빈칸: Every step you _____.',
+                                                          ['takes', 'taken', 'taking', 'take'],
+                                                          'take',
+                                                          'Every step you take'),
+                                                         ('알맞은 구조는?',
+                                                          ['Every + to + 동사',
+                                                           'Every + 명사 + 주어 + 동사',
+                                                           'Every + 과거형',
+                                                           'Every + ing'],
+                                                          'Every + 명사 + 주어 + 동사',
+                                                          '반복되는 표현에서 규칙을 찾을 수 있습니다.')],
+                                            'sentence_prefix': 'Every',
+                                            'sentence_choices': ['word you say',
+                                                                 'step you take',
+                                                                 'move you make',
+                                                                 'breath you take',
+                                                                 'game you play'],
+                                            'sentence_suffix': ''}}
 
 
 
@@ -2052,6 +2122,8 @@ def song_reflection_bridge_ko(song_title):
         return "이 노래는 돈이나 현실적인 걱정 너머에 있는 꿈, 선택, 미래에 대한 고민을 떠올리게 합니다."
     if "My Universe" in song_title:
         return "이 노래는 서로 다른 세계에 있는 사람도 누군가에게는 가장 특별한 존재가 될 수 있다는 메시지를 전합니다."
+    if "Every Breath You Take" in song_title:
+        return "이 노래는 그리움과 관심이 지나칠 때 관계에서 어떤 부담이 될 수 있는지, 그리고 건강한 거리와 배려가 왜 중요한지 생각하게 합니다."
     return "이 노래는 단순히 듣고 끝나는 음악이 아니라, 내 경험과 감정을 연결해 볼 수 있는 계기가 됩니다."
 
 
@@ -5184,7 +5256,137 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                           ('take it slow', '천천히 하다')],
                              'reflect_questions': ['화려한 장소보다 조용하고 진심 있는 시간이 더 좋았던 경험이 있나요?',
                                                    '내가 누군가에게 예의나 배려를 보여 줄 수 있는 작은 행동은 무엇인가요?',
-                                                   '다른 사람들과 조금 다르지만 내가 소중하게 생각하는 나만의 마음이나 태도는 무엇인가요?']}}
+                                                   '다른 사람들과 조금 다르지만 내가 소중하게 생각하는 나만의 마음이나 태도는 무엇인가요?']},
+ '20. Every Breath You Take - The Police': {'video_url': 'https://www.youtube.com/watch?v=OMOGaugKpzs',
+                                            'lyrics': [('Every breath you take', '네가 쉬는 모든 숨'),
+                                                       ('And every move you make', '네가 하는 모든 움직임'),
+                                                       ('Every bond you break', '네가 끊는 모든 관계'),
+                                                       ('Every step you take', '네가 내딛는 모든 걸음'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ('Every single day', '매일매일'),
+                                                       ('And every word you say', '네가 하는 모든 말'),
+                                                       ('Every game you play', '네가 하는 모든 행동'),
+                                                       ('Every night you stay', '네가 머무는 모든 밤'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ("Oh, can't you see", '오, 모르겠니'),
+                                                       ('You belong to me?', '너는 나에게 속해 있다는 걸?'),
+                                                       ('How my poor heart aches', '내 불쌍한 마음이 얼마나 아픈지'),
+                                                       ('With every step you take?', '네가 내딛는 모든 걸음마다'),
+                                                       ('Every move you make', '네가 하는 모든 움직임'),
+                                                       ('And every vow you break', '네가 깨뜨리는 모든 맹세'),
+                                                       ('Every smile you fake', '네가 지어 보이는 모든 가짜 미소'),
+                                                       ('Every claim you stake', '네가 주장하는 모든 권리'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ("Since you've gone, I've been lost without a trace",
+                                                        '네가 떠난 뒤로 나는 흔적도 없이 길을 잃은 듯했어'),
+                                                       ('I dream at night, I can only see your face',
+                                                        '밤에 꿈을 꾸면 네 얼굴만 보여'),
+                                                       ("I look around, but it's you I can't replace",
+                                                        '주위를 둘러봐도 너를 대신할 수 있는 사람은 없어'),
+                                                       ('I feel so cold, and I long for your embrace',
+                                                        '너무 차갑게 느껴지고, 네 품이 그리워'),
+                                                       ('I keep crying, baby, baby please',
+                                                        '나는 계속 울고 있어, 제발'),
+                                                       ("Oh, can't you see", '오, 모르겠니'),
+                                                       ('You belong to me?', '너는 나에게 속해 있다는 걸?'),
+                                                       ('How my poor heart aches', '내 불쌍한 마음이 얼마나 아픈지'),
+                                                       ('With every step you take?', '네가 내딛는 모든 걸음마다'),
+                                                       ('Every move you make', '네가 하는 모든 움직임'),
+                                                       ('And every vow you break', '네가 깨뜨리는 모든 맹세'),
+                                                       ('Every smile you fake', '네가 지어 보이는 모든 가짜 미소'),
+                                                       ('Every claim you stake', '네가 주장하는 모든 권리'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ('Every move you make', '네가 하는 모든 움직임'),
+                                                       ('Every step you take', '네가 내딛는 모든 걸음'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ('(Every breath you take)', '(네가 쉬는 모든 숨)'),
+                                                       ('(Every move you make)', '(네가 하는 모든 움직임)'),
+                                                       ('(Every bond you break)', '(네가 끊는 모든 관계)'),
+                                                       ("(Every step you take) I'll be watching you",
+                                                        '(네가 내딛는 모든 걸음) 나는 너를 지켜보고 있을 거야'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ('whoo, hoo', '우, 후'),
+                                                       ('(Every game you play)', '(네가 하는 모든 행동)'),
+                                                       ("(Every night you stay) I'll be watching you",
+                                                        '(네가 머무는 모든 밤) 나는 너를 지켜보고 있을 거야'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                       ('(Every single day)', '(매일매일)'),
+                                                       ('(Every word you say)', '(네가 하는 모든 말)'),
+                                                       ('(Every game you play)', '(네가 하는 모든 행동)'),
+                                                       ("(Every night you stay) I'll be watching you",
+                                                        '(네가 머무는 모든 밤) 나는 너를 지켜보고 있을 거야')],
+                                            'quiz': [{'q': '1. 이 노래에서 가장 반복되는 표현은 무엇인가요?',
+                                                      'options': ['Every breath you take',
+                                                                  'Let it go',
+                                                                  'I can show you',
+                                                                  "Let's skip the club"],
+                                                      'answer': 'Every breath you take'},
+                                                     {'q': "2. 'I'll be watching you'의 뜻으로 알맞은 것은?",
+                                                      'options': ['나는 너를 지켜보고 있을 거야',
+                                                                  '나는 너를 잊을 거야',
+                                                                  '나는 너와 춤출 거야',
+                                                                  '나는 집에 갈 거야'],
+                                                      'answer': '나는 너를 지켜보고 있을 거야'},
+                                                     {'q': '3. 화자는 상대가 떠난 뒤 어떤 상태라고 말하나요?',
+                                                      'options': ['길을 잃은 듯하다',
+                                                                  '매우 신난다',
+                                                                  '새로운 도시로 간다',
+                                                                  '노래를 멈춘다'],
+                                                      'answer': '길을 잃은 듯하다'},
+                                                     {'q': "4. 'I can only see your face'의 의미로 알맞은 것은?",
+                                                      'options': ['네 얼굴만 보인다',
+                                                                  '네 목소리만 들린다',
+                                                                  '나는 아무것도 볼 수 없다',
+                                                                  '나는 얼굴을 잊었다'],
+                                                      'answer': '네 얼굴만 보인다'},
+                                                     {'q': "5. 'you I can't replace'가 의미하는 것은?",
+                                                      'options': ['너를 대신할 수 있는 사람은 없다',
+                                                                  '너를 쉽게 잊을 수 있다',
+                                                                  '너는 나를 대신할 수 있다',
+                                                                  '나는 새 친구가 많다'],
+                                                      'answer': '너를 대신할 수 있는 사람은 없다'},
+                                                     {'q': '6. 이 노래의 분위기로 가장 알맞은 것은?',
+                                                      'options': ['그리움과 집착이 섞인 분위기',
+                                                                  '여행의 즐거움',
+                                                                  '친구들과의 파티',
+                                                                  '학교생활의 설렘'],
+                                                      'answer': '그리움과 집착이 섞인 분위기'},
+                                                     {'q': "7. 'Every smile you fake'의 뜻으로 알맞은 것은?",
+                                                      'options': ['네가 짓는 모든 가짜 미소',
+                                                                  '네가 진심으로 웃는 순간',
+                                                                  '네가 부르는 모든 노래',
+                                                                  '네가 걷는 모든 길'],
+                                                      'answer': '네가 짓는 모든 가짜 미소'},
+                                                     {'q': '8. 이 노래를 수업에서 이야기할 때 가장 중요한 주제는?',
+                                                      'options': ['그리움과 건강한 관계의 경계',
+                                                                  '운동 경기 규칙',
+                                                                  '여행 계획 세우기',
+                                                                  '음식 주문하기'],
+                                                      'answer': '그리움과 건강한 관계의 경계'}],
+                                            'key_expressions': [('Every breath you take', '네가 쉬는 모든 숨'),
+                                                                ('every move you make', '네가 하는 모든 움직임'),
+                                                                ('every step you take', '네가 내딛는 모든 걸음'),
+                                                                ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                                ("can't you see", '모르겠니'),
+                                                                ('belong to me', '나에게 속하다'),
+                                                                ('my poor heart aches', '내 마음이 아프다'),
+                                                                ("Since you've gone", '네가 떠난 뒤로'),
+                                                                ('without a trace', '흔적도 없이'),
+                                                                ("I can't replace", '대신할 수 없다')],
+                                            'matching': [('Every breath you take', '네가 쉬는 모든 숨'),
+                                                         ('every move you make', '네가 하는 모든 움직임'),
+                                                         ("I'll be watching you", '나는 너를 지켜보고 있을 거야'),
+                                                         ("can't you see", '모르겠니'),
+                                                         ("Since you've gone", '네가 떠난 뒤로'),
+                                                         ("I can't replace", '대신할 수 없다')],
+                                            'reflect_questions': ['누군가를 그리워해 본 경험이 있나요? 그때 어떤 마음이 들었나요?',
+                                                                  '사랑이나 관심이 지나치면 상대에게 부담이 될 수 있는 이유는 무엇일까요?',
+                                                                  '건강한 관계를 위해 서로 지켜야 할 선이나 배려는 무엇이라고 '
+                                                                  '생각하나요?']}}
 
 BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 숨겨 왔던 자신을 받아들이는 순간',
                                'paragraphs': ['Let It Go는 영화 Frozen의 대표곡으로, 엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 '
@@ -5425,7 +5627,24 @@ BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 
                                             'cowboy처럼 솔직하고 단단하며, 다른 사람들과 똑같이 보이고 말하기보다 different kind of heart를 가진 사람으로 자신을 표현합니다.',
                                             "수업에서는 palm trees, square dancing, ain't got nothing on you, let's skip, take you on a date, "
                                             'hold the door, how I was raised, different kind of heart, take it slow 같은 표현을 중심으로 배울 수 '
-                                            '있습니다. 학생들은 진심, 배려, 나만의 태도, 그리고 화려함보다 중요한 가치에 대해 생각을 적을 수 있습니다.']}}
+                                            '있습니다. 학생들은 진심, 배려, 나만의 태도, 그리고 화려함보다 중요한 가치에 대해 생각을 적을 수 있습니다.']},
+ '20. Every Breath You Take - The Police': {'title': '👁️ Every Breath You Take: 그리움과 집착의 경계',
+                                            'paragraphs': ['Every Breath You Take는 The Police의 대표곡으로, 부드러운 '
+                                                           '멜로디와 반복적인 표현 때문에 사랑 노래처럼 들릴 수 있습니다. 하지만 가사를 자세히 '
+                                                           '보면 떠난 사람을 계속 바라보고 따라가는 화자의 강한 집착과 그리움이 함께 드러납니다.',
+                                                           '이 노래의 핵심 표현은 Every breath you take, every move '
+                                                           'you make, every step you take처럼 Every + 명사 + 주어 '
+                                                           '+ 동사 구조가 반복되는 부분입니다. 학생들은 이 반복을 통해 every가 ‘모든’ '
+                                                           '또는 ‘매 ~마다’라는 의미를 가진다는 것을 자연스럽게 발견할 수 있습니다.',
+                                                           '화자는 상대가 떠난 뒤 lost without a trace, I can only '
+                                                           "see your face, you I can't replace라고 말하며 상실감과 "
+                                                           "외로움을 표현합니다. 동시에 I'll be watching you라는 반복은 관심과 "
+                                                           '사랑이 지나치면 상대에게 부담이나 두려움이 될 수 있다는 점도 생각하게 합니다.',
+                                                           '수업에서는 every breath, every move, every step, '
+                                                           "every word, I'll be watching you, can't you see, "
+                                                           "belong to me, since you've gone, without a "
+                                                           "trace, I can't replace 같은 표현을 중심으로 배울 수 있습니다. "
+                                                           '학생들은 그리움, 이별, 건강한 관계의 경계에 대해 생각을 적을 수 있습니다.']}}
 
 
 def show_background(song_choice, data):
