@@ -7,6 +7,7 @@ import json
 import uuid
 import io
 import os
+import base64
 from datetime import datetime
 from gtts import gTTS
 from urllib.parse import quote
@@ -5971,6 +5972,31 @@ elif selected_tab == "🧩 문장 매칭 게임":
     data_json = json.dumps(payload, ensure_ascii=False)
     component_id = "match_" + uuid.uuid4().hex
 
+    matching_pdf_bytes = make_mission_pdf(song_choice, "문장 매칭 게임", "문장 매칭 게임 활동 완료")
+    matching_pdf_filename = f"mission_complete_{safe_key(song_choice)}_{safe_key('문장 매칭 게임')}.pdf"
+    if matching_pdf_bytes:
+        matching_pdf_b64 = base64.b64encode(matching_pdf_bytes).decode("utf-8")
+        certificate_html = f'''
+            <div id="cert_{component_id}" class="certificate-box" style="display:none;">
+                <div class="certificate-title">📄 문장 매칭 게임 PDF 인증서</div>
+                <div class="certificate-guide">
+                    모든 문장을 성공적으로 맞췄습니다. 아래 버튼을 눌러 완료 인증서를 저장하세요.
+                </div>
+                <a class="cert-download" href="data:application/pdf;base64,{matching_pdf_b64}" download="{matching_pdf_filename}">
+                    📄 PDF 인증서 다운받기
+                </a>
+            </div>
+        '''
+    else:
+        certificate_html = f'''
+            <div id="cert_{component_id}" class="certificate-box" style="display:none;">
+                <div class="certificate-title">📄 문장 매칭 게임 PDF 인증서</div>
+                <div class="certificate-guide">
+                    PDF 저장 기능을 사용하려면 requirements.txt에 reportlab을 추가해 주세요. 예: reportlab>=4.0.0
+                </div>
+            </div>
+        '''
+
     components.html(
         f"""
         <div id="{component_id}" class="match-app">
@@ -6003,6 +6029,8 @@ elif selected_tab == "🧩 문장 매칭 게임":
             </div>
 
             <button id="reset_{component_id}" class="reset-btn">매칭 게임 다시 시작</button>
+
+            {certificate_html}
         </div>
 
         <style>
@@ -6198,6 +6226,50 @@ elif selected_tab == "🧩 문장 매칭 게임":
                 background: #eef2ff;
             }}
 
+            #{component_id} .certificate-box {{
+                background: linear-gradient(135deg,#eef2ff,#f0f9ff,#fdf2f8);
+                border: 2px solid #6366f1;
+                border-radius: 22px;
+                padding: 24px;
+                margin-top: 18px;
+                text-align: center;
+                animation: pop_{component_id} .45s ease;
+            }}
+
+            #{component_id} .certificate-title {{
+                font-size: 25px;
+                font-weight: 1000;
+                color: #3730a3;
+                margin-bottom: 8px;
+            }}
+
+            #{component_id} .certificate-guide {{
+                font-size: 16px;
+                font-weight: 850;
+                color: #475569;
+                line-height: 1.7;
+                margin-bottom: 14px;
+            }}
+
+            #{component_id} .cert-download {{
+                display: block;
+                width: 100%;
+                box-sizing: border-box;
+                min-height: 68px;
+                line-height: 68px;
+                background: #ffffff;
+                color: #3730a3;
+                border: 2px solid #4f46e5;
+                border-radius: 18px;
+                text-decoration: none;
+                font-size: 20px;
+                font-weight: 1000;
+            }}
+
+            #{component_id} .cert-download:hover {{
+                background: #eef2ff;
+            }}
+
             #{component_id} .done-message {{
                 background: linear-gradient(135deg,#dcfce7,#bbf7d0);
                 border: 1px solid #86efac;
@@ -6238,6 +6310,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
             const score_{component_id} = document.getElementById("score_{component_id}");
             const bar_{component_id} = document.getElementById("bar_{component_id}");
             const reset_{component_id} = document.getElementById("reset_{component_id}");
+            const certBox_{component_id} = document.getElementById("cert_{component_id}");
 
             let selected_{component_id} = null;
             let done_{component_id} = new Set();
@@ -6292,8 +6365,11 @@ elif selected_tab == "🧩 문장 매칭 게임":
                     if (!root_{component_id}.querySelector(".done-message")) {{
                         const msg = document.createElement("div");
                         msg.className = "done-message";
-                        msg.textContent = "🎉 모든 문장을 맞췄습니다!";
+                        msg.textContent = "🎉 모든 문장을 맞췄습니다! 이제 PDF 인증서를 저장하세요.";
                         root_{component_id}.appendChild(msg);
+                    }}
+                    if (certBox_{component_id}) {{
+                        certBox_{component_id}.style.display = "block";
                     }}
                 }}
             }}
@@ -6366,6 +6442,10 @@ elif selected_tab == "🧩 문장 매칭 게임":
                 const doneMsg = root_{component_id}.querySelector(".done-message");
                 if (doneMsg) doneMsg.remove();
 
+                if (certBox_{component_id}) {{
+                    certBox_{component_id}.style.display = "none";
+                }}
+
                 status_{component_id}.textContent = "먼저 영어 또는 한국어 박스를 하나 선택하세요.";
                 render_{component_id}();
             }});
@@ -6377,18 +6457,6 @@ elif selected_tab == "🧩 문장 매칭 게임":
         scrolling=True
     )
 
-    st.markdown("---")
-    st.markdown("## 📄 문장 매칭 게임 PDF 인증서")
-
-    show_mission_pdf_download(
-        song_choice,
-        "문장 매칭 게임",
-        f"{match_key}_matching_direct",
-        "문장 매칭 게임 활동 완료",
-        big=True,
-        show_message=False
-    )
-    
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
     st.markdown(
