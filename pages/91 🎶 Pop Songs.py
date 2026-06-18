@@ -295,23 +295,58 @@ def make_mission_pdf(song_title, activity_name, detail_text=""):
     return buffer.getvalue()
 
 
-def show_mission_pdf_download(song_choice, activity_name, mission_key, detail_text=""):
-    """완료 메시지와 인증 PDF 다운로드 버튼을 보여 줍니다."""
+def show_mission_pdf_download(song_choice, activity_name, mission_key, detail_text="", big=False, show_message=True):
+    """완료 인증 PDF 다운로드 버튼을 보여 줍니다."""
     activity_label = clean_text_for_display(activity_name)
-    st.markdown(
-        f"""
-        <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d0); padding:20px; border-radius:18px; border:2px solid #86efac; margin-top:18px; text-align:center;">
-            <div style="font-size:1.45rem; font-weight:1000; color:#14532d;">🎉 {activity_label} 임무를 완성하셨습니다.</div>
-            <div style="font-size:1.02rem; font-weight:850; color:#166534; margin-top:6px;">PDF에는 완료한 활동명이 <b>{activity_label}</b>로 기록됩니다. 아래 버튼을 눌러 완료 인증 PDF를 저장하고, 나중에 선생님께 보여 주세요.</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+    if show_message:
+        st.markdown(
+            f"""
+            <div style="background:linear-gradient(135deg,#dcfce7,#bbf7d0); padding:20px; border-radius:18px; border:2px solid #86efac; margin-top:18px; text-align:center;">
+                <div style="font-size:1.45rem; font-weight:1000; color:#14532d;">🎉 {activity_label} 임무를 완성하셨습니다.</div>
+                <div style="font-size:1.02rem; font-weight:850; color:#166534; margin-top:6px;">
+                    PDF에는 완료한 활동명이 <b>{activity_label}</b>로 기록됩니다. 아래 버튼을 눌러 완료 인증 PDF를 저장하고, 나중에 선생님께 보여 주세요.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.markdown(
+            f"""
+            <div style="background:linear-gradient(135deg,#eef2ff,#f0f9ff,#fdf2f8); padding:24px; border-radius:22px; border:2px solid #6366f1; margin-top:18px; text-align:center;">
+                <div style="font-size:1.55rem; font-weight:1000; color:#3730a3;">📄 {activity_label} PDF 인증서 저장</div>
+                <div style="font-size:1.05rem; font-weight:850; color:#475569; margin-top:8px;">
+                    아래 버튼을 눌러 <b>{activity_label}</b> 완료 인증서를 저장하세요.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
     pdf_bytes = make_mission_pdf(song_choice, activity_name, detail_text)
+
     if pdf_bytes:
         file_name = f"mission_complete_{safe_key(song_choice)}_{safe_key(activity_name)}.pdf"
+
+        if big:
+            st.markdown(
+                """
+                <style>
+                div[data-testid="stDownloadButton"] button {
+                    min-height: 68px !important;
+                    font-size: 1.25rem !important;
+                    font-weight: 1000 !important;
+                    border-radius: 18px !important;
+                    border: 2px solid #4f46e5 !important;
+                }
+                </style>
+                """,
+                unsafe_allow_html=True
+            )
+
         st.download_button(
-            "📄 완료 인증 PDF 저장",
+            "📄 PDF 인증서 다운받기" if big else "📄 완료 인증 PDF 저장",
             data=pdf_bytes,
             file_name=file_name,
             mime="application/pdf",
@@ -320,6 +355,8 @@ def show_mission_pdf_download(song_choice, activity_name, mission_key, detail_te
         )
     else:
         st.warning("PDF 저장 기능을 사용하려면 requirements.txt에 reportlab을 추가해 주세요. 예: reportlab>=4.0.0")
+
+
 
 def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
     """Key Expression을 문제 없이 학습 자료로 보여주고 듣기를 제공합니다."""
@@ -470,12 +507,6 @@ def show_integrated_quiz_tab(song_choice, data):
             st.session_state[f"mission_{key_key}_lyrics_quiz"] = True
             st.session_state[f"mission_{key_key}_lyrics_quiz_detail"] = f"가사 이해도 퀴즈 완료 / 점수: {score}/{len(questions)}"
             st.balloons()
-            show_mission_pdf_download(
-                song_choice,
-                "가사 이해도 퀴즈",
-                f"{key_key}_lyrics_quiz_now",
-                st.session_state.get(f"mission_{key_key}_lyrics_quiz_detail", "")
-            )
         else:
             st.warning(f"아직 통과 기준에 부족합니다. 통과 기준은 {pass_score}/{len(questions)} 이상입니다.")
 
@@ -494,12 +525,29 @@ def show_integrated_quiz_tab(song_choice, data):
                 )
 
 
+    if st.session_state.get(f"mission_{key_key}_lyrics_quiz"):
+        st.markdown("---")
+        st.markdown("## 📄 가사와 이해도 퀴즈 PDF 인증서")
+
+        show_mission_pdf_download(
+            song_choice,
+            "가사 이해도 퀴즈",
+            f"{key_key}_lyrics_quiz_bottom",
+            st.session_state.get(
+                f"mission_{key_key}_lyrics_quiz_detail",
+                "가사 이해도 퀴즈 활동 완료"
+            ),
+            big=True,
+            show_message=False
+        )
+
 
 def check_target_grammar_sentence(target, sentence):
     """학생이 직접 쓴 문장이 오늘의 오늘 배운 표현을 포함하는지 간단히 검사합니다.
     너무 엄격한 문법 채점기가 아니라, 핵심 구조가 들어갔는지 확인하는 용도입니다.
     """
     raw = str(sentence).strip()
+    raw = raw.replace("’", "'").replace("‘", "'").replace("`", "'")
     s = re.sub(r"\s+", " ", raw)
     low = s.lower().strip()
 
@@ -624,11 +672,11 @@ def check_target_grammar_sentence(target, sentence):
         return no("Every + 명사 + 주어 + 동사 구조를 써 보세요. 예: Every word you say.")
 
     if target == "Let's + 동사":
-        if re.search(r"\blet's\s+(?!to\b)\w+", low) or re.search(r"\blet\s+us\s+(?!to\b)\w+", low):
+        if re.search(r"\b(let's|let us)\s+(?!to\b)[a-zA-Z']+", low):
             return ok("좋아요. 함께 하자고 제안하는 Let's + 동사 형태를 잘 썼습니다.")
-        if re.search(r"\blet's\s+to\s+\w+", low):
+        if re.search(r"\b(let's|let us)\s+to\s+[a-zA-Z']+", low):
             return no("Let's 뒤에는 to를 쓰지 않고 동사를 바로 씁니다. 예: Let's skip the club.")
-        return no("Let's + 동사 구조를 써 보세요. 예: Let's study English.")
+        return no("Let's + 동사 구조를 써 보세요. 예: Let's study English. / Let's skip the club.")
 
     if target == "gonna be + 형용사":
         if re.search(r"\b(gonna|going\s+to)\s+be\s+\w+", low):
@@ -1961,8 +2009,7 @@ def show_song_grammar_tab(song_choice, data):
             label_visibility="collapsed"
         )
         if st.button("정답 확인", key=f"{prefix}cp_check_btn_{i}"):
-            if check_key not in st.session_state:
-                st.session_state[check_key] = choice == answer
+            st.session_state[check_key] = choice == answer
 
         if check_key in st.session_state:
             checked += 1
@@ -2050,13 +2097,24 @@ def show_song_grammar_tab(song_choice, data):
     )
     if grammar_complete:
         st.session_state[f"mission_{grammar_key}_grammar"] = True
+        st.session_state[f"mission_{grammar_key}_grammar_detail"] = (
+            f"Grammar 활동 완료 / Grammar Practice 점수: {score}/{len(questions)}"
+        )
 
     if st.session_state.get(f"mission_{grammar_key}_grammar"):
+        st.markdown("---")
+        st.markdown("## 📄 Grammar PDF 인증서")
+
         show_mission_pdf_download(
             song_choice,
             "Grammar",
-            f"{grammar_key}_grammar",
-            f"Grammar 활동 완료 / Grammar Practice 점수: {score}/{len(questions)}"
+            f"{grammar_key}_grammar_big",
+            st.session_state.get(
+                f"mission_{grammar_key}_grammar_detail",
+                "Grammar 활동 완료"
+            ),
+            big=True,
+            show_message=False
         )
 
 def try_translate_ko_to_en(korean_text):
@@ -6320,18 +6378,16 @@ elif selected_tab == "🧩 문장 매칭 게임":
     )
 
     st.markdown("---")
-    st.markdown("### 📄 문장 매칭 게임 완료 인증")
-    st.info("문장 매칭 게임을 끝까지 완료한 뒤 아래 버튼을 누르면 ‘문장 매칭 게임 임무를 완성하셨습니다’ PDF를 저장할 수 있습니다.")
-    if st.button("문장 매칭을 모두 끝냈습니다", key=f"matching_done_{match_key}", use_container_width=True):
-        st.session_state[f"mission_{match_key}_matching"] = True
+    st.markdown("## 📄 문장 매칭 게임 PDF 인증서")
 
-    if st.session_state.get(f"mission_{match_key}_matching"):
-        show_mission_pdf_download(
-            song_choice,
-            "문장 매칭 게임",
-            f"{match_key}_matching",
-            "문장 매칭 게임 활동 완료"
-        )
+    show_mission_pdf_download(
+        song_choice,
+        "문장 매칭 게임",
+        f"{match_key}_matching_direct",
+        "문장 매칭 게임 활동 완료",
+        big=True,
+        show_message=False
+    )
     
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
