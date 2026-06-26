@@ -3812,8 +3812,11 @@ def show_lie_finding_activity(category, topic_name, data):
 def show_reading_blocks(dialogue, category, topic_name):
     full_english = make_full_listening_text(dialogue)
     play_persistent_full_audio(full_english, key=f"{category}_{topic_name}_full_only_audio_v1", button_label="🎧 전체 듣기", lang="en")
+
     lines = [eng for _, eng, _ in dialogue]
+    korean_lines = [kor for _, _, kor in dialogue]
     chunk_size = 4
+
     for block_idx in range(0, len(lines), chunk_size):
         chunk = lines[block_idx:block_idx + chunk_size]
         html_lines = "<br>".join(chunk)
@@ -3829,6 +3832,33 @@ def show_reading_blocks(dialogue, category, topic_name):
             """,
             unsafe_allow_html=True
         )
+
+    # 교과서와 Ronaldo 지문은 학생이 필요할 때만 한국어 해석을 열어 볼 수 있게 합니다.
+    # st.button은 누를 때마다 session_state 값을 바꾸어 해석 보기/숨기기를 전환합니다.
+    korean_available_topics = {"📘 교과서", "⚽ Ronaldo"}
+    if topic_name in korean_available_topics:
+        show_korean_key = f"show_korean_translation_{category}_{topic_name}"
+        if show_korean_key not in st.session_state:
+            st.session_state[show_korean_key] = False
+
+        button_label = "🇰🇷 한국어 해석 숨기기" if st.session_state[show_korean_key] else "🇰🇷 한국어 해석 보기"
+        if st.button(button_label, use_container_width=True, key=f"{show_korean_key}_btn"):
+            st.session_state[show_korean_key] = not st.session_state[show_korean_key]
+            st.rerun()
+
+        if st.session_state[show_korean_key]:
+            st.markdown("### 🇰🇷 한국어 해석")
+            for block_idx in range(0, len(korean_lines), chunk_size):
+                chunk = korean_lines[block_idx:block_idx + chunk_size]
+                html_lines = "<br>".join(chunk)
+                st.markdown(
+                    f"""
+                    <div class="korean-card" style="margin-bottom: 16px;">
+                        {html_lines}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
 
 tab_video, tab_reading = st.tabs([
@@ -3874,7 +3904,7 @@ with tab_video:
 # =========================================================
 with tab_reading:
     st.markdown("## 📖 Reading")
-    st.caption("본문을 먼저 읽고, 아래 Mission 1 문제를 풉니다. 한국어 해석 보기는 제공하지 않습니다.")
+    st.caption("본문을 먼저 읽고, 아래 Mission 1 문제를 풉니다. 교과서와 Ronaldo 지문은 필요할 때 한국어 해석 보기 버튼을 눌러 확인할 수 있습니다.")
 
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
     show_reading_blocks(dialogue, category, topic_name)
