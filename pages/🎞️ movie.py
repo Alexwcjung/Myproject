@@ -936,22 +936,22 @@ with tab2:
                     "아래에서 결과를 확인한 뒤 다시 풀어 보세요."
                 )
 
-            # Pop Song 가사 이해도 퀴즈와 같은 결과 표시
+            # 결과 표시:
+            # 정답이면 "정답입니다"만,
+            # 오답이면 정답과 선택 답을 공개하지 않고 다시 풀도록 안내
             for idx, (item, picked) in enumerate(blank_user_answers, start=1):
                 answer = item["answer"]
 
                 if picked == answer:
                     st.success(f"{idx}번 정답입니다. ✅")
                 else:
-                    wrong_html = (
-                        '<div class="wrong-box">'
-                        f'<b>{idx}번</b> 다시 확인해 보세요.<br>'
-                        f'내가 고른 답: {picked if picked else "선택 안 함"}<br>'
-                        f'정답: <b>{answer}</b><br>'
-                        '대사를 다시 듣고 확인해 보세요.'
-                        '</div>'
+                    st.markdown(
+                        f'<div class="wrong-box">'
+                        f'<b>{idx}번</b> 다시 확인해 보세요. ❌<br>'
+                        '정답은 아직 공개하지 않습니다. 대사를 다시 듣고 다시 풀어 보세요.'
+                        '</div>',
+                        unsafe_allow_html=True
                     )
-                    st.markdown(wrong_html, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
