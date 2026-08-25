@@ -1002,9 +1002,9 @@ with tab4:
     st.markdown('<div class="section-title">📘 문법</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="small-guide">'
-        '각 문제를 풀고 채점하세요. 맞힌 문제는 정답으로 표시되고, '
-        '틀린 문제는 정답을 공개하지 않은 채 계속 다시 도전할 수 있습니다. '
-        '모든 문제를 맞히면 문법 미션이 완료됩니다.'
+        '문제는 항상 그대로 유지됩니다. 답을 고르고 채점하면 각 문제 아래에 '
+        '정답 또는 오답만 표시됩니다. 정답 자체는 공개하지 않습니다. '
+        '오답은 답을 바꿔 다시 채점할 수 있습니다.'
         '</div>',
         unsafe_allow_html=True
     )
@@ -1019,97 +1019,64 @@ with tab4:
     </div>
     """, unsafe_allow_html=True)
 
-    # 문법 문제별 완료 여부
-    if "grammar_solved" not in st.session_state:
-        st.session_state.grammar_solved = [False] * len(grammar_questions)
-
-    if "grammar_round" not in st.session_state:
-        st.session_state.grammar_round = 0
-
-    # 이미 맞힌 문제는 계속 정답 표시
-    solved_count = sum(st.session_state.grammar_solved)
-
-    if solved_count > 0:
-        st.markdown("### ✅ 현재까지 맞힌 문제")
-        for idx, solved in enumerate(st.session_state.grammar_solved):
-            if solved:
-                st.success(f"Q{idx + 1}. 정답입니다. ✅")
-
-    # 아직 못 맞힌 문제만 다시 출제
-    remaining_indices = [
-        idx
-        for idx, solved in enumerate(st.session_state.grammar_solved)
-        if not solved
-    ]
+    if "grammar_status" not in st.session_state:
+        st.session_state.grammar_status = [None] * len(grammar_questions)
 
     grammar_answers = {}
 
-    if remaining_indices:
-        st.markdown("### ✏️ 풀어 볼 문제")
+    # 모든 문제를 항상 그대로 표시
+    for idx, item in enumerate(grammar_questions):
+        st.markdown(f"**Q{idx + 1}. {item['q']}**")
 
-        for idx in remaining_indices:
-            item = grammar_questions[idx]
+        grammar_answers[idx] = st.radio(
+            "하나를 고르세요.",
+            item["options"],
+            key=f"grammar_fixed_{idx}",
+            index=None,
+            horizontal=True
+        )
 
-            st.markdown(f"**Q{idx + 1}. {item['q']}**")
+        # 채점 결과만 문제 바로 아래 표시
+        if st.session_state.grammar_status[idx] is True:
+            st.success("정답입니다. ✅")
 
-            grammar_answers[idx] = st.radio(
-                "하나를 고르세요.",
-                item["options"],
-                key=f"grammar_{idx}_round_{st.session_state.grammar_round}",
-                index=None,
-                horizontal=True
+        elif st.session_state.grammar_status[idx] is False:
+            st.error("오답입니다. ❌ 다시 생각해 보세요.")
+
+        st.write("")
+
+    if st.button(
+        "문법 채점",
+        key="check_grammar_fixed",
+        type="primary"
+    ):
+        unanswered = [
+            idx
+            for idx in range(len(grammar_questions))
+            if grammar_answers.get(idx) is None
+        ]
+
+        if unanswered:
+            st.warning(
+                "모든 문제에 답한 뒤 채점하세요. "
+                f"선택하지 않은 문제: {', '.join(str(i + 1) for i in unanswered)}번"
             )
 
-            st.write("")
-
-        if st.button(
-            "문법 채점",
-            key=f"check_grammar_round_{st.session_state.grammar_round}",
-            type="primary"
-        ):
-            unanswered = [
-                idx
-                for idx in remaining_indices
-                if grammar_answers.get(idx) is None
-            ]
-
-            if unanswered:
-                st.warning(
-                    "모든 문제에 답한 뒤 채점하세요. "
-                    f"선택하지 않은 문제: {', '.join(str(i + 1) for i in unanswered)}번"
+        else:
+            for idx, item in enumerate(grammar_questions):
+                st.session_state.grammar_status[idx] = (
+                    grammar_answers[idx] == item["answer"]
                 )
 
+            if all(st.session_state.grammar_status):
+                st.session_state.batman_complete["grammar"] = True
             else:
-                newly_correct = []
-                still_wrong = []
+                st.session_state.batman_complete["grammar"] = False
 
-                for idx in remaining_indices:
-                    if grammar_answers[idx] == grammar_questions[idx]["answer"]:
-                        st.session_state.grammar_solved[idx] = True
-                        newly_correct.append(idx)
-                    else:
-                        still_wrong.append(idx)
+            st.rerun()
 
-                # 모든 문제를 맞힌 경우 완료 처리
-                if all(st.session_state.grammar_solved):
-                    st.session_state.batman_complete["grammar"] = True
-
-                # 다음 라운드에서 radio 상태를 새로 만들기
-                st.session_state.grammar_round += 1
-                st.rerun()
-
-        if remaining_indices:
-            st.markdown(
-                '<div class="info-box">'
-                '틀린 문제의 정답은 공개되지 않습니다. '
-                '다시 생각해서 계속 도전해 보세요.'
-                '</div>',
-                unsafe_allow_html=True
-            )
-
-    else:
-        st.session_state.batman_complete["grammar"] = True
-
+    # 모두 맞힌 경우에만 완료 메시지
+    if all(status is True for status in st.session_state.grammar_status):
         st.markdown("""
         <div class="success-box">
             📘 모든 문법 문제를 맞혔습니다! 문법 미션 완료! 🎉
