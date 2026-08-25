@@ -657,19 +657,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-completed_count = sum(st.session_state.batman_complete.values())
-
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    st.markdown(f"<span class='badge'>선택 문제 {'✅' if st.session_state.batman_complete['choice'] else '⬜'}</span>", unsafe_allow_html=True)
-with c2:
-    st.markdown(f"<span class='badge'>대사 빈칸 {'✅' if st.session_state.batman_complete['blank'] else '⬜'}</span>", unsafe_allow_html=True)
-with c3:
-    st.markdown(f"<span class='badge'>대사 연결 {'✅' if st.session_state.batman_complete['matching'] else '⬜'}</span>", unsafe_allow_html=True)
-with c4:
-    st.markdown(f"<span class='badge'>문법 {'✅' if st.session_state.batman_complete['grammar'] else '⬜'}</span>", unsafe_allow_html=True)
-
-st.progress(completed_count / 4)
 
 
 # =========================
