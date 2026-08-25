@@ -396,6 +396,22 @@ key_lines = [
     }
 ]
 
+
+key_expressions = [
+    {"word": "whatever", "ko": "무엇이든, 어떤 것이든", "example": "I'm whatever Gotham needs me to be."},
+    {"word": "deserve", "ko": "~할 자격이 있다, ~을 받을 만하다", "example": "Sometimes people deserve more."},
+    {"word": "hero", "ko": "영웅", "example": "He's the hero Gotham deserves."},
+    {"word": "truth", "ko": "진실", "example": "The truth isn't good enough."},
+    {"word": "faith", "ko": "믿음, 신뢰", "example": "People deserve to have their faith rewarded."},
+    {"word": "reward", "ko": "보상하다", "example": "Their faith is rewarded."},
+    {"word": "hunt", "ko": "쫓다, 추적하다", "example": "So we'll hunt him."},
+    {"word": "take it", "ko": "그것을 감당하다, 견디다", "example": "Because he can take it."},
+    {"word": "guardian", "ko": "수호자", "example": "He's a silent guardian."},
+    {"word": "watchful", "ko": "주의 깊게 지켜보는", "example": "A watchful protector."},
+    {"word": "protector", "ko": "보호자", "example": "A watchful protector."},
+    {"word": "need", "ko": "필요로 하다", "example": "Gotham needs me."}
+]
+
 hero_questions = [
     {
         "q": "Q1. At first, what do people think Batman is?",
@@ -561,13 +577,14 @@ st.progress(completed_count / 5)
 # TABS
 # =========================
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🎬 Video",
     "🎧 Line Blanks",
     "🧩 Quote Matching",
     "📘 Grammar",
     "🕵️ Story Order",
-    "💬 Quotes"
+    "💬 Quotes",
+    "🔑 Key Expressions"
 ])
 
 
@@ -962,6 +979,30 @@ with tab6:
             <b>Easy Meaning:</b> {line["easy"]}
         </div>
         """, unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
+# =========================
+# TAB 7 KEY EXPRESSIONS
+# =========================
+
+with tab7:
+    st.markdown('<div class="section-card">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🔑 Key Expressions</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">영화 속 핵심 단어와 표현을 뜻, 예문, TTS와 함께 확인하세요.</div>', unsafe_allow_html=True)
+
+    for i, item in enumerate(key_expressions, start=1):
+        st.markdown(f"""
+        <div class="line-box">
+            <b>{i}. {item["word"]}</b><br>
+            <span class="kor">{item["ko"]}</span><br><br>
+            <b>Example:</b> {item["example"]}
+        </div>
+        """, unsafe_allow_html=True)
+
+        speak_button(item["word"], f"key_word_{i}")
+        speak_button(item["example"], f"key_example_{i}")
 
     st.markdown('</div>', unsafe_allow_html=True)
 
