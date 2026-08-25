@@ -4,6 +4,7 @@ import random
 import io
 import json
 import uuid
+import base64
 from datetime import datetime, timezone, timedelta
 from gtts import gTTS
 
@@ -30,11 +31,35 @@ def make_tts_audio(text):
 
 
 def show_tts_audio(text):
-    """작은 크기의 Streamlit 오디오 플레이어"""
+    """가로 폭이 짧은 미니 TTS 오디오 플레이어"""
     try:
         audio_bytes = make_tts_audio(text)
         if audio_bytes:
-            st.audio(audio_bytes, format="audio/mp3")
+            audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+            components.html(
+                f"""
+                <div style="
+                    width:320px;
+                    max-width:100%;
+                    margin:4px 0 10px 0;
+                ">
+                    <audio
+                        controls
+                        preload="metadata"
+                        style="
+                            width:320px;
+                            max-width:100%;
+                            height:34px;
+                            display:block;
+                        "
+                    >
+                        <source src="data:audio/mp3;base64,{audio_b64}" type="audio/mp3">
+                    </audio>
+                </div>
+                """,
+                height=48
+            )
     except Exception as e:
         st.warning("음성을 불러오지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
         st.caption(f"오류 내용: {e}")
@@ -216,18 +241,6 @@ st.markdown("""
     margin-top: 18px;
     text-align: center;
     box-shadow: 0 8px 24px rgba(245,158,11,.14);
-}
-
-/* TTS 플레이어 크기 축소 */
-div[data-testid="stAudio"] {
-    max-width: 360px !important;
-    margin-top: 2px !important;
-    margin-bottom: 8px !important;
-}
-
-div[data-testid="stAudio"] audio {
-    width: 100% !important;
-    height: 32px !important;
 }
 
 div[data-testid="stButton"] button {
