@@ -778,66 +778,56 @@ with tab1:
 # =========================
 
 with tab2:
-    # Pop Song 퀴즈형 대사 빈칸에서는 이전 재도전용 상태를 사용하지 않습니다.
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🎧 대사 빈칸</div>', unsafe_allow_html=True)
 
     st.markdown(
-        """
-        <div class="game-card">
-            <div class="big-guide">
-                듣기 버튼을 눌러 영화 속 대사를 들어 보세요.<br>
-                빈칸에 들어갈 가장 알맞은 표현을 고른 뒤 <b>정답 확인</b>을 누르세요.
-            </div>
-        </div>
-        """,
+        '<div class="game-card">'
+        '<div class="big-guide">'
+        '듣기 버튼을 눌러 영화 속 대사를 들어 보세요.<br>'
+        '빈칸에 들어갈 가장 알맞은 표현을 고른 뒤 <b>정답 확인</b>을 누르세요.'
+        '</div>'
+        '</div>',
         unsafe_allow_html=True
     )
 
-    # Pop Song '가사 이해도 퀴즈'와 같은 방식으로
-    # 전체 문제를 한 화면에 보여 주고 한 번에 채점합니다.
     blank_user_answers = []
 
     for i, item in enumerate(blank_questions, start=1):
-
-        st.markdown(
-            f"""
-            <div style="
-                background:#ffffff;
-                padding:16px 18px;
-                border-radius:18px;
-                border:1px solid #e2e8f0;
-                margin-top:18px;
-            ">
-                <div style="
-                    font-size:0.95rem;
-                    font-weight:900;
-                    color:#6366f1;
-                    margin-bottom:6px;
-                ">
-                    대사 듣기
-                </div>
-
-                <div style="
-                    font-size:1.12rem;
-                    font-weight:950;
-                    color:#1e293b;
-                    line-height:1.6;
-                ">
-                    {i}. {item["sentence"]}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        question_html = (
+            '<div style="'
+            'background:#ffffff;'
+            'padding:16px 18px;'
+            'border-radius:18px;'
+            'border:1px solid #e2e8f0;'
+            'margin-top:18px;'
+            '">'
+            '<div style="'
+            'font-size:0.95rem;'
+            'font-weight:900;'
+            'color:#6366f1;'
+            'margin-bottom:6px;'
+            '">'
+            '대사 듣기'
+            '</div>'
+            '<div style="'
+            'font-size:1.12rem;'
+            'font-weight:950;'
+            'color:#1e293b;'
+            'line-height:1.6;'
+            '">'
+            f'{i}. {item["sentence"]}'
+            '</div>'
+            '</div>'
         )
 
-        # 각 대사 듣기
+        st.markdown(question_html, unsafe_allow_html=True)
+
         speak_button(
             item["audio"],
             f"blank_quiz_audio_{i}"
         )
 
-        # 정답 위치가 고정되지 않도록 문항별로 안정적으로 섞음
         options = item["options"].copy()
         rng = random.Random(f"batman_blank_quiz_{i}")
         rng.shuffle(options)
@@ -852,7 +842,6 @@ with tab2:
 
         blank_user_answers.append((item, picked))
 
-    # Pop Song 퀴즈처럼 정답 확인 / 다시 풀기 버튼을 나란히 배치
     c1, c2 = st.columns(2)
 
     with c1:
@@ -869,9 +858,6 @@ with tab2:
             key="batman_blank_quiz_reset",
             use_container_width=True
         ):
-            # 현재 대사 빈칸 선택값과 결과를 전부 초기화
-            # 답안 라디오 버튼 상태만 초기화합니다.
-            # 현재 실행 중인 submit/reset 버튼의 session_state 키는 건드리지 않습니다.
             for k in list(st.session_state.keys()):
                 if str(k).startswith("batman_blank_answer_"):
                     del st.session_state[k]
@@ -879,7 +865,6 @@ with tab2:
             st.session_state.batman_complete["blank"] = False
             st.rerun()
 
-    # 채점
     if submit_blank_quiz:
         unanswered = [
             idx
@@ -900,13 +885,11 @@ with tab2:
                 if picked == item["answer"]
             )
 
-            # Pop Song quiz의 score-box와 동일한 형태
             st.markdown(
                 f'<div class="score-box">점수: {score} / {len(blank_questions)}</div>',
                 unsafe_allow_html=True
             )
 
-            # 이 활동은 전 문항을 확인하면 완료 처리
             st.session_state.batman_complete["blank"] = True
 
             if score == len(blank_questions):
@@ -920,26 +903,21 @@ with tab2:
                     "아래에서 틀린 문제를 확인한 뒤 다시 풀어 보세요."
                 )
 
-            # Pop Song '가사 이해도 퀴즈'와 동일하게
-            # 맞은 문제는 success, 틀린 문제는 wrong-box
             for idx, (item, picked) in enumerate(blank_user_answers, start=1):
                 answer = item["answer"]
 
                 if picked == answer:
                     st.success(f"{idx}번 정답입니다. ✅")
-
                 else:
-                    st.markdown(
-                        f"""
-                        <div class="wrong-box">
-                            <b>{idx}번</b> 다시 확인해 보세요.<br>
-                            내가 고른 답: {picked if picked else "선택 안 함"}<br>
-                            정답: <b>{answer}</b><br>
-                            듣기 버튼을 다시 눌러 실제 대사를 확인해 보세요.
-                        </div>
-                        """,
-                        unsafe_allow_html=True
+                    wrong_html = (
+                        '<div class="wrong-box">'
+                        f'<b>{idx}번</b> 다시 확인해 보세요.<br>'
+                        f'내가 고른 답: {picked if picked else "선택 안 함"}<br>'
+                        f'정답: <b>{answer}</b><br>'
+                        '듣기 버튼을 다시 눌러 실제 대사를 확인해 보세요.'
+                        '</div>'
                     )
+                    st.markdown(wrong_html, unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
