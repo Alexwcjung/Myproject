@@ -1745,8 +1745,8 @@ with tab5:
         </div>
         """, unsafe_allow_html=True)
 
-        speak_button(item["word"], f"key_word_{i}")
-        speak_button(item["example"], f"key_example_{i}")
+        st.markdown("**🔊 TTS 듣기**")
+        show_blank_audio(item["word"])
 
     st.markdown('</div>', unsafe_allow_html=True)
 
