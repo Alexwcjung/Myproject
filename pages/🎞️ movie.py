@@ -676,13 +676,12 @@ st.progress(completed_count / 4)
 # TABS
 # =========================
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "🎬 영상",
     "🎧 대사 빈칸",
     "🧩 대사 연결",
     "📘 문법",
-    "💬 핵심 대사",
-    "🔑 핵심 표현"
+    "💬 핵심 대사 & 표현"
 ])
 
 
@@ -1703,13 +1702,20 @@ with tab4:
 
 
 # =========================
-# TAB 5 QUOTES
+# TAB 5 KEY QUOTES & EXPRESSIONS
 # =========================
 
 with tab5:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">💬 Key Quotes</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 뜻을 마지막으로 다시 확인하세요.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">💬 핵심 대사 & 핵심 표현</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="small-guide">'
+        '영상 속 핵심 대사와 핵심 단어·표현을 한곳에서 확인하세요.'
+        '</div>',
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 💬 핵심 대사")
 
     for line in key_lines:
         st.markdown(f"""
@@ -1721,17 +1727,14 @@ with tab5:
         </div>
         """, unsafe_allow_html=True)
 
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# TAB 6 KEY EXPRESSIONS
-# =========================
-
-with tab6:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🔑 Key Expressions</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">영화 속 핵심 단어와 표현을 뜻, 예문, TTS와 함께 확인하세요.</div>', unsafe_allow_html=True)
+    st.markdown("---")
+    st.markdown("### 🔑 핵심 표현")
+    st.markdown(
+        '<div class="small-guide">'
+        '핵심 단어와 표현의 뜻을 확인하고 듣기 버튼으로 발음과 예문을 들어 보세요.'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
     for i, item in enumerate(key_expressions, start=1):
         st.markdown(f"""
