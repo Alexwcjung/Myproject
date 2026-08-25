@@ -1,5 +1,6 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import random
 
 st.set_page_config(page_title="Batman English Mission", page_icon="🦇", layout="wide")
 
@@ -545,6 +546,21 @@ if "matching_korean_list" not in st.session_state:
     ]
 
 
+# 객관식 재도전 상태
+for mission_name in ["hero", "blank", "grammar"]:
+    attempt_key = f"{mission_name}_attempt"
+    wrong_key = f"{mission_name}_wrong"
+    if attempt_key not in st.session_state:
+        st.session_state[attempt_key] = 0
+    if wrong_key not in st.session_state:
+        st.session_state[wrong_key] = []
+
+
+# 대사 빈칸 보기 순서: 정답 위치가 항상 같지 않도록 문항별로 섞어서 유지
+if "blank_option_orders" not in st.session_state:
+    st.session_state.blank_option_orders = {}
+
+
 # =========================
 # HEADER
 # =========================
@@ -628,36 +644,90 @@ with tab1:
     st.markdown("### 🦸 Hero or Villain Mission")
     st.markdown('<div class="small-guide">Read the questions and choose the best answer. Get 3 or more correct to complete the mission.</div>', unsafe_allow_html=True)
 
-    choice_score = 0
+    # 1차: 전체 문제 / 2차: 틀린 문제만 다시 풀기
+    hero_indices = (
+        st.session_state.hero_wrong
+        if st.session_state.hero_attempt == 1 and st.session_state.hero_wrong
+        else list(range(len(hero_questions)))
+    )
 
-    for i, item in enumerate(hero_questions, start=1):
+    hero_answers = {}
+
+    for idx in hero_indices:
+        item = hero_questions[idx]
         st.markdown(f"**{item['q']}**")
-        user_answer = st.radio(
-            "Choose one.",
+        hero_answers[idx] = st.radio(
+            "하나를 고르세요.",
             item["options"],
-            key=f"hero_{i}",
+            key=f"hero_{idx}_attempt_{st.session_state.hero_attempt}",
             horizontal=False
         )
-
-        if user_answer == item["answer"]:
-            choice_score += 1
-
         st.write("")
 
-    if st.button("Hero or Villain 채점하기", key="check_hero", type="primary"):
-        st.markdown(f"### 점수: {choice_score} / {len(hero_questions)}")
+    if st.session_state.hero_attempt == 0:
+        if st.button("Hero or Villain 1차 채점", key="check_hero_first", type="primary"):
+            wrong = [
+                idx for idx in hero_indices
+                if hero_answers.get(idx) != hero_questions[idx]["answer"]
+            ]
+            score = len(hero_questions) - len(wrong)
 
-        if choice_score >= 3:
+            if not wrong:
+                st.session_state.batman_complete["choice"] = True
+                st.session_state.hero_attempt = 2
+                st.markdown(f"### 점수: {score} / {len(hero_questions)}")
+                st.markdown("""
+                <div class="success-box">
+                    🦸 전부 맞았습니다! Hero or Villain 임무를 완성했습니다.
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.session_state.hero_wrong = wrong
+                st.session_state.hero_attempt = 1
+                st.markdown(f"### 점수: {score} / {len(hero_questions)}")
+                st.markdown(f"""
+                <div class="fail-box">
+                    틀린 문제가 {len(wrong)}개 있습니다. 정답은 아직 보여주지 않습니다.<br>
+                    틀린 문제만 다시 풀어 보세요.
+                </div>
+                """, unsafe_allow_html=True)
+                st.rerun()
+
+    elif st.session_state.hero_attempt == 1:
+        if st.button("틀린 문제 다시 채점", key="check_hero_retry", type="primary"):
+            still_wrong = [
+                idx for idx in hero_indices
+                if hero_answers.get(idx) != hero_questions[idx]["answer"]
+            ]
+
+            st.session_state.hero_attempt = 2
+            st.session_state.hero_wrong = still_wrong
             st.session_state.batman_complete["choice"] = True
-            st.markdown("""
-            <div class="success-box">
-                🦸 Hero or Villain 임무를 완성하셨습니다!
-            </div>
-            """, unsafe_allow_html=True)
+
+            if not still_wrong:
+                st.markdown("""
+                <div class="success-box">
+                    🦸 재도전에서 모두 맞았습니다!
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div class="info-box">
+                    재도전이 끝났습니다. 아래에서 남은 오답의 정답을 확인하세요.
+                </div>
+                """, unsafe_allow_html=True)
+                for idx in still_wrong:
+                    st.write(f"**{hero_questions[idx]['q']}** → 정답: **{hero_questions[idx]['answer']}**")
+
+    else:
+        if st.session_state.hero_wrong:
+            st.markdown("### 남은 오답 정답")
+            for idx in st.session_state.hero_wrong:
+                st.write(f"**{hero_questions[idx]['q']}** → **{hero_questions[idx]['answer']}**")
         else:
             st.markdown("""
-            <div class="fail-box">
-                Think again. Why does Batman take the blame?
+            <div class="success-box">
+                🦸 이 미션을 완료했습니다.
             </div>
             """, unsafe_allow_html=True)
 
@@ -670,47 +740,145 @@ with tab1:
 
 with tab2:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🎧 Line Blanks</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">각 문장의 듣기 버튼을 누르고, 빈칸에 들어갈 말을 고르세요. 4개 이상 맞히면 성공입니다.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🎧 대사 빈칸</div>', unsafe_allow_html=True)
+    st.markdown('<div class="small-guide">각 문장의 듣기 버튼을 누르고 빈칸에 들어갈 말을 고르세요. 1차 채점 후 틀린 문제만 다시 풀 수 있습니다.</div>', unsafe_allow_html=True)
 
-    blank_score = 0
+    # 1차에는 전체 문제, 재도전에는 1차에서 틀린 문제만 보여 줍니다.
+    if st.session_state.blank_attempt == 1:
+        st.markdown("""
+        <div class="fail-box">
+            ❌ 아래 문제들은 1차에서 틀린 문제입니다.<br>
+            정답은 아직 공개하지 않습니다. 다시 듣고 한 번 더 풀어 보세요.
+        </div>
+        """, unsafe_allow_html=True)
+        blank_indices = st.session_state.blank_wrong
+    else:
+        blank_indices = list(range(len(blank_questions)))
 
-    for i, item in enumerate(blank_questions, start=1):
+    blank_answers = {}
+
+    for idx in blank_indices:
+        item = blank_questions[idx]
+
+        if st.session_state.blank_attempt == 1:
+            q_label = f"❌ Q{idx + 1}. 1차 오답 — 다시 풀기"
+        else:
+            q_label = f"Q{idx + 1}. 듣고 고르세요."
+
         st.markdown(f"""
         <div class="mission-box">
-            <b>Q{i}. Listen and choose.</b><br><br>
+            <b>{q_label}</b><br><br>
             <b>{item["sentence"]}</b>
         </div>
         """, unsafe_allow_html=True)
 
-        speak_button(item["audio"], f"blank_{i}")
+        speak_button(item["audio"], f"blank_{idx}_{st.session_state.blank_attempt}")
 
-        user_answer = st.radio(
-            "Choose one.",
-            item["options"],
-            key=f"blank_{i}",
-            horizontal=True
+        # 정답이 늘 첫 번째에 오지 않도록 보기 순서를 섞습니다.
+        # 같은 화면에서 Streamlit이 rerun되어도 순서는 유지됩니다.
+        order_key = f"{idx}_{st.session_state.blank_attempt}"
+        if order_key not in st.session_state.blank_option_orders:
+            shuffled_options = item["options"].copy()
+            random.shuffle(shuffled_options)
+
+            # 우연히 정답이 첫 번째가 되면 가능한 경우 한 번 위치를 바꿉니다.
+            if len(shuffled_options) > 1 and shuffled_options[0] == item["answer"]:
+                swap_index = (idx % (len(shuffled_options) - 1)) + 1
+                shuffled_options[0], shuffled_options[swap_index] = (
+                    shuffled_options[swap_index],
+                    shuffled_options[0],
+                )
+
+            st.session_state.blank_option_orders[order_key] = shuffled_options
+
+        displayed_options = st.session_state.blank_option_orders[order_key]
+
+        blank_answers[idx] = st.radio(
+            "하나를 고르세요.",
+            displayed_options,
+            key=f"blank_{idx}_attempt_{st.session_state.blank_attempt}",
+            horizontal=True,
+            index=None
         )
-
-        if user_answer == item["answer"]:
-            blank_score += 1
-
         st.write("")
 
-    if st.button("빈칸 채점하기", key="check_blank", type="primary"):
-        st.markdown(f"### 점수: {blank_score} / {len(blank_questions)}")
+    # 1차 채점: 틀린 번호를 저장하고 정답은 공개하지 않음
+    if st.session_state.blank_attempt == 0:
+        if st.button("대사 빈칸 1차 채점", key="check_blank_first", type="primary"):
+            unanswered = [idx for idx in blank_indices if blank_answers.get(idx) is None]
 
-        if blank_score >= 4:
-            st.session_state.batman_complete["blank"] = True
-            st.markdown("""
-            <div class="success-box">
-                🎧 대사 빈칸 채우기 임무를 완성하셨습니다!
-            </div>
-            """, unsafe_allow_html=True)
+            if unanswered:
+                st.warning("모든 문제에 답한 뒤 채점하세요.")
+            else:
+                wrong = [
+                    idx for idx in blank_indices
+                    if blank_answers.get(idx) != blank_questions[idx]["answer"]
+                ]
+                score = len(blank_questions) - len(wrong)
+
+                if not wrong:
+                    st.session_state.batman_complete["blank"] = True
+                    st.session_state.blank_attempt = 2
+                    st.session_state.blank_wrong = []
+                    st.markdown(f"### 점수: {score} / {len(blank_questions)}")
+                    st.markdown("""
+                    <div class="success-box">
+                        🎧 전부 맞았습니다! 대사 빈칸 임무를 완성했습니다.
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.session_state.blank_wrong = wrong
+                    st.session_state.blank_attempt = 1
+                    st.rerun()
+
+    # 재도전: 1차에서 틀린 문제만 다시 채점
+    elif st.session_state.blank_attempt == 1:
+        if st.button("틀린 빈칸 다시 채점", key="check_blank_retry", type="primary"):
+            unanswered = [idx for idx in blank_indices if blank_answers.get(idx) is None]
+
+            if unanswered:
+                st.warning("재도전 문제에 모두 답한 뒤 채점하세요.")
+            else:
+                still_wrong = [
+                    idx for idx in blank_indices
+                    if blank_answers.get(idx) != blank_questions[idx]["answer"]
+                ]
+
+                st.session_state.blank_attempt = 2
+                st.session_state.blank_wrong = still_wrong
+                st.session_state.batman_complete["blank"] = True
+
+                if not still_wrong:
+                    st.markdown("""
+                    <div class="success-box">
+                        🎧 재도전에서 모두 맞았습니다!
+                    </div>
+                    """, unsafe_allow_html=True)
+                else:
+                    st.markdown("""
+                    <div class="info-box">
+                        재도전이 끝났습니다. 아래에서 아직 틀린 문제의 정답을 확인하세요.
+                    </div>
+                    """, unsafe_allow_html=True)
+                    for idx in still_wrong:
+                        st.markdown(
+                            f"❌ **Q{idx + 1}. {blank_questions[idx]['sentence']}**  "
+                            f"→ 정답: **{blank_questions[idx]['answer']}**"
+                        )
+
+    # 재도전까지 끝난 뒤에만 남은 오답의 정답 공개
+    else:
+        if st.session_state.blank_wrong:
+            st.markdown("### ❌ 재도전 후 남은 오답")
+            for idx in st.session_state.blank_wrong:
+                st.markdown(
+                    f"**Q{idx + 1}. {blank_questions[idx]['sentence']}**  "
+                    f"→ 정답: **{blank_questions[idx]['answer']}**"
+                )
         else:
             st.markdown("""
-            <div class="fail-box">
-                조금만 더! 듣기 버튼을 다시 누르고 핵심 대사를 확인해 봅시다.
+            <div class="success-box">
+                🎧 이 미션을 완료했습니다.
             </div>
             """, unsafe_allow_html=True)
 
@@ -723,123 +891,153 @@ with tab2:
 
 with tab3:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🧩 Quote Matching</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">먼저 영어 또는 한국어 박스를 하나 선택하세요. 그다음 짝이 되는 박스를 선택하세요.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🧩 대사 연결</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="small-guide">'
+        '① 왼쪽 영어 대사를 하나 클릭하세요. '
+        '② 오른쪽에서 알맞은 한국어 뜻을 하나 클릭하세요. '
+        '정답이면 두 항목이 사라지고, 틀리면 다시 선택할 수 있습니다.'
+        '</div>',
+        unsafe_allow_html=True
+    )
 
-    def handle_match_click(text, side):
-        selected = st.session_state.get("selected_match")
+    # -------------------------
+    # Matching 상태
+    # -------------------------
+    if "matching_selected_en" not in st.session_state:
+        st.session_state.matching_selected_en = None
 
-        if selected is None:
-            st.session_state.selected_match = {"text": text, "side": side}
-            return
+    if "matching_feedback" not in st.session_state:
+        st.session_state.matching_feedback = None
 
-        # 같은 쪽을 다시 누르면 새 선택으로 바꿉니다.
-        if selected.get("side") == side:
-            st.session_state.selected_match = {"text": text, "side": side}
-            return
+    if "matching_feedback_type" not in st.session_state:
+        st.session_state.matching_feedback_type = None
 
-        if selected.get("side") == "en":
-            en_text = selected.get("text")
-            ko_text = text
-        else:
-            en_text = text
-            ko_text = selected.get("text")
+    # 기존 버전의 selected_match가 남아 있어도 충돌하지 않게 초기화
+    st.session_state.selected_match = None
 
-        is_correct = (
-            en_text in correct_map
-            and correct_map.get(en_text) == ko_text
-            and en_text not in st.session_state.matched_pairs
+    matched_count = len(st.session_state.matched_pairs)
+
+    # 상태 안내
+    if st.session_state.matching_selected_en is None:
+        guide_text = "👈 먼저 왼쪽에서 영어 대사를 하나 선택하세요."
+    else:
+        guide_text = f"선택한 영어: {st.session_state.matching_selected_en} → 오른쪽에서 뜻을 하나 고르세요."
+
+    st.markdown(f"""
+    <div class="info-box">
+        {guide_text}<br>
+        <b>맞춘 개수: {matched_count} / {len(correct_map)}</b>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 직전 선택 결과 표시
+    if st.session_state.matching_feedback:
+        if st.session_state.matching_feedback_type == "correct":
+            st.markdown(
+                f'<div class="success-box">{st.session_state.matching_feedback}</div>',
+                unsafe_allow_html=True
+            )
+        elif st.session_state.matching_feedback_type == "wrong":
+            st.markdown(
+                f'<div class="fail-box">{st.session_state.matching_feedback}</div>',
+                unsafe_allow_html=True
+            )
+
+    # 맞힌 항목은 화면에서 사라지게 함
+    remaining_english = [
+        en for en in st.session_state.matching_english_list
+        if en not in st.session_state.matched_pairs
+    ]
+
+    remaining_korean = [
+        ko for ko in st.session_state.matching_korean_list
+        if not any(
+            en in st.session_state.matched_pairs and correct_ko == ko
+            for en, correct_ko in correct_map.items()
         )
-
-        st.session_state.selected_match = None
-
-        if is_correct:
-            st.session_state.matched_pairs.add(en_text)
-            st.toast("정답입니다!", icon="✅")
-        else:
-            st.toast("다시 시도해 보세요!", icon="❌")
-
-    top1, top2 = st.columns([2, 1])
-
-    with top1:
-        if st.session_state.selected_match:
-            selected_text = st.session_state.selected_match["text"]
-            st.markdown(f"""
-            <div class="info-box">
-                선택됨: {selected_text}
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown("""
-            <div class="info-box">
-                먼저 영어 또는 한국어 박스를 하나 선택하세요.
-            </div>
-            """, unsafe_allow_html=True)
-
-    with top2:
-        st.markdown(f"""
-        <div class="info-box">
-            맞춘 개수: {len(st.session_state.matched_pairs)} / {len(correct_map)}
-        </div>
-        """, unsafe_allow_html=True)
+    ]
 
     left_col, right_col = st.columns(2)
 
-    english_list = st.session_state.matching_english_list
-    korean_list = st.session_state.matching_korean_list
-
+    # -------------------------
+    # 왼쪽: 영어 하나 선택
+    # -------------------------
     with left_col:
-        st.markdown("### English")
+        st.markdown("### 🇺🇸 English")
 
-        for i, en in enumerate(english_list, start=1):
-            is_done = en in st.session_state.matched_pairs
-            label = f"✅ {en}" if is_done else en
+        if not remaining_english:
+            st.success("영어 대사를 모두 맞췄습니다. ✅")
+        else:
+            for i, en in enumerate(remaining_english):
+                is_selected = (st.session_state.matching_selected_en == en)
 
-            clicked = st.button(
-                label,
-                key=f"en_match_{i}",
-                use_container_width=True,
-                disabled=is_done
-            )
+                if is_selected:
+                    label = f"🟨 {en}"
+                else:
+                    label = en
 
-            if clicked:
-                handle_match_click(en, "en")
-                st.rerun()
+                # 영어를 하나 선택한 뒤에는 다른 영어를 눌러 선택을 바꿀 수 있음
+                if st.button(
+                    label,
+                    key=f"match_en_card_{i}_{en}",
+                    use_container_width=True
+                ):
+                    st.session_state.matching_selected_en = en
+                    st.session_state.matching_feedback = None
+                    st.session_state.matching_feedback_type = None
+                    st.rerun()
 
+    # -------------------------
+    # 오른쪽: 한국어 하나 선택
+    # 영어를 먼저 선택해야 클릭 가능
+    # -------------------------
     with right_col:
-        st.markdown("### Korean")
+        st.markdown("### 🇰🇷 Korean")
 
-        for i, ko in enumerate(korean_list, start=1):
-            matched_english = None
+        if not remaining_korean:
+            st.success("한국어 뜻을 모두 맞췄습니다. ✅")
+        else:
+            for i, ko in enumerate(remaining_korean):
+                can_click = st.session_state.matching_selected_en is not None
 
-            for en, correct_ko in correct_map.items():
-                if correct_ko == ko:
-                    matched_english = en
+                if st.button(
+                    ko,
+                    key=f"match_ko_card_{i}_{ko}",
+                    use_container_width=True,
+                    disabled=not can_click
+                ):
+                    selected_en = st.session_state.matching_selected_en
 
-            is_done = matched_english in st.session_state.matched_pairs
-            label = f"✅ {ko}" if is_done else ko
+                    if correct_map.get(selected_en) == ko:
+                        st.session_state.matched_pairs.add(selected_en)
+                        st.session_state.matching_feedback = "✅ 정답입니다! 맞춘 두 항목이 사라졌습니다."
+                        st.session_state.matching_feedback_type = "correct"
+                    else:
+                        st.session_state.matching_feedback = "❌ 틀렸습니다. 영어 대사를 다시 선택해서 한 번 더 맞춰 보세요."
+                        st.session_state.matching_feedback_type = "wrong"
 
-            clicked = st.button(
-                label,
-                key=f"ko_match_{i}",
-                use_container_width=True,
-                disabled=is_done
-            )
+                    # 한 쌍을 판정하면 반드시 선택 초기화
+                    st.session_state.matching_selected_en = None
+                    st.rerun()
 
-            if clicked:
-                handle_match_click(ko, "ko")
-                st.rerun()
-
+    # -------------------------
+    # 완료
+    # -------------------------
     if len(st.session_state.matched_pairs) == len(correct_map):
         st.session_state.batman_complete["matching"] = True
         st.markdown("""
         <div class="success-box">
-            🧩 Quote Matching 임무를 완성하셨습니다!
+            🎉 대사 연결을 모두 완성했습니다!
         </div>
         """, unsafe_allow_html=True)
 
-    if st.button("매칭 다시 하기", key="reset_matching", type="primary"):
-        st.session_state.selected_match = None
+    st.markdown("")
+
+    if st.button("🔄 매칭 다시 시작", key="reset_matching", type="primary"):
+        st.session_state.matching_selected_en = None
+        st.session_state.matching_feedback = None
+        st.session_state.matching_feedback_type = None
         st.session_state.matched_pairs = set()
         st.session_state.batman_complete["matching"] = False
         st.rerun()
@@ -869,43 +1067,98 @@ with tab4:
     </div>
     """, unsafe_allow_html=True)
 
-    grammar_score = 0
+    grammar_indices = (
+        st.session_state.grammar_wrong
+        if st.session_state.grammar_attempt == 1 and st.session_state.grammar_wrong
+        else list(range(len(grammar_questions)))
+    )
 
-    for i, item in enumerate(grammar_questions, start=1):
-        st.markdown(f"**Q{i}. {item['q']}**")
-        user_answer = st.radio(
-            "Choose one.",
+    grammar_answers = {}
+
+    for idx in grammar_indices:
+        item = grammar_questions[idx]
+        st.markdown(f"**Q{idx + 1}. {item['q']}**")
+        grammar_answers[idx] = st.radio(
+            "하나를 고르세요.",
             item["options"],
-            key=f"grammar_{i}",
+            key=f"grammar_{idx}_attempt_{st.session_state.grammar_attempt}",
             horizontal=True
         )
-
-        if user_answer == item["answer"]:
-            grammar_score += 1
-
-        with st.expander("해설 보기"):
-            st.write(item["explain"])
-
         st.write("")
 
-    if st.button("Grammar 채점하기", key="check_grammar", type="primary"):
-        st.markdown(f"### 점수: {grammar_score} / {len(grammar_questions)}")
+    if st.session_state.grammar_attempt == 0:
+        if st.button("문법 1차 채점", key="check_grammar_first", type="primary"):
+            wrong = [
+                idx for idx in grammar_indices
+                if grammar_answers.get(idx) != grammar_questions[idx]["answer"]
+            ]
+            score = len(grammar_questions) - len(wrong)
 
-        if grammar_score == len(grammar_questions):
+            if not wrong:
+                st.session_state.batman_complete["grammar"] = True
+                st.session_state.grammar_attempt = 2
+                st.markdown(f"### 점수: {score} / {len(grammar_questions)}")
+                st.markdown("""
+                <div class="success-box">
+                    📘 전부 맞았습니다! 문법 임무를 완성했습니다.
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.session_state.grammar_wrong = wrong
+                st.session_state.grammar_attempt = 1
+                st.markdown(f"### 점수: {score} / {len(grammar_questions)}")
+                st.markdown(f"""
+                <div class="fail-box">
+                    틀린 문제가 {len(wrong)}개 있습니다. 해설과 정답은 아직 공개하지 않습니다.<br>
+                    틀린 문제만 다시 풀어 보세요.
+                </div>
+                """, unsafe_allow_html=True)
+                st.rerun()
+
+    elif st.session_state.grammar_attempt == 1:
+        if st.button("틀린 문법 다시 채점", key="check_grammar_retry", type="primary"):
+            still_wrong = [
+                idx for idx in grammar_indices
+                if grammar_answers.get(idx) != grammar_questions[idx]["answer"]
+            ]
+
+            st.session_state.grammar_attempt = 2
+            st.session_state.grammar_wrong = still_wrong
             st.session_state.batman_complete["grammar"] = True
-            st.markdown("""
-            <div class="success-box">
-                📘 Grammar 임무를 완성하셨습니다!
-            </div>
-            """, unsafe_allow_html=True)
+
+            if not still_wrong:
+                st.markdown("""
+                <div class="success-box">
+                    📘 재도전에서 모두 맞았습니다!
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                st.markdown("""
+                <div class="info-box">
+                    재도전이 끝났습니다. 남은 오답의 정답과 해설을 확인하세요.
+                </div>
+                """, unsafe_allow_html=True)
+                for idx in still_wrong:
+                    item = grammar_questions[idx]
+                    st.write(f"**Q{idx + 1}. 정답: {item['answer']}**")
+                    st.write(item["explain"])
+
+    else:
+        if st.session_state.grammar_wrong:
+            st.markdown("### 남은 오답 정답 및 해설")
+            for idx in st.session_state.grammar_wrong:
+                item = grammar_questions[idx]
+                st.write(f"**Q{idx + 1}. 정답: {item['answer']}**")
+                st.write(item["explain"])
         else:
             st.markdown("""
-            <div class="fail-box">
-                거의 다 왔습니다! can/can't + 동사원형 규칙을 다시 확인하세요.
+            <div class="success-box">
+                📘 이 미션을 완료했습니다.
             </div>
             """, unsafe_allow_html=True)
 
-    st.markdown("""
+    if st.session_state.grammar_attempt >= 2:
+        st.markdown("""
     <div class="line-box">
         <b>Grammar Rule</b><br><br>
         1. <b>can + 동사원형</b><br>
