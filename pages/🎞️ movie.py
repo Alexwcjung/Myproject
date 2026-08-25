@@ -778,6 +778,7 @@ with tab1:
 # =========================
 
 with tab2:
+    # Pop Song 퀴즈형 대사 빈칸에서는 이전 재도전용 상태를 사용하지 않습니다.
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🎧 대사 빈칸</div>', unsafe_allow_html=True)
 
@@ -844,7 +845,7 @@ with tab2:
         picked = st.radio(
             "정답을 고르세요.",
             options,
-            key=f"batman_blank_quiz_{i}",
+            key=f"batman_blank_answer_{i}",
             index=None,
             label_visibility="collapsed"
         )
@@ -869,8 +870,10 @@ with tab2:
             use_container_width=True
         ):
             # 현재 대사 빈칸 선택값과 결과를 전부 초기화
+            # 답안 라디오 버튼 상태만 초기화합니다.
+            # 현재 실행 중인 submit/reset 버튼의 session_state 키는 건드리지 않습니다.
             for k in list(st.session_state.keys()):
-                if str(k).startswith("batman_blank_quiz_"):
+                if str(k).startswith("batman_blank_answer_"):
                     del st.session_state[k]
 
             st.session_state.batman_complete["blank"] = False
