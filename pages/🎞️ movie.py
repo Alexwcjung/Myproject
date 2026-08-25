@@ -363,7 +363,7 @@ if "batman_complete" not in st.session_state:
         "grammar": False
     }
 
-for mission_name in ["hero", "grammar"]:
+for mission_name in ["hero"]:
     if f"{mission_name}_attempt" not in st.session_state:
         st.session_state[f"{mission_name}_attempt"] = 0
     if f"{mission_name}_wrong" not in st.session_state:
@@ -1002,8 +1002,9 @@ with tab4:
     st.markdown('<div class="section-title">📘 문법</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="small-guide">'
-        '모든 문제는 직접 답을 고른 뒤 채점합니다. '
-        '틀린 문제는 한 번 더 풀고, 그 뒤 정답과 해설을 확인합니다.'
+        '각 문제를 풀고 채점하세요. 맞힌 문제는 정답으로 표시되고, '
+        '틀린 문제는 정답을 공개하지 않은 채 계속 다시 도전할 수 있습니다. '
+        '모든 문제를 맞히면 문법 미션이 완료됩니다.'
         '</div>',
         unsafe_allow_html=True
     )
@@ -1018,93 +1019,102 @@ with tab4:
     </div>
     """, unsafe_allow_html=True)
 
-    grammar_indices = (
-        st.session_state.grammar_wrong
-        if st.session_state.grammar_attempt == 1 and st.session_state.grammar_wrong
-        else list(range(len(grammar_questions)))
-    )
+    # 문법 문제별 완료 여부
+    if "grammar_solved" not in st.session_state:
+        st.session_state.grammar_solved = [False] * len(grammar_questions)
+
+    if "grammar_round" not in st.session_state:
+        st.session_state.grammar_round = 0
+
+    # 이미 맞힌 문제는 계속 정답 표시
+    solved_count = sum(st.session_state.grammar_solved)
+
+    if solved_count > 0:
+        st.markdown("### ✅ 현재까지 맞힌 문제")
+        for idx, solved in enumerate(st.session_state.grammar_solved):
+            if solved:
+                st.success(f"Q{idx + 1}. 정답입니다. ✅")
+
+    # 아직 못 맞힌 문제만 다시 출제
+    remaining_indices = [
+        idx
+        for idx, solved in enumerate(st.session_state.grammar_solved)
+        if not solved
+    ]
 
     grammar_answers = {}
 
-    for idx in grammar_indices:
-        item = grammar_questions[idx]
-        st.markdown(f"**Q{idx + 1}. {item['q']}**")
-        grammar_answers[idx] = st.radio(
-            "하나를 고르세요.",
-            item["options"],
-            key=f"grammar_{idx}_attempt_{st.session_state.grammar_attempt}",
-            index=None,
-            horizontal=True
-        )
+    if remaining_indices:
+        st.markdown("### ✏️ 풀어 볼 문제")
 
-    if st.session_state.grammar_attempt == 0:
-        if st.button("문법 1차 채점", key="check_grammar_first", type="primary"):
+        for idx in remaining_indices:
+            item = grammar_questions[idx]
+
+            st.markdown(f"**Q{idx + 1}. {item['q']}**")
+
+            grammar_answers[idx] = st.radio(
+                "하나를 고르세요.",
+                item["options"],
+                key=f"grammar_{idx}_round_{st.session_state.grammar_round}",
+                index=None,
+                horizontal=True
+            )
+
+            st.write("")
+
+        if st.button(
+            "문법 채점",
+            key=f"check_grammar_round_{st.session_state.grammar_round}",
+            type="primary"
+        ):
             unanswered = [
-                idx for idx in grammar_indices
+                idx
+                for idx in remaining_indices
                 if grammar_answers.get(idx) is None
             ]
 
             if unanswered:
-                st.warning("모든 문법 문제에 답한 뒤 채점하세요.")
+                st.warning(
+                    "모든 문제에 답한 뒤 채점하세요. "
+                    f"선택하지 않은 문제: {', '.join(str(i + 1) for i in unanswered)}번"
+                )
+
             else:
-                wrong = [
-                    idx for idx in grammar_indices
-                    if grammar_answers[idx] != grammar_questions[idx]["answer"]
-                ]
+                newly_correct = []
+                still_wrong = []
 
-                st.session_state.grammar_first_correct = [
-                    idx for idx in grammar_indices if idx not in wrong
-                ]
-                st.session_state.grammar_wrong = wrong
+                for idx in remaining_indices:
+                    if grammar_answers[idx] == grammar_questions[idx]["answer"]:
+                        st.session_state.grammar_solved[idx] = True
+                        newly_correct.append(idx)
+                    else:
+                        still_wrong.append(idx)
 
-                if not wrong:
-                    st.session_state.grammar_attempt = 2
+                # 모든 문제를 맞힌 경우 완료 처리
+                if all(st.session_state.grammar_solved):
                     st.session_state.batman_complete["grammar"] = True
-                else:
-                    st.session_state.grammar_attempt = 1
 
+                # 다음 라운드에서 radio 상태를 새로 만들기
+                st.session_state.grammar_round += 1
                 st.rerun()
 
-    elif st.session_state.grammar_attempt == 1:
-        st.markdown("### 1차 결과")
-
-        for idx in st.session_state.grammar_first_correct:
-            st.success(f"Q{idx + 1}. 정답입니다. ✅")
-
-        for idx in st.session_state.grammar_wrong:
+        if remaining_indices:
             st.markdown(
-                f'<div class="wrong-box"><b>Q{idx + 1}.</b> 다시 풀어 보세요. ❌</div>',
+                '<div class="info-box">'
+                '틀린 문제의 정답은 공개되지 않습니다. '
+                '다시 생각해서 계속 도전해 보세요.'
+                '</div>',
                 unsafe_allow_html=True
             )
 
-        if st.button("틀린 문법 다시 채점", key="check_grammar_retry", type="primary"):
-            unanswered = [
-                idx for idx in grammar_indices
-                if grammar_answers.get(idx) is None
-            ]
-
-            if unanswered:
-                st.warning("재도전 문법 문제에 모두 답한 뒤 채점하세요.")
-            else:
-                still_wrong = [
-                    idx for idx in grammar_indices
-                    if grammar_answers[idx] != grammar_questions[idx]["answer"]
-                ]
-
-                st.session_state.grammar_wrong = still_wrong
-                st.session_state.grammar_attempt = 2
-                st.session_state.batman_complete["grammar"] = True
-                st.rerun()
-
     else:
-        if st.session_state.grammar_wrong:
-            st.markdown("### 재도전 후 남은 오답 정답 및 해설")
-            for idx in st.session_state.grammar_wrong:
-                item = grammar_questions[idx]
-                st.write(f"**Q{idx + 1}. 정답: {item['answer']}**")
-                st.write(item["explain"])
-        else:
-            st.markdown('<div class="success-box">📘 문법 미션 완료!</div>', unsafe_allow_html=True)
+        st.session_state.batman_complete["grammar"] = True
+
+        st.markdown("""
+        <div class="success-box">
+            📘 모든 문법 문제를 맞혔습니다! 문법 미션 완료! 🎉
+        </div>
+        """, unsafe_allow_html=True)
 
         st.markdown("""
         <div class="line-box">
