@@ -439,39 +439,37 @@ blank_questions = [
     {
         "audio": "I'm whatever Gotham needs me to be.",
         "sentence": "I'm whatever Gotham ______ me to be.",
-        "options": ["need", "needed", "needs"],
+        "options": ["needs", "follows", "remembers"],
         "answer": "needs"
     },
     {
         "audio": "Not the hero we deserved, but the hero we needed.",
         "sentence": "Not the hero we ______, but the hero we ______.",
-        "options": ["need / deserve", "needs / deserved", "deserved / needed"],
+        "options": ["deserved / needed", "found / lost", "saw / followed"],
         "answer": "deserved / needed"
     },
     {
         "audio": "Sometimes people deserve more.",
         "sentence": "Sometimes people ______ more.",
-        "options": ["deserves", "deserved", "deserve"],
+        "options": ["deserve", "forget", "hide"],
         "answer": "deserve"
     },
     {
         "audio": "Because he can take it.",
         "sentence": "Because he can ______ it.",
-        "options": ["takes", "took", "take"],
+        "options": ["take", "find", "change"],
         "answer": "take"
     },
     {
         "audio": "A silent guardian, a watchful protector.",
         "sentence": "A silent ______, a watchful ______.",
-        "options": ["student / teacher", "singer / dancer", "guardian / protector"],
+        "options": ["guardian / protector", "student / teacher", "singer / dancer"],
         "answer": "guardian / protector"
     }
 ]
 
 correct_map = {
     "I'm whatever Gotham needs me to be.": "나는 고담시가 필요로 하는 무엇이든 될 거야.",
-    "Not the hero we deserved.": "우리가 받을 자격이 있던 영웅은 아니다.",
-    "The hero we needed.": "우리에게 필요했던 영웅.",
     "The truth isn't good enough.": "진실만으로는 충분하지 않아.",
     "Sometimes people deserve more.": "때로 사람들은 더 많은 것을 받을 자격이 있다.",
     "Because he can take it.": "왜냐하면 그는 그것을 감당할 수 있으니까.",
@@ -479,15 +477,6 @@ correct_map = {
     "A watchful protector.": "늘 지켜보는 보호자."
 }
 
-story_order_options = {
-    "A": "Batman decides to take the blame.",
-    "B": "People think Batman is bad.",
-    "C": "Gotham starts to hunt Batman.",
-    "D": "Batman still protects Gotham.",
-    "E": "Batman becomes a silent guardian."
-}
-
-story_order_answer = "ABCDE"
 
 grammar_questions = [
     {
@@ -526,8 +515,7 @@ if "batman_complete" not in st.session_state:
         "choice": False,
         "blank": False,
         "matching": False,
-        "grammar": False,
-        "order": False
+        "grammar": False
     }
 
 if "selected_match" not in st.session_state:
@@ -535,6 +523,26 @@ if "selected_match" not in st.session_state:
 
 if "matched_pairs" not in st.session_state:
     st.session_state.matched_pairs = set()
+
+if "matching_english_list" not in st.session_state:
+    st.session_state.matching_english_list = [
+        "Because he can take it.",
+        "A watchful protector.",
+        "I'm whatever Gotham needs me to be.",
+        "Sometimes people deserve more.",
+        "A silent guardian.",
+        "The truth isn't good enough."
+    ]
+
+if "matching_korean_list" not in st.session_state:
+    st.session_state.matching_korean_list = [
+        "진실만으로는 충분하지 않아.",
+        "조용한 수호자.",
+        "나는 고담시가 필요로 하는 무엇이든 될 거야.",
+        "늘 지켜보는 보호자.",
+        "왜냐하면 그는 그것을 감당할 수 있으니까.",
+        "때로 사람들은 더 많은 것을 받을 자격이 있다."
+    ]
 
 
 # =========================
@@ -549,42 +557,39 @@ st.markdown("""
     <div class="hero-title">Hero or Villain?</div>
     <div class="hero-sub">
         Watch the Batman scene, read the subtitles, answer the first mission,
-        listen and fill in key lines, match quotes, discover grammar rules, and arrange the story.
+        listen and fill in key lines, match quotes, and discover grammar rules.
         <br>
-        <span class="kor">배트맨 장면을 보고 5개의 영어 미션을 완성해 봅시다.</span>
+        <span class="kor">배트맨 장면을 보고 4개의 영어 미션을 완성해 봅시다.</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 completed_count = sum(st.session_state.batman_complete.values())
 
-c1, c2, c3, c4, c5 = st.columns(5)
+c1, c2, c3, c4 = st.columns(4)
 with c1:
-    st.markdown(f"<span class='badge'>Choice {'✅' if st.session_state.batman_complete['choice'] else '⬜'}</span>", unsafe_allow_html=True)
+    st.markdown(f"<span class='badge'>선택 문제 {'✅' if st.session_state.batman_complete['choice'] else '⬜'}</span>", unsafe_allow_html=True)
 with c2:
-    st.markdown(f"<span class='badge'>Blanks {'✅' if st.session_state.batman_complete['blank'] else '⬜'}</span>", unsafe_allow_html=True)
+    st.markdown(f"<span class='badge'>대사 빈칸 {'✅' if st.session_state.batman_complete['blank'] else '⬜'}</span>", unsafe_allow_html=True)
 with c3:
-    st.markdown(f"<span class='badge'>Matching {'✅' if st.session_state.batman_complete['matching'] else '⬜'}</span>", unsafe_allow_html=True)
+    st.markdown(f"<span class='badge'>대사 연결 {'✅' if st.session_state.batman_complete['matching'] else '⬜'}</span>", unsafe_allow_html=True)
 with c4:
-    st.markdown(f"<span class='badge'>Grammar {'✅' if st.session_state.batman_complete['grammar'] else '⬜'}</span>", unsafe_allow_html=True)
-with c5:
-    st.markdown(f"<span class='badge'>Order {'✅' if st.session_state.batman_complete['order'] else '⬜'}</span>", unsafe_allow_html=True)
+    st.markdown(f"<span class='badge'>문법 {'✅' if st.session_state.batman_complete['grammar'] else '⬜'}</span>", unsafe_allow_html=True)
 
-st.progress(completed_count / 5)
+st.progress(completed_count / 4)
 
 
 # =========================
 # TABS
 # =========================
 
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "🎬 Video",
-    "🎧 Line Blanks",
-    "🧩 Quote Matching",
-    "📘 Grammar",
-    "🕵️ Story Order",
-    "💬 Quotes",
-    "🔑 Key Expressions"
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+    "🎬 영상",
+    "🎧 대사 빈칸",
+    "🧩 대사 연결",
+    "📘 문법",
+    "💬 핵심 대사",
+    "🔑 핵심 표현"
 ])
 
 
@@ -722,32 +727,36 @@ with tab3:
     st.markdown('<div class="small-guide">먼저 영어 또는 한국어 박스를 하나 선택하세요. 그다음 짝이 되는 박스를 선택하세요.</div>', unsafe_allow_html=True)
 
     def handle_match_click(text, side):
-        selected = st.session_state.selected_match
+        selected = st.session_state.get("selected_match")
 
         if selected is None:
             st.session_state.selected_match = {"text": text, "side": side}
             return
 
-        if selected["side"] == side:
+        # 같은 쪽을 다시 누르면 새 선택으로 바꿉니다.
+        if selected.get("side") == side:
             st.session_state.selected_match = {"text": text, "side": side}
             return
 
-        first_text = selected["text"]
-        second_text = text
-
-        if selected["side"] == "en":
-            en_text = first_text
-            ko_text = second_text
+        if selected.get("side") == "en":
+            en_text = selected.get("text")
+            ko_text = text
         else:
-            en_text = second_text
-            ko_text = first_text
+            en_text = text
+            ko_text = selected.get("text")
 
-        if en_text in correct_map and correct_map[en_text] == ko_text:
+        is_correct = (
+            en_text in correct_map
+            and correct_map.get(en_text) == ko_text
+            and en_text not in st.session_state.matched_pairs
+        )
+
+        st.session_state.selected_match = None
+
+        if is_correct:
             st.session_state.matched_pairs.add(en_text)
-            st.session_state.selected_match = None
             st.toast("정답입니다!", icon="✅")
         else:
-            st.session_state.selected_match = None
             st.toast("다시 시도해 보세요!", icon="❌")
 
     top1, top2 = st.columns([2, 1])
@@ -776,8 +785,8 @@ with tab3:
 
     left_col, right_col = st.columns(2)
 
-    english_list = list(correct_map.keys())
-    korean_list = list(correct_map.values())
+    english_list = st.session_state.matching_english_list
+    korean_list = st.session_state.matching_korean_list
 
     with left_col:
         st.markdown("### English")
@@ -821,7 +830,7 @@ with tab3:
                 handle_match_click(ko, "ko")
                 st.rerun()
 
-    if len(st.session_state.matched_pairs) >= 7:
+    if len(st.session_state.matched_pairs) == len(correct_map):
         st.session_state.batman_complete["matching"] = True
         st.markdown("""
         <div class="success-box">
@@ -913,59 +922,12 @@ with tab4:
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
 # =========================
-# TAB 5 STORY ORDER
+# TAB 5 QUOTES
 # =========================
 
 with tab5:
-    st.markdown('<div class="section-card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">🕵️ Story Order Mission</div>', unsafe_allow_html=True)
-    st.markdown('<div class="small-guide">아래 영어 문장 A-E를 보고, 이야기 순서대로 알파벳을 입력하세요. 예: ABCDE</div>', unsafe_allow_html=True)
-
-    st.markdown("### Story Cards")
-
-    for letter, sentence in story_order_options.items():
-        st.markdown(f"""
-        <div class="order-card">
-            <span class="choice-letter">{letter}</span>
-            <b>{sentence}</b>
-        </div>
-        """, unsafe_allow_html=True)
-
-    user_order = st.text_input(
-        "정답 순서를 입력하세요. 예: ABCDE",
-        max_chars=5,
-        key="story_order_input"
-    ).strip().upper().replace(" ", "").replace(",", "")
-
-    if st.button("Story Order 채점하기", key="check_order", type="primary"):
-        if user_order == story_order_answer:
-            st.session_state.batman_complete["order"] = True
-            st.markdown("""
-            <div class="success-box">
-                🕵️ Story Order 임무를 완성하셨습니다!
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            st.markdown(f"""
-            <div class="fail-box">
-                다시 생각해 봅시다. 입력한 답: {user_order}
-            </div>
-            """, unsafe_allow_html=True)
-
-    with st.expander("정답 순서 보기"):
-        st.write("A → B → C → D → E")
-        for letter, sentence in story_order_options.items():
-            st.write(f"{letter}. {sentence}")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# TAB 6 QUOTES
-# =========================
-
-with tab6:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">💬 Key Quotes</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">영상 속 핵심 대사와 쉬운 뜻을 마지막으로 다시 확인하세요.</div>', unsafe_allow_html=True)
@@ -984,10 +946,10 @@ with tab6:
 
 
 # =========================
-# TAB 7 KEY EXPRESSIONS
+# TAB 6 KEY EXPRESSIONS
 # =========================
 
-with tab7:
+with tab6:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🔑 Key Expressions</div>', unsafe_allow_html=True)
     st.markdown('<div class="small-guide">영화 속 핵심 단어와 표현을 뜻, 예문, TTS와 함께 확인하세요.</div>', unsafe_allow_html=True)
@@ -1015,7 +977,7 @@ st.markdown("---")
 
 completed_count = sum(st.session_state.batman_complete.values())
 
-if completed_count == 5:
+if completed_count == 4:
     st.markdown("""
     <div class="success-box">
         🦇 모든 배트맨 영어 미션을 완성하셨습니다!  
@@ -1025,7 +987,7 @@ if completed_count == 5:
 else:
     st.markdown(f"""
     <div class="line-box">
-        <b>Mission Progress:</b> {completed_count} / 5 completed<br>
+        <b>Mission Progress:</b> {completed_count} / 4 completed<br>
         <span class="kor">아직 완료하지 않은 미션을 마저 해결하세요.</span>
     </div>
     """, unsafe_allow_html=True)
