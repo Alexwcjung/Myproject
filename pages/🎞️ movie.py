@@ -260,41 +260,6 @@ button[kind="primary"] {
 input {
     font-weight: 900 !important;
 }
-
-.game-card {
-    background:linear-gradient(135deg,#eef2ff,#f8fafc);
-    border:1px solid #c7d2fe;
-    border-radius:18px;
-    padding:20px;
-    margin-bottom:18px;
-}
-
-.big-guide {
-    font-size:1.12rem;
-    font-weight:800;
-    color:#475569;
-    line-height:1.7;
-}
-
-.score-box {
-    background:linear-gradient(135deg,#dcfce7,#bbf7d0);
-    padding:18px;
-    border-radius:18px;
-    border:1px solid #86efac;
-    margin-top:18px;
-    text-align:center;
-    font-size:1.15rem;
-    font-weight:900;
-}
-
-.wrong-box {
-    background:#fff7ed;
-    padding:15px;
-    border-radius:14px;
-    border:1px solid #fdba74;
-    margin-top:10px;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -600,6 +565,16 @@ if "blank_first_results" not in st.session_state:
     st.session_state.blank_first_results = {}
 
 
+if "blank_current_index" not in st.session_state:
+    st.session_state.blank_current_index = 0
+
+if "blank_last_wrong" not in st.session_state:
+    st.session_state.blank_last_wrong = False
+
+if "blank_last_correct_answer" not in st.session_state:
+    st.session_state.blank_last_correct_answer = None
+
+
 # =========================
 # HEADER
 # =========================
@@ -784,140 +759,187 @@ with tab2:
     st.markdown(
         '<div class="game-card">'
         '<div class="big-guide">'
-        '듣기 버튼을 눌러 영화 속 대사를 들어 보세요.<br>'
-        '빈칸에 들어갈 가장 알맞은 표현을 고른 뒤 <b>정답 확인</b>을 누르세요.'
+        '한 문제씩 풀어 보세요.<br>'
+        '답을 고른 뒤 <b>정답 확인</b>을 누릅니다. '
+        '틀리면 정답은 보여 주지 않고 같은 문제를 다시 풉니다. '
+        '<b>맞혔을 때만 정답을 확인할 수 있습니다.</b>'
         '</div>'
         '</div>',
         unsafe_allow_html=True
     )
 
-    blank_user_answers = []
+    total_blank = len(blank_questions)
+    current_idx = st.session_state.blank_current_index
 
-    for i, item in enumerate(blank_questions, start=1):
+    if current_idx >= total_blank:
+        st.session_state.batman_complete["blank"] = True
+
+        st.markdown(
+            '<div class="success-box">'
+            '🎉 모든 대사 빈칸 문제를 맞혔습니다!'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        if st.button(
+            "🔄 처음부터 다시 풀기",
+            key="blank_restart_all",
+            use_container_width=True
+        ):
+            st.session_state.blank_current_index = 0
+            st.session_state.blank_last_wrong = False
+            st.session_state.blank_last_correct_answer = None
+            st.session_state.batman_complete["blank"] = False
+
+            for k in list(st.session_state.keys()):
+                if str(k).startswith("blank_single_answer_"):
+                    del st.session_state[k]
+
+            st.rerun()
+
+    else:
+        item = blank_questions[current_idx]
+        q_num = current_idx + 1
+
+        st.progress(current_idx / total_blank)
+
+        st.markdown(
+            f'<div class="info-box">'
+            f'<b>문제 {q_num} / {total_blank}</b><br>'
+            '아래 듣기 영역을 클릭한 뒤 빈칸에 들어갈 말을 고르세요.'
+            '</div>',
+            unsafe_allow_html=True
+        )
+
+        # 클릭 즉시 재생되는 브라우저 음성합성 버튼
+        safe_audio = (
+            item["audio"]
+            .replace("\\", "\\\\")
+            .replace("'", "\\'")
+            .replace('"', '\\"')
+            .replace("\n", " ")
+        )
+
+        components.html(
+            f"""
+            <div
+                onclick="
+                    window.speechSynthesis.cancel();
+                    const u = new SpeechSynthesisUtterance('{safe_audio}');
+                    u.lang='en-US';
+                    u.rate=0.82;
+                    u.pitch=1.0;
+                    window.speechSynthesis.speak(u);
+                "
+                style="
+                    width:100%;
+                    box-sizing:border-box;
+                    border:2px solid #bfdbfe;
+                    background:#eff6ff;
+                    color:#1e3a8a;
+                    border-radius:16px;
+                    padding:17px 18px;
+                    font-size:17px;
+                    font-weight:900;
+                    cursor:pointer;
+                    text-align:center;
+                    user-select:none;
+                "
+            >
+                🔊 클릭해서 대사 듣기
+            </div>
+            """,
+            height=70
+        )
+
         question_html = (
             '<div style="'
             'background:#ffffff;'
-            'padding:16px 18px;'
+            'padding:18px 20px;'
             'border-radius:18px;'
             'border:1px solid #e2e8f0;'
-            'margin-top:18px;'
+            'margin:8px 0 16px 0;'
             '">'
             '<div style="'
-            'font-size:0.95rem;'
-            'font-weight:900;'
-            'color:#6366f1;'
-            'margin-bottom:6px;'
-            '">'
-            '대사 듣기'
-            '</div>'
-            '<div style="'
-            'font-size:1.12rem;'
+            'font-size:1.18rem;'
             'font-weight:950;'
             'color:#1e293b;'
-            'line-height:1.6;'
+            'line-height:1.7;'
             '">'
-            f'{i}. {item["sentence"]}'
+            + str(q_num) + '. ' + item["sentence"] +
             '</div>'
             '</div>'
         )
-
         st.markdown(question_html, unsafe_allow_html=True)
 
-        speak_button(
-            item["audio"],
-            f"blank_quiz_audio_{i}"
-        )
-
         options = item["options"].copy()
-        rng = random.Random(f"batman_blank_quiz_{i}")
+        rng = random.Random(f"batman_single_blank_{q_num}")
         rng.shuffle(options)
+
+        answer_key = f"blank_single_answer_{current_idx}"
 
         picked = st.radio(
             "정답을 고르세요.",
             options,
-            key=f"batman_blank_answer_{i}",
+            key=answer_key,
             index=None,
             label_visibility="collapsed"
         )
 
-        blank_user_answers.append((item, picked))
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        submit_blank_quiz = st.button(
-            "대사 빈칸 정답 확인",
-            key="batman_blank_quiz_submit",
-            use_container_width=True,
-            type="primary"
-        )
-
-    with c2:
-        if st.button(
-            "대사 빈칸 다시 풀기",
-            key="batman_blank_quiz_reset",
-            use_container_width=True
-        ):
-            for k in list(st.session_state.keys()):
-                if str(k).startswith("batman_blank_answer_"):
-                    del st.session_state[k]
-
-            st.session_state.batman_complete["blank"] = False
-            st.rerun()
-
-    if submit_blank_quiz:
-        unanswered = [
-            idx
-            for idx, (item, picked) in enumerate(blank_user_answers, start=1)
-            if picked is None
-        ]
-
-        if unanswered:
-            st.warning(
-                "모든 문제에 답한 뒤 정답을 확인하세요. "
-                f"선택하지 않은 문제: {', '.join(map(str, unanswered))}번"
-            )
-
-        else:
-            score = sum(
-                1
-                for item, picked in blank_user_answers
-                if picked == item["answer"]
-            )
-
+        if st.session_state.blank_last_wrong:
             st.markdown(
-                f'<div class="score-box">점수: {score} / {len(blank_questions)}</div>',
+                '<div class="wrong-box">'
+                '❌ 틀렸습니다. 정답은 아직 보여 주지 않습니다.<br>'
+                '대사를 다시 듣고 같은 문제를 다시 풀어 보세요.'
+                '</div>',
                 unsafe_allow_html=True
             )
 
-            st.session_state.batman_complete["blank"] = True
+        if st.session_state.blank_last_correct_answer is not None:
+            st.markdown(
+                '<div class="success-box">'
+                '✅ 정답입니다! 정답: <b>'
+                + str(st.session_state.blank_last_correct_answer)
+                + '</b>'
+                '</div>',
+                unsafe_allow_html=True
+            )
 
-            if score == len(blank_questions):
-                st.success(
-                    f"모두 맞혔습니다! "
-                    f"{len(blank_questions)}문제 중 {score}문제를 맞혔습니다. 🎉"
-                )
-            else:
-                st.warning(
-                    f"{len(blank_questions)}문제 중 {score}문제를 맞혔습니다. "
-                    "아래에서 틀린 문제를 확인한 뒤 다시 풀어 보세요."
-                )
+            if st.button(
+                "다음 문제 ▶",
+                key=f"blank_next_{current_idx}",
+                use_container_width=True,
+                type="primary"
+            ):
+                st.session_state.blank_current_index += 1
+                st.session_state.blank_last_wrong = False
+                st.session_state.blank_last_correct_answer = None
 
-            for idx, (item, picked) in enumerate(blank_user_answers, start=1):
-                answer = item["answer"]
+                if answer_key in st.session_state:
+                    del st.session_state[answer_key]
 
-                if picked == answer:
-                    st.success(f"{idx}번 정답입니다. ✅")
+                st.rerun()
+
+        else:
+            if st.button(
+                "정답 확인",
+                key=f"blank_check_{current_idx}",
+                use_container_width=True,
+                type="primary"
+            ):
+                if picked is None:
+                    st.warning("먼저 답을 하나 고르세요.")
+                elif picked == item["answer"]:
+                    st.session_state.blank_last_wrong = False
+                    st.session_state.blank_last_correct_answer = item["answer"]
+                    st.rerun()
                 else:
-                    wrong_html = (
-                        '<div class="wrong-box">'
-                        f'<b>{idx}번</b> 다시 확인해 보세요.<br>'
-                        f'내가 고른 답: {picked if picked else "선택 안 함"}<br>'
-                        f'정답: <b>{answer}</b><br>'
-                        '듣기 버튼을 다시 눌러 실제 대사를 확인해 보세요.'
-                        '</div>'
-                    )
-                    st.markdown(wrong_html, unsafe_allow_html=True)
+                    st.session_state.blank_last_wrong = True
+
+                    if answer_key in st.session_state:
+                        del st.session_state[answer_key]
+
+                    st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
 
