@@ -386,6 +386,9 @@ if "matching_completed_manual" not in st.session_state:
 if "student_name" not in st.session_state:
     st.session_state.student_name = ""
 
+if "certificate_issued" not in st.session_state:
+    st.session_state.certificate_issued = False
+
 
 # =========================
 # HEADER
@@ -411,12 +414,13 @@ st.markdown("""
 # TABS
 # =========================
 
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🎬 영상",
     "🎧 대사 빈칸",
     "🧩 대사 연결",
     "📘 문법",
-    "💬 핵심 대사 & 표현"
+    "💬 핵심 대사 & 표현",
+    "🏆 인증서"
 ])
 
 
@@ -1067,41 +1071,75 @@ with tab5:
 
 
 # =========================
-# FINAL STATUS + CERTIFICATE
+# TAB 6 CERTIFICATE
 # =========================
 
-st.markdown("---")
+with tab6:
+    st.markdown('<div class="section-card">', unsafe_allow_html=True)
+    st.markdown('<div class="section-title">🏆 인증서</div>', unsafe_allow_html=True)
 
-certificate_missions = ["blank", "matching", "grammar"]
-completed_count = sum(
-    1 for mission in certificate_missions
-    if st.session_state.batman_complete.get(mission, False)
-)
-
-if completed_count == 3:
-    st.markdown("""
-    <div class="success-box">
-        🦇 대사 빈칸 · 대사 연결 · 문법 미션을 모두 완성했습니다!<br>
-        You are Gotham's English Guardian!
-    </div>
-    """, unsafe_allow_html=True)
-
-    st.markdown("### 🏆 인증서 발급")
-
-    student_name = st.text_input(
-        "이름을 입력하세요.",
-        value=st.session_state.student_name,
-        key="certificate_name_input",
-        placeholder="예: 홍길동"
+    certificate_missions = ["blank", "matching", "grammar"]
+    completed_count = sum(
+        1 for mission in certificate_missions
+        if st.session_state.batman_complete.get(mission, False)
     )
 
-    if student_name.strip():
-        st.session_state.student_name = student_name.strip()
+    mission_labels = {
+        "blank": "🎧 대사 빈칸",
+        "matching": "🧩 대사 연결",
+        "grammar": "📘 문법"
+    }
 
-        korea_tz = timezone(timedelta(hours=9))
-        issue_date = datetime.now(korea_tz).strftime("%Y-%m-%d")
+    st.markdown(
+        f"""
+        <div class="line-box">
+            <b>Mission Progress:</b> {completed_count} / 3 completed<br>
+            <span class="kor">대사 빈칸 · 대사 연결 · 문법을 모두 완료하면 인증서를 발급할 수 있습니다.</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        certificate_text = f"""
+    for mission in certificate_missions:
+        if st.session_state.batman_complete.get(mission, False):
+            st.success(f"{mission_labels[mission]} 완료 ✅")
+        else:
+            st.info(f"{mission_labels[mission]} 미완료")
+
+    if completed_count == 3:
+        st.markdown("""
+        <div class="success-box">
+            🦇 세 가지 영어 미션을 모두 완성했습니다!<br>
+            You are Gotham's English Guardian!
+        </div>
+        """, unsafe_allow_html=True)
+
+        student_name = st.text_input(
+            "인증서에 표시할 이름을 입력하세요.",
+            value=st.session_state.student_name,
+            key="certificate_name_input",
+            placeholder="예: 홍길동"
+        )
+
+        if st.button(
+            "🏆 인증서 발급",
+            key="issue_certificate",
+            type="primary",
+            use_container_width=True
+        ):
+            if not student_name.strip():
+                st.warning("이름을 입력한 뒤 인증서를 발급하세요.")
+            else:
+                st.session_state.student_name = student_name.strip()
+                st.session_state.certificate_issued = True
+                st.rerun()
+
+        if st.session_state.certificate_issued and st.session_state.student_name:
+            korea_tz = timezone(timedelta(hours=9))
+            issue_date = datetime.now(korea_tz).strftime("%Y-%m-%d")
+            name = st.session_state.student_name
+
+            certificate_text = f"""
 ============================================================
                 BATMAN ENGLISH MISSION
                   CERTIFICATE
@@ -1109,15 +1147,14 @@ if completed_count == 3:
 
 This certificate is proudly presented to
 
-{student_name.strip()}
+{name}
 
-for successfully completing all four
+for successfully completing all three
 Batman English Missions:
 
-1. Hero or Villain
-2. Line Blanks
-3. Quote Matching
-4. Grammar Discovery
+1. Line Blanks
+2. Quote Matching
+3. Grammar Discovery
 
 You are Gotham's English Guardian!
 
@@ -1126,36 +1163,33 @@ Issued on: {issue_date}
 ============================================================
 """
 
-        st.markdown(f"""
-        <div class="cert-box">
-            <div style="font-size:34px;font-weight:1000;">🏆 Certificate of Completion</div>
-            <div style="font-size:20px;margin-top:16px;">This certificate is proudly presented to</div>
-            <div style="font-size:32px;font-weight:1000;margin:14px 0;">{student_name.strip()}</div>
-            <div style="font-size:18px;line-height:1.8;">
-                for successfully completing all three<br>
-                <b>Batman English Missions</b><br><br>
-                🦇 You are Gotham's English Guardian!
+            st.markdown(f"""
+            <div class="cert-box">
+                <div style="font-size:34px;font-weight:1000;">🏆 Certificate of Completion</div>
+                <div style="font-size:20px;margin-top:16px;">This certificate is proudly presented to</div>
+                <div style="font-size:32px;font-weight:1000;margin:14px 0;">{name}</div>
+                <div style="font-size:18px;line-height:1.8;">
+                    for successfully completing all three<br>
+                    <b>Batman English Missions</b><br><br>
+                    🎧 Line Blanks<br>
+                    🧩 Quote Matching<br>
+                    📘 Grammar Discovery<br><br>
+                    🦇 You are Gotham's English Guardian!
+                </div>
+                <div style="margin-top:18px;color:#6b7280;">Issued on {issue_date}</div>
             </div>
-            <div style="margin-top:18px;color:#6b7280;">Issued on {issue_date}</div>
-        </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
-        st.download_button(
-            label="📥 인증서 다운로드",
-            data=certificate_text.encode("utf-8"),
-            file_name=f"Batman_English_Certificate_{student_name.strip()}.txt",
-            mime="text/plain",
-            use_container_width=True,
-            type="primary"
-        )
+            st.download_button(
+                label="📥 인증서 다운로드",
+                data=certificate_text.encode("utf-8"),
+                file_name=f"Batman_English_Certificate_{name}.txt",
+                mime="text/plain",
+                use_container_width=True,
+                type="primary"
+            )
 
     else:
-        st.info("이름을 입력하면 인증서 미리보기와 다운로드 버튼이 나타납니다.")
+        st.warning("아직 완료하지 않은 미션이 있습니다. 위의 3개 미션을 모두 완료해 주세요.")
 
-else:
-    st.markdown(f"""
-    <div class="line-box">
-        <b>Mission Progress:</b> {completed_count} / 3 completed<br>
-        <span class="kor">대사 빈칸 · 대사 연결 · 문법을 모두 완료하면 인증서를 발급할 수 있습니다.</span>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
