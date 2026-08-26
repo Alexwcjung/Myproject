@@ -2,10 +2,11 @@ import streamlit as st
 import streamlit.components.v1 as components
 import random
 import io
+import os
 import json
 import uuid
 import base64
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
 from gtts import gTTS
 
 st.set_page_config(page_title="Batman English Mission", page_icon="🦇", layout="wide")
@@ -63,6 +64,212 @@ def show_tts_audio(text):
     except Exception as e:
         st.warning("음성을 불러오지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
         st.caption(f"오류 내용: {e}")
+
+
+
+# =========================
+# PDF CERTIFICATE
+# =========================
+
+def get_korean_font_path():
+    """Streamlit Cloud/리눅스 환경에서 사용할 수 있는 한글 폰트를 찾습니다."""
+    candidates = [
+        "/usr/share/fonts/truetype/nanum/NanumGothic.ttf",
+        "/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf",
+        "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/noto/NotoSansCJK-Regular.ttc",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+    ]
+
+    for path in candidates:
+        try:
+            if os.path.exists(path):
+                return path
+        except Exception:
+            pass
+    return None
+
+
+def make_batman_mission_pdf():
+    """배트맨 3개 미션 완료 인증 PDF를 만듭니다."""
+    try:
+        from reportlab.lib.pagesizes import A4
+        from reportlab.lib import colors
+        from reportlab.lib.units import mm
+        from reportlab.pdfbase import pdfmetrics
+        from reportlab.pdfbase.ttfonts import TTFont
+        from reportlab.pdfbase.cidfonts import UnicodeCIDFont
+        from reportlab.pdfgen import canvas
+    except Exception:
+        return None
+
+    buffer = io.BytesIO()
+    c = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+
+    font_name = "Helvetica"
+    bold_font_name = "Helvetica-Bold"
+
+    try:
+        pdfmetrics.registerFont(UnicodeCIDFont("HYGothic-Medium"))
+        font_name = "HYGothic-Medium"
+        bold_font_name = "HYGothic-Medium"
+    except Exception:
+        font_path = get_korean_font_path()
+        if font_path and "DejaVuSans" not in font_path:
+            try:
+                pdfmetrics.registerFont(TTFont("KoreanFont", font_path))
+                font_name = "KoreanFont"
+                bold_font_name = "KoreanFont"
+            except Exception:
+                pass
+
+    c.setFillColor(colors.HexColor("#eef2ff"))
+    c.roundRect(
+        18 * mm, 24 * mm,
+        width - 36 * mm, height - 48 * mm,
+        10 * mm, fill=1, stroke=0
+    )
+
+    c.setFillColor(colors.white)
+    c.roundRect(
+        28 * mm, 38 * mm,
+        width - 56 * mm, height - 76 * mm,
+        8 * mm, fill=1, stroke=0
+    )
+
+    c.setStrokeColor(colors.HexColor("#6366f1"))
+    c.setLineWidth(2)
+    c.roundRect(
+        28 * mm, 38 * mm,
+        width - 56 * mm, height - 76 * mm,
+        8 * mm, fill=0, stroke=1
+    )
+
+    c.setFillColor(colors.HexColor("#14532d"))
+    c.setFont(bold_font_name, 27)
+    c.drawCentredString(
+        width / 2,
+        height - 72 * mm,
+        "Batman English Mission 임무 완성"
+    )
+
+    c.setFillColor(colors.HexColor("#3730a3"))
+    c.setFont("Helvetica-Bold", 16)
+    c.drawCentredString(
+        width / 2,
+        height - 86 * mm,
+        "MISSION COMPLETE"
+    )
+
+    c.setFillColor(colors.HexColor("#14532d"))
+    c.setFont(bold_font_name, 18)
+    c.drawCentredString(
+        width / 2,
+        height - 103 * mm,
+        "배트맨 영어 미션을 모두 완성하셨습니다."
+    )
+
+    c.setFillColor(colors.HexColor("#1e293b"))
+    c.setFont(font_name, 15)
+    c.drawCentredString(width / 2, height - 126 * mm, "완료 활동: 대사 빈칸")
+    c.drawCentredString(width / 2, height - 139 * mm, "완료 활동: 대사 연결")
+    c.drawCentredString(width / 2, height - 152 * mm, "완료 활동: 문법")
+
+    c.setFillColor(colors.HexColor("#475569"))
+    c.setFont(font_name, 12)
+    c.drawCentredString(
+        width / 2,
+        height - 169 * mm,
+        "You are Gotham's English Guardian!"
+    )
+
+    c.setFillColor(colors.HexColor("#64748b"))
+    c.setFont(font_name, 11)
+    now_text = datetime.now().strftime("%Y-%m-%d %H:%M")
+    c.drawCentredString(width / 2, 62 * mm, f"완료 시간: {now_text}")
+    c.drawCentredString(
+        width / 2,
+        52 * mm,
+        "이 PDF를 저장한 뒤 선생님께 보여 주세요."
+    )
+
+    c.setStrokeColor(colors.HexColor("#6366f1"))
+    c.setLineWidth(2.5)
+    c.circle(width / 2, 86 * mm, 16 * mm, fill=0, stroke=1)
+    c.line(width / 2 - 7 * mm, 86 * mm, width / 2 - 2 * mm, 80 * mm)
+    c.line(width / 2 - 2 * mm, 80 * mm, width / 2 + 8 * mm, 93 * mm)
+
+    c.showPage()
+    c.save()
+    buffer.seek(0)
+    return buffer.getvalue()
+
+
+def show_batman_pdf_download():
+    """배트맨 3개 미션 완료 PDF 다운로드 버튼을 보여 줍니다."""
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#eef2ff,#f0f9ff,#fdf2f8);
+            padding:24px;
+            border-radius:22px;
+            border:2px solid #6366f1;
+            margin-top:18px;
+            text-align:center;
+        ">
+            <div style="
+                font-size:1.55rem;
+                font-weight:1000;
+                color:#3730a3;
+            ">
+                📄 Batman English Mission PDF 인증서 저장
+            </div>
+            <div style="
+                font-size:1.05rem;
+                font-weight:850;
+                color:#475569;
+                margin-top:8px;
+            ">
+                아래 버튼을 눌러 배트맨 영어 미션 완료 인증서를 저장하세요.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    pdf_bytes = make_batman_mission_pdf()
+
+    if pdf_bytes:
+        st.markdown(
+            """
+            <style>
+            div[data-testid="stDownloadButton"] button {
+                min-height:68px !important;
+                font-size:1.25rem !important;
+                font-weight:1000 !important;
+                border-radius:18px !important;
+                border:2px solid #4f46e5 !important;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.download_button(
+            "📄 PDF 인증서 다운받기",
+            data=pdf_bytes,
+            file_name="Batman_English_Mission_Complete.pdf",
+            mime="application/pdf",
+            key="download_batman_complete_pdf",
+            use_container_width=True
+        )
+    else:
+        st.warning(
+            "PDF 저장 기능을 사용하려면 requirements.txt에 "
+            "reportlab을 추가해 주세요. 예: reportlab>=4.0.0"
+        )
+
 
 
 # =========================
@@ -383,11 +590,6 @@ if "blank_first_correct" not in st.session_state:
 if "matching_completed_manual" not in st.session_state:
     st.session_state.matching_completed_manual = False
 
-if "student_name" not in st.session_state:
-    st.session_state.student_name = ""
-
-if "certificate_issued" not in st.session_state:
-    st.session_state.certificate_issued = False
 
 
 # =========================
@@ -1079,8 +1281,10 @@ with tab6:
     st.markdown('<div class="section-title">🏆 인증서</div>', unsafe_allow_html=True)
 
     certificate_missions = ["blank", "matching", "grammar"]
+
     completed_count = sum(
-        1 for mission in certificate_missions
+        1
+        for mission in certificate_missions
         if st.session_state.batman_complete.get(mission, False)
     )
 
@@ -1094,7 +1298,10 @@ with tab6:
         f"""
         <div class="line-box">
             <b>Mission Progress:</b> {completed_count} / 3 completed<br>
-            <span class="kor">대사 빈칸 · 대사 연결 · 문법을 모두 완료하면 인증서를 발급할 수 있습니다.</span>
+            <span class="kor">
+                대사 빈칸 · 대사 연결 · 문법을 모두 완료하면
+                PDF 인증서를 저장할 수 있습니다.
+            </span>
         </div>
         """,
         unsafe_allow_html=True
@@ -1107,89 +1314,23 @@ with tab6:
             st.info(f"{mission_labels[mission]} 미완료")
 
     if completed_count == 3:
-        st.markdown("""
-        <div class="success-box">
-            🦇 세 가지 영어 미션을 모두 완성했습니다!<br>
-            You are Gotham's English Guardian!
-        </div>
-        """, unsafe_allow_html=True)
-
-        student_name = st.text_input(
-            "인증서에 표시할 이름을 입력하세요.",
-            value=st.session_state.student_name,
-            key="certificate_name_input",
-            placeholder="예: 홍길동"
+        st.markdown(
+            """
+            <div class="success-box">
+                🎉 Batman English Mission 임무를 완성하셨습니다.<br>
+                🦇 You are Gotham's English Guardian!
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
-        if st.button(
-            "🏆 인증서 발급",
-            key="issue_certificate",
-            type="primary",
-            use_container_width=True
-        ):
-            if not student_name.strip():
-                st.warning("이름을 입력한 뒤 인증서를 발급하세요.")
-            else:
-                st.session_state.student_name = student_name.strip()
-                st.session_state.certificate_issued = True
-                st.rerun()
-
-        if st.session_state.certificate_issued and st.session_state.student_name:
-            korea_tz = timezone(timedelta(hours=9))
-            issue_date = datetime.now(korea_tz).strftime("%Y-%m-%d")
-            name = st.session_state.student_name
-
-            certificate_text = f"""
-============================================================
-                BATMAN ENGLISH MISSION
-                  CERTIFICATE
-============================================================
-
-This certificate is proudly presented to
-
-{name}
-
-for successfully completing all three
-Batman English Missions:
-
-1. Line Blanks
-2. Quote Matching
-3. Grammar Discovery
-
-You are Gotham's English Guardian!
-
-Issued on: {issue_date}
-
-============================================================
-"""
-
-            st.markdown(f"""
-            <div class="cert-box">
-                <div style="font-size:34px;font-weight:1000;">🏆 Certificate of Completion</div>
-                <div style="font-size:20px;margin-top:16px;">This certificate is proudly presented to</div>
-                <div style="font-size:32px;font-weight:1000;margin:14px 0;">{name}</div>
-                <div style="font-size:18px;line-height:1.8;">
-                    for successfully completing all three<br>
-                    <b>Batman English Missions</b><br><br>
-                    🎧 Line Blanks<br>
-                    🧩 Quote Matching<br>
-                    📘 Grammar Discovery<br><br>
-                    🦇 You are Gotham's English Guardian!
-                </div>
-                <div style="margin-top:18px;color:#6b7280;">Issued on {issue_date}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            st.download_button(
-                label="📥 인증서 다운로드",
-                data=certificate_text.encode("utf-8"),
-                file_name=f"Batman_English_Certificate_{name}.txt",
-                mime="text/plain",
-                use_container_width=True,
-                type="primary"
-            )
+        st.balloons()
+        show_batman_pdf_download()
 
     else:
-        st.warning("아직 완료하지 않은 미션이 있습니다. 위의 3개 미션을 모두 완료해 주세요.")
+        st.warning(
+            "대사 빈칸, 대사 연결, 문법 활동을 모두 완료하면 "
+            "PDF 인증서 다운로드 버튼이 나타납니다."
+        )
 
     st.markdown('</div>', unsafe_allow_html=True)
