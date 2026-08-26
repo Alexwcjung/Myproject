@@ -398,10 +398,10 @@ st.markdown("""
 <div class="hero-box">
     <div class="hero-title">Hero or Villain?</div>
     <div class="hero-sub">
-        Watch the Batman scene, read the subtitles, answer the missions,
+        Watch the Batman scene, read the subtitles,
         listen and fill in key lines, match quotes, and discover grammar rules.
         <br>
-        <span class="kor">배트맨 장면을 보고 4개의 영어 미션을 완성해 봅시다.</span>
+        <span class="kor">영상을 본 뒤 대사 빈칸 · 대사 연결 · 문법 활동을 완성해 봅시다.</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -450,78 +450,6 @@ with tab1:
             <span class="kor">{line["ko"]}</span>
         </div>
         """, unsafe_allow_html=True)
-
-    st.markdown("---")
-    st.markdown("### 🦸 Hero or Villain Mission")
-
-    hero_indices = (
-        st.session_state.hero_wrong
-        if st.session_state.hero_attempt == 1 and st.session_state.hero_wrong
-        else list(range(len(hero_questions)))
-    )
-
-    hero_answers = {}
-
-    for idx in hero_indices:
-        item = hero_questions[idx]
-        st.markdown(f"**{item['q']}**")
-        hero_answers[idx] = st.radio(
-            "하나를 고르세요.",
-            item["options"],
-            key=f"hero_{idx}_attempt_{st.session_state.hero_attempt}",
-            index=None,
-            horizontal=False
-        )
-
-    if st.session_state.hero_attempt == 0:
-        if st.button("Hero or Villain 1차 채점", key="check_hero_first", type="primary"):
-            unanswered = [idx for idx in hero_indices if hero_answers.get(idx) is None]
-
-            if unanswered:
-                st.warning("모든 문제에 답한 뒤 채점하세요.")
-            else:
-                wrong = [
-                    idx for idx in hero_indices
-                    if hero_answers[idx] != hero_questions[idx]["answer"]
-                ]
-                correct = [idx for idx in hero_indices if idx not in wrong]
-                st.session_state.hero_first_correct = correct
-
-                if not wrong:
-                    st.session_state.batman_complete["choice"] = True
-                    st.session_state.hero_attempt = 2
-                    st.rerun()
-                else:
-                    st.session_state.hero_wrong = wrong
-                    st.session_state.hero_attempt = 1
-                    st.rerun()
-
-    elif st.session_state.hero_attempt == 1:
-        for idx in st.session_state.hero_first_correct:
-            st.success(f"{idx + 1}번 정답입니다. ✅")
-
-        if st.button("틀린 문제 다시 채점", key="check_hero_retry", type="primary"):
-            unanswered = [idx for idx in hero_indices if hero_answers.get(idx) is None]
-
-            if unanswered:
-                st.warning("재도전 문제에 모두 답한 뒤 채점하세요.")
-            else:
-                still_wrong = [
-                    idx for idx in hero_indices
-                    if hero_answers[idx] != hero_questions[idx]["answer"]
-                ]
-                st.session_state.hero_wrong = still_wrong
-                st.session_state.hero_attempt = 2
-                st.session_state.batman_complete["choice"] = True
-                st.rerun()
-
-    else:
-        if st.session_state.hero_wrong:
-            st.markdown("### 재도전 후 남은 오답")
-            for idx in st.session_state.hero_wrong:
-                st.write(f"**{hero_questions[idx]['q']}** → 정답: **{hero_questions[idx]['answer']}**")
-        else:
-            st.markdown('<div class="success-box">🦸 Hero or Villain 미션 완료!</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1144,12 +1072,16 @@ with tab5:
 
 st.markdown("---")
 
-completed_count = sum(st.session_state.batman_complete.values())
+certificate_missions = ["blank", "matching", "grammar"]
+completed_count = sum(
+    1 for mission in certificate_missions
+    if st.session_state.batman_complete.get(mission, False)
+)
 
-if completed_count == 4:
+if completed_count == 3:
     st.markdown("""
     <div class="success-box">
-        🦇 모든 배트맨 영어 미션을 완성했습니다!<br>
+        🦇 대사 빈칸 · 대사 연결 · 문법 미션을 모두 완성했습니다!<br>
         You are Gotham's English Guardian!
     </div>
     """, unsafe_allow_html=True)
@@ -1200,7 +1132,7 @@ Issued on: {issue_date}
             <div style="font-size:20px;margin-top:16px;">This certificate is proudly presented to</div>
             <div style="font-size:32px;font-weight:1000;margin:14px 0;">{student_name.strip()}</div>
             <div style="font-size:18px;line-height:1.8;">
-                for successfully completing all four<br>
+                for successfully completing all three<br>
                 <b>Batman English Missions</b><br><br>
                 🦇 You are Gotham's English Guardian!
             </div>
@@ -1223,7 +1155,7 @@ Issued on: {issue_date}
 else:
     st.markdown(f"""
     <div class="line-box">
-        <b>Mission Progress:</b> {completed_count} / 4 completed<br>
-        <span class="kor">4개의 미션을 모두 완료하면 인증서를 발급할 수 있습니다.</span>
+        <b>Mission Progress:</b> {completed_count} / 3 completed<br>
+        <span class="kor">대사 빈칸 · 대사 연결 · 문법을 모두 완료하면 인증서를 발급할 수 있습니다.</span>
     </div>
     """, unsafe_allow_html=True)
