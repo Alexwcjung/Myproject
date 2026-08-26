@@ -562,35 +562,56 @@ grammar_questions = [
 # SESSION STATE
 # =========================
 
-if "batman_complete" not in st.session_state:
+# 코드 구조가 바뀐 뒤에도 이전 세션의 완료값이 남아
+# 새 활동이 건너뛰어지는 문제를 막기 위한 버전 초기화입니다.
+BATMAN_STATE_VERSION = "2026-08-26-v3"
+
+if st.session_state.get("batman_state_version") != BATMAN_STATE_VERSION:
+    st.session_state.batman_state_version = BATMAN_STATE_VERSION
+
     st.session_state.batman_complete = {
-        "choice": False,
         "blank": False,
         "matching": False,
         "grammar": False
     }
 
-for mission_name in ["hero"]:
-    if f"{mission_name}_attempt" not in st.session_state:
-        st.session_state[f"{mission_name}_attempt"] = 0
-    if f"{mission_name}_wrong" not in st.session_state:
-        st.session_state[f"{mission_name}_wrong"] = []
-    if f"{mission_name}_first_correct" not in st.session_state:
-        st.session_state[f"{mission_name}_first_correct"] = []
+    st.session_state.blank_current = 0
+    st.session_state.blank_checked = False
+    st.session_state.blank_last_correct = None
 
-if "blank_phase" not in st.session_state:
-    st.session_state.blank_phase = 0
+    st.session_state.matching_completed_ids = []
+    st.session_state.matching_selected_en = None
+    st.session_state.matching_feedback = ""
 
-if "blank_wrong" not in st.session_state:
-    st.session_state.blank_wrong = []
+    # 이전 버전의 문법 결과도 함께 초기화
+    st.session_state.grammar_status = [None] * len(grammar_questions)
 
-if "blank_first_correct" not in st.session_state:
-    st.session_state.blank_first_correct = []
+if "batman_complete" not in st.session_state:
+    st.session_state.batman_complete = {
+        "blank": False,
+        "matching": False,
+        "grammar": False
+    }
 
-if "matching_completed_manual" not in st.session_state:
-    st.session_state.matching_completed_manual = False
+# 대사 빈칸: 한 문제씩 풀기
+if "blank_current" not in st.session_state:
+    st.session_state.blank_current = 0
 
+if "blank_checked" not in st.session_state:
+    st.session_state.blank_checked = False
 
+if "blank_last_correct" not in st.session_state:
+    st.session_state.blank_last_correct = None
+
+# 대사 연결: Streamlit이 실제 완료 상태를 직접 관리
+if "matching_completed_ids" not in st.session_state:
+    st.session_state.matching_completed_ids = []
+
+if "matching_selected_en" not in st.session_state:
+    st.session_state.matching_selected_en = None
+
+if "matching_feedback" not in st.session_state:
+    st.session_state.matching_feedback = ""
 
 # =========================
 # HEADER
@@ -670,101 +691,108 @@ with tab2:
 
     st.markdown(
         '<div class="game-card"><div class="big-guide">'
-        '대사를 듣고 빈칸에 들어갈 말을 고르세요. '
-        '틀린 문제는 정답을 바로 보여주지 않고 한 번 더 풀게 됩니다.'
+        '대사를 듣고 빈칸에 들어갈 말을 고르세요.<br>'
+        '한 문제씩 <b>답 확인</b>을 누르면 정답 여부와 정답이 표시됩니다. '
+        '확인한 뒤 다음 문제로 넘어가세요.'
         '</div></div>',
         unsafe_allow_html=True
     )
 
-    blank_indices = (
-        st.session_state.blank_wrong
-        if st.session_state.blank_phase == 1 and st.session_state.blank_wrong
-        else list(range(len(blank_questions)))
-    )
+    total_blank = len(blank_questions)
+    current_blank = min(st.session_state.blank_current, total_blank - 1)
 
-    blank_answers = {}
+    if not st.session_state.batman_complete["blank"]:
+        item = blank_questions[current_blank]
 
-    for idx in blank_indices:
-        item = blank_questions[idx]
+        st.markdown(
+            f"""
+            <div class="score-box">
+                대사 빈칸 {current_blank + 1} / {total_blank}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
         st.markdown(f"""
         <div class="line-box">
-            <b>{idx + 1}. {item["sentence"]}</b>
+            <b>{current_blank + 1}. {item["sentence"]}</b>
         </div>
         """, unsafe_allow_html=True)
 
         show_tts_audio(item["audio"])
 
         options = item["options"].copy()
-        rng = random.Random(f"batman_blank_{idx}")
-        rng.shuffle(options)
+        random.Random(f"batman_blank_single_{current_blank}").shuffle(options)
 
-        blank_answers[idx] = st.radio(
+        answer_key = f"blank_single_answer_{current_blank}"
+
+        selected_answer = st.radio(
             "정답을 고르세요.",
             options,
-            key=f"blank_{idx}_phase_{st.session_state.blank_phase}",
+            key=answer_key,
             index=None,
-            label_visibility="collapsed"
+            label_visibility="collapsed",
+            disabled=st.session_state.blank_checked
         )
 
-    if st.session_state.blank_phase == 0:
-        if st.button("대사 빈칸 1차 채점", key="blank_first_check", type="primary"):
-            unanswered = [idx for idx in blank_indices if blank_answers.get(idx) is None]
-
-            if unanswered:
-                st.warning("모든 문제에 답한 뒤 채점하세요.")
-            else:
-                wrong = [
-                    idx for idx in blank_indices
-                    if blank_answers[idx] != blank_questions[idx]["answer"]
-                ]
-                st.session_state.blank_first_correct = [
-                    idx for idx in blank_indices if idx not in wrong
-                ]
-                st.session_state.blank_wrong = wrong
-
-                if not wrong:
-                    st.session_state.blank_phase = 2
-                    st.session_state.batman_complete["blank"] = True
+        if not st.session_state.blank_checked:
+            if st.button(
+                "✅ 답 확인",
+                key=f"blank_check_{current_blank}",
+                type="primary",
+                use_container_width=True
+            ):
+                if selected_answer is None:
+                    st.warning("먼저 답을 하나 고르세요.")
                 else:
-                    st.session_state.blank_phase = 1
+                    st.session_state.blank_last_correct = (
+                        selected_answer == item["answer"]
+                    )
+                    st.session_state.blank_checked = True
+                    st.rerun()
 
-                st.rerun()
+        else:
+            if st.session_state.blank_last_correct:
+                st.success("정답입니다. ✅")
+            else:
+                st.error("오답입니다. ❌")
 
-    elif st.session_state.blank_phase == 1:
-        st.markdown("### 1차 결과")
-        for idx in st.session_state.blank_first_correct:
-            st.success(f"{idx + 1}번 정답입니다. ✅")
-        for idx in st.session_state.blank_wrong:
             st.markdown(
-                f'<div class="wrong-box"><b>{idx + 1}번</b>은 다시 풀어 보세요. ❌</div>',
+                f"""
+                <div class="feedback-ko">
+                    <b>정답:</b> {item["answer"]}<br>
+                    <b>전체 대사:</b> {item["audio"]}
+                </div>
+                """,
                 unsafe_allow_html=True
             )
 
-        if st.button("틀린 대사 다시 채점", key="blank_retry_check", type="primary"):
-            unanswered = [idx for idx in blank_indices if blank_answers.get(idx) is None]
-
-            if unanswered:
-                st.warning("재도전 문제에 모두 답한 뒤 채점하세요.")
+            if current_blank < total_blank - 1:
+                if st.button(
+                    "➡️ 다음 문제",
+                    key=f"blank_next_{current_blank}",
+                    type="primary",
+                    use_container_width=True
+                ):
+                    st.session_state.blank_current += 1
+                    st.session_state.blank_checked = False
+                    st.session_state.blank_last_correct = None
+                    st.rerun()
             else:
-                still_wrong = [
-                    idx for idx in blank_indices
-                    if blank_answers[idx] != blank_questions[idx]["answer"]
-                ]
-                st.session_state.blank_wrong = still_wrong
-                st.session_state.blank_phase = 2
-                st.session_state.batman_complete["blank"] = True
-                st.rerun()
+                if st.button(
+                    "🎉 대사 빈칸 완료",
+                    key="blank_finish_all",
+                    type="primary",
+                    use_container_width=True
+                ):
+                    st.session_state.batman_complete["blank"] = True
+                    st.rerun()
 
     else:
-        if st.session_state.blank_wrong:
-            st.markdown("### 재도전 후 남은 오답")
-            for idx in st.session_state.blank_wrong:
-                st.write(
-                    f"**{idx + 1}번 정답:** "
-                    f"**{blank_questions[idx]['answer']}**"
-                )
-        else:
-            st.markdown('<div class="success-box">🎧 대사 빈칸 미션 완료!</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="success-box">🎧 대사 빈칸의 모든 문제를 확인했습니다. 미션 완료! ✅</div>',
+            unsafe_allow_html=True
+        )
 
     st.markdown('</div>', unsafe_allow_html=True)
 
@@ -776,11 +804,13 @@ with tab2:
 with tab3:
     st.markdown('<div class="section-card">', unsafe_allow_html=True)
     st.markdown('<div class="section-title">🧩 대사 연결</div>', unsafe_allow_html=True)
+
     st.markdown(
-        '<div class="small-guide">'
-        '왼쪽 영어 대사를 하나 클릭하고, 오른쪽에서 알맞은 한국어 뜻을 하나 클릭하세요. '
-        '모든 카드가 사라지면 아래 완료 버튼을 누르세요.'
-        '</div>',
+        '<div class="game-card"><div class="big-guide">'
+        '왼쪽 영어 대사 1개를 클릭한 뒤 오른쪽 한국어 뜻 1개를 클릭하세요.<br>'
+        '맞으면 해당 두 카드가 사라지고, 틀리면 다시 고를 수 있습니다.<br>'
+        '<b>6쌍을 모두 실제로 맞혀야 대사 연결 미션이 완료됩니다.</b>'
+        '</div></div>',
         unsafe_allow_html=True
     )
 
@@ -789,339 +819,120 @@ with tab3:
         for i, (en, ko) in enumerate(correct_map.items(), start=1)
     ]
 
-    en_cards = [{"id": p["id"], "text": p["en"]} for p in matching_pairs]
-    ko_cards = [{"id": p["id"], "text": p["ko"]} for p in matching_pairs]
+    completed_ids = set(st.session_state.matching_completed_ids)
+    total_matching = len(matching_pairs)
 
-    random.Random("batman_match_en").shuffle(en_cards)
-    random.Random("batman_match_ko").shuffle(ko_cards)
-
-    matching_json = json.dumps(
-        {"en": en_cards, "ko": ko_cards, "total": len(matching_pairs)},
-        ensure_ascii=False
-    )
-
-    component_id = "batman_match_" + uuid.uuid4().hex
-
-    components.html(
-        f"""
-        <div id="{component_id}" class="match-app">
-            <div class="match-status">
-                <div id="status_{component_id}">먼저 왼쪽에서 영어 대사를 하나 선택하세요.</div>
-                <div id="score_{component_id}">맞춘 개수: 0 / {len(matching_pairs)}</div>
-            </div>
-
-            <div class="match-board">
-                <div class="match-col">
-                    <div class="col-title">🇺🇸 English</div>
-                    <div id="en_{component_id}" class="card-wrap"></div>
-                </div>
-
-                <div class="match-col">
-                    <div class="col-title">🇰🇷 Korean</div>
-                    <div id="ko_{component_id}" class="card-wrap"></div>
-                </div>
-            </div>
-
-            <div class="progress-outer">
-                <div id="bar_{component_id}" class="progress-inner"></div>
-            </div>
-
-            <button id="reset_{component_id}" class="reset-btn">🔄 매칭 다시 시작</button>
-            <div id="done_{component_id}" class="done-message" style="display:none;">
-                🎉 모든 대사를 맞췄습니다! 아래의 '대사 연결 완료' 버튼을 눌러 주세요.
-            </div>
-        </div>
-
-        <style>
-        #{component_id}.match-app {{
-            font-family: Arial, sans-serif;
-            width:100%;
-            box-sizing:border-box;
-            background:linear-gradient(135deg,#eef2ff 0%,#f0f9ff 50%,#fdf2f8 100%);
-            border:1px solid #c7d2fe;
-            border-radius:22px;
-            padding:22px;
-            color:#1e293b;
-        }}
-
-        #{component_id} .match-status {{
-            display:grid;
-            grid-template-columns:1.5fr .8fr;
-            gap:10px;
-            margin-bottom:14px;
-        }}
-
-        #{component_id} .match-status > div {{
-            background:#ffffff;
-            border:1px solid #dbeafe;
-            border-radius:14px;
-            padding:12px 14px;
-            font-size:15px;
-            font-weight:900;
-            color:#1d4ed8;
-        }}
-
-        #{component_id} .match-board {{
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            gap:14px;
-        }}
-
-        #{component_id} .match-col {{
-            background:rgba(255,255,255,.76);
-            border:1px solid #e5e7eb;
-            border-radius:18px;
-            padding:14px;
-        }}
-
-        #{component_id} .col-title {{
-            font-size:22px;
-            font-weight:1000;
-            margin-bottom:12px;
-        }}
-
-        #{component_id} .card-wrap {{
-            display:flex;
-            flex-direction:column;
-            gap:10px;
-        }}
-
-        #{component_id} .match-card {{
-            width:100%;
-            text-align:left;
-            border:2px solid #c7d2fe;
-            background:#ffffff;
-            color:#1e293b;
-            border-radius:16px;
-            padding:14px 15px;
-            font-size:17px;
-            font-weight:900;
-            line-height:1.55;
-            cursor:pointer;
-            transition:.16s ease;
-            position:relative;
-            overflow:hidden;
-        }}
-
-        #{component_id} .match-card.selected {{
-            background:linear-gradient(135deg,#fef3c7,#fde68a);
-            border-color:#f59e0b;
-        }}
-
-        #{component_id} .match-card.wrong {{
-            animation:shake_{component_id} .30s ease-in-out;
-            background:#fee2e2;
-            border-color:#ef4444;
-        }}
-
-        #{component_id} .match-card.correct {{
-            background:linear-gradient(135deg,#dcfce7,#bbf7d0);
-            border-color:#22c55e;
-            animation:explodeOut_{component_id} .78s ease forwards;
-            z-index:5;
-        }}
-
-        #{component_id} .match-card.correct::after {{
-            content:"✨ 💥 ✨";
-            position:absolute;
-            inset:0;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:34px;
-            background:radial-gradient(circle,rgba(255,255,255,.98),rgba(255,255,255,.45),rgba(255,255,255,0));
-            animation:sparkle_{component_id} .78s ease forwards;
-        }}
-
-        @keyframes explodeOut_{component_id} {{
-            0% {{opacity:1; transform:scale(1); max-height:220px;}}
-            25% {{transform:scale(1.10);}}
-            60% {{opacity:1; transform:scale(1.18);}}
-            100% {{opacity:0; transform:scale(.25); max-height:0; padding:0; border-width:0; margin:0;}}
-        }}
-
-        @keyframes sparkle_{component_id} {{
-            0% {{opacity:0; transform:scale(.5);}}
-            35% {{opacity:1; transform:scale(1.35);}}
-            100% {{opacity:0; transform:scale(2.2);}}
-        }}
-
-        @keyframes shake_{component_id} {{
-            0%,100% {{transform:translateX(0);}}
-            25% {{transform:translateX(-6px);}}
-            50% {{transform:translateX(6px);}}
-            75% {{transform:translateX(-3px);}}
-        }}
-
-        #{component_id} .progress-outer {{
-            width:100%;
-            height:14px;
-            background:#e5e7eb;
-            border-radius:999px;
-            overflow:hidden;
-            margin:16px 0 12px;
-        }}
-
-        #{component_id} .progress-inner {{
-            width:0%;
-            height:100%;
-            background:linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);
-            transition:width .28s ease;
-        }}
-
-        #{component_id} .reset-btn {{
-            width:100%;
-            border:1px solid #c7d2fe;
-            background:#ffffff;
-            color:#4338ca;
-            border-radius:999px;
-            min-height:46px;
-            font-size:16px;
-            font-weight:1000;
-            cursor:pointer;
-        }}
-
-        #{component_id} .done-message {{
-            background:linear-gradient(135deg,#dcfce7,#bbf7d0);
-            border:2px solid #22c55e;
-            color:#14532d;
-            border-radius:16px;
-            padding:18px;
-            margin-top:16px;
-            font-size:20px;
-            font-weight:1000;
-            text-align:center;
-        }}
-        </style>
-
-        <script>
-        const data = {matching_json};
-        const root = document.getElementById("{component_id}");
-        const enBox = document.getElementById("en_{component_id}");
-        const koBox = document.getElementById("ko_{component_id}");
-        const status = document.getElementById("status_{component_id}");
-        const score = document.getElementById("score_{component_id}");
-        const bar = document.getElementById("bar_{component_id}");
-        const doneBox = document.getElementById("done_{component_id}");
-        const resetBtn = document.getElementById("reset_{component_id}");
-
-        let selected = null;
-        let completed = new Set();
-        let locked = false;
-
-        function makeCard(card, kind) {{
-            const btn = document.createElement("button");
-            btn.className = "match-card";
-            btn.textContent = card.text;
-            btn.onclick = () => handleClick(btn, card, kind);
-            return btn;
-        }}
-
-        function render() {{
-            enBox.innerHTML = "";
-            koBox.innerHTML = "";
-
-            data.en.forEach(card => {{
-                if (!completed.has(card.id)) enBox.appendChild(makeCard(card, "en"));
-            }});
-
-            data.ko.forEach(card => {{
-                if (!completed.has(card.id)) koBox.appendChild(makeCard(card, "ko"));
-            }});
-
-            const count = completed.size;
-            score.textContent = "맞춘 개수: " + count + " / " + data.total;
-            bar.style.width = ((count / data.total) * 100) + "%";
-
-            if (count === data.total) {{
-                doneBox.style.display = "block";
-                status.textContent = "모든 대사를 맞췄습니다! 🎉";
-            }}
-        }}
-
-        function clearSelected() {{
-            root.querySelectorAll(".selected").forEach(x => x.classList.remove("selected"));
-            selected = null;
-        }}
-
-        function handleClick(el, card, kind) {{
-            if (locked) return;
-
-            if (!selected) {{
-                selected = {{el, card, kind}};
-                el.classList.add("selected");
-                status.textContent = kind === "en"
-                    ? "오른쪽에서 알맞은 한국어 뜻을 고르세요."
-                    : "왼쪽에서 알맞은 영어 대사를 고르세요.";
-                return;
-            }}
-
-            if (selected.el === el) {{
-                clearSelected();
-                return;
-            }}
-
-            if (selected.kind === kind) {{
-                selected.el.classList.remove("selected");
-                selected = {{el, card, kind}};
-                el.classList.add("selected");
-                return;
-            }}
-
-            if (selected.card.id === card.id) {{
-                locked = true;
-                const firstEl = selected.el;
-                const secondEl = el;
-                const matchedId = card.id;
-
-                firstEl.classList.remove("selected");
-                firstEl.classList.add("correct");
-                secondEl.classList.add("correct");
-
-                setTimeout(() => {{
-                    completed.add(matchedId);
-                    selected = null;
-                    locked = false;
-                    render();
-                }}, 780);
-
-            }} else {{
-                locked = true;
-                const firstEl = selected.el;
-                const secondEl = el;
-
-                firstEl.classList.add("wrong");
-                secondEl.classList.add("wrong");
-
-                setTimeout(() => {{
-                    firstEl.classList.remove("selected","wrong");
-                    secondEl.classList.remove("wrong");
-                    selected = null;
-                    locked = false;
-                }}, 430);
-            }}
-        }}
-
-        resetBtn.onclick = () => {{
-            selected = null;
-            completed = new Set();
-            locked = false;
-            doneBox.style.display = "none";
-            render();
-        }};
-
-        render();
-        </script>
-        """,
-        height=760,
-        scrolling=True
-    )
+    if len(completed_ids) >= total_matching:
+        st.session_state.batman_complete["matching"] = True
 
     if st.session_state.batman_complete["matching"]:
-        st.markdown('<div class="success-box">🧩 대사 연결 미션 완료!</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="success-box">🧩 모든 대사를 정확히 연결했습니다. 매칭 미션 완료! ✅</div>',
+            unsafe_allow_html=True
+        )
     else:
-        if st.button("✅ 대사 연결 완료", key="matching_finish", type="primary"):
-            st.session_state.batman_complete["matching"] = True
+        st.markdown(
+            f"""
+            <div class="score-box">
+                맞춘 개수: {len(completed_ids)} / {total_matching}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if st.session_state.matching_feedback:
+            if st.session_state.matching_feedback.startswith("✅"):
+                st.success(st.session_state.matching_feedback)
+            else:
+                st.error(st.session_state.matching_feedback)
+
+        remaining_pairs = [
+            p for p in matching_pairs
+            if p["id"] not in completed_ids
+        ]
+
+        en_cards = remaining_pairs.copy()
+        ko_cards = remaining_pairs.copy()
+
+        random.Random("batman_native_match_en").shuffle(en_cards)
+        random.Random("batman_native_match_ko").shuffle(ko_cards)
+
+        col_en, col_ko = st.columns(2)
+
+        with col_en:
+            st.markdown("### 🇺🇸 English")
+            for pair in en_cards:
+                is_selected = (
+                    st.session_state.matching_selected_en == pair["id"]
+                )
+
+                label = (
+                    f"🟡 {pair['en']}"
+                    if is_selected
+                    else pair["en"]
+                )
+
+                if st.button(
+                    label,
+                    key=f"match_en_{pair['id']}",
+                    use_container_width=True
+                ):
+                    st.session_state.matching_selected_en = pair["id"]
+                    st.session_state.matching_feedback = (
+                        "영어 대사를 선택했습니다. 오른쪽에서 뜻을 고르세요."
+                    )
+                    st.rerun()
+
+        with col_ko:
+            st.markdown("### 🇰🇷 Korean")
+            for pair in ko_cards:
+                if st.button(
+                    pair["ko"],
+                    key=f"match_ko_{pair['id']}",
+                    use_container_width=True
+                ):
+                    selected_id = st.session_state.matching_selected_en
+
+                    if selected_id is None:
+                        st.session_state.matching_feedback = (
+                            "❌ 먼저 왼쪽에서 영어 대사를 선택하세요."
+                        )
+
+                    elif selected_id == pair["id"]:
+                        if pair["id"] not in st.session_state.matching_completed_ids:
+                            st.session_state.matching_completed_ids.append(pair["id"])
+
+                        st.session_state.matching_selected_en = None
+
+                        if len(st.session_state.matching_completed_ids) >= total_matching:
+                            st.session_state.batman_complete["matching"] = True
+                            st.session_state.matching_feedback = (
+                                "✅ 마지막 대사까지 맞혔습니다!"
+                            )
+                        else:
+                            st.session_state.matching_feedback = (
+                                "✅ 정답입니다! 맞힌 카드가 사라졌습니다."
+                            )
+
+                    else:
+                        st.session_state.matching_selected_en = None
+                        st.session_state.matching_feedback = (
+                            "❌ 연결이 맞지 않습니다. 다시 선택해 보세요."
+                        )
+
+                    st.rerun()
+
+        st.markdown("---")
+
+        if st.button(
+            "🔄 대사 연결 처음부터 다시 하기",
+            key="matching_reset_native",
+            use_container_width=True
+        ):
+            st.session_state.matching_completed_ids = []
+            st.session_state.matching_selected_en = None
+            st.session_state.matching_feedback = ""
+            st.session_state.batman_complete["matching"] = False
             st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
@@ -1299,7 +1110,7 @@ with tab6:
         <div class="line-box">
             <b>Mission Progress:</b> {completed_count} / 3 completed<br>
             <span class="kor">
-                대사 빈칸 · 대사 연결 · 문법을 모두 완료하면
+                대사 빈칸의 모든 문제 확인 · 대사 연결 6쌍 완성 · 문법 전체 정답을 모두 완료하면
                 PDF 인증서를 저장할 수 있습니다.
             </span>
         </div>
