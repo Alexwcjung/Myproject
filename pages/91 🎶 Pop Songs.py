@@ -5920,7 +5920,7 @@ if selected_tab == "🎬 배경 학습":
     )
 
 
-elif selected_tab == "📖 가사 & 이해도 퀴즈":
+elif selected_tab == "📖 가사 퀴즈":
     st.subheader("🎬 노래 영상")
     video_url = str(data.get("video_url", "")).strip()
     if video_url:
@@ -5941,7 +5941,7 @@ elif selected_tab == "📖 가사 & 이해도 퀴즈":
     show_integrated_quiz_tab(song_choice, data)
 
 
-elif selected_tab == "🎯 Grammar":
+elif selected_tab == "🎯 문법":
     show_song_grammar_tab(song_choice, data)
 
 
@@ -6532,5 +6532,5 @@ elif selected_tab == "✍️ 생각 적기":
 
 
 
-elif selected_tab == "⭐ Key Expression 학습":
+elif selected_tab == "⭐ 핵심 표현 듣기":
     show_key_expression_learning_in_lyrics(song_choice, data, max_words=10)
