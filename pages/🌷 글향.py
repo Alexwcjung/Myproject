@@ -3882,60 +3882,113 @@ def show_lie_finding_activity(category, topic_name, data):
 
 def show_reading_blocks(dialogue, category, topic_name):
     full_english = make_full_listening_text(dialogue)
-    play_persistent_full_audio(full_english, key=f"{category}_{topic_name}_full_only_audio_v1", button_label="🎧 전체 듣기", lang="en")
+    play_persistent_full_audio(
+        full_english,
+        key=f"{category}_{topic_name}_full_only_audio_v2",
+        button_label="🎧 전체 듣기",
+        lang="en"
+    )
 
-    # 대화형 교과서 본문은 화자 이름까지 함께 표시합니다.
-    # 예: Jiho: Hi, Kelly. / Kelly: Sure! / Sujin: Daniel, ... / Daniel: ...
+    # 교과서 1, 교과서 2는 화자 이름을 유지합니다.
     dialogue_topics = {"📘 교과서 1", "📗 교과서 2"}
 
     if topic_name in dialogue_topics:
         lines = [
-            f"<strong>{speaker}:</strong> {eng}" if speaker not in {"Narration", "Title", "Section"} else eng
+            f"<strong>{speaker}:</strong> {eng}"
+            if speaker not in {"Narration", "Title", "Section"} else eng
             for speaker, eng, _ in dialogue
         ]
         korean_lines = [
-            f"<strong>{speaker}:</strong> {kor}" if speaker not in {"Narration", "Title", "Section"} else kor
+            f"<strong>{speaker}:</strong> {kor}"
+            if speaker not in {"Narration", "Title", "Section"} else kor
             for speaker, _, kor in dialogue
         ]
     else:
         lines = [eng for _, eng, _ in dialogue]
         korean_lines = [kor for _, _, kor in dialogue]
 
-    chunk_size = 4
+    # 교과서는 6줄씩, 나머지 읽기 자료는 기존처럼 4줄씩 표시
+    chunk_size = 6 if topic_name in dialogue_topics else 4
 
     for block_idx in range(0, len(lines), chunk_size):
-        chunk = lines[block_idx:block_idx + chunk_size]
-        html_lines = "<br>".join(chunk)
+        block_no = block_idx // chunk_size + 1
+        eng_chunk = lines[block_idx:block_idx + chunk_size]
+        kor_chunk = korean_lines[block_idx:block_idx + chunk_size]
+
+        eng_html = "<br>".join(eng_chunk)
+
         st.markdown(
             f"""
-            <div style="margin-bottom: 16px; padding: 20px 22px; border-radius: 18px;
+            <div style="margin-bottom: 10px; padding: 20px 22px; border-radius: 18px;
                         border: 1px solid #e5e7eb; background: #ffffff;
                         box-shadow: 0 3px 10px rgba(15,23,42,0.04);">
                 <div style="font-size: 21px; font-weight: 750; color: #000000; line-height: 1.85;">
-                    {html_lines}
+                    {eng_html}
                 </div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-    # 교과서 1, 교과서 2와 Ronaldo 지문은 학생이 필요할 때만 한국어 해석을 열어 볼 수 있게 합니다.
-    # st.button은 누를 때마다 session_state 값을 바꾸어 해석 보기/숨기기를 전환합니다.
-    korean_available_topics = {"📘 교과서 1", "📗 교과서 2", "⚽ Ronaldo"}
-    if topic_name in korean_available_topics:
-        show_korean_key = f"show_korean_translation_{category}_{topic_name}"
-        if show_korean_key not in st.session_state:
-            st.session_state[show_korean_key] = False
+        # 교과서는 각 6줄 묶음 바로 아래에 개별 한국어 해석 버튼을 둡니다.
+        if topic_name in dialogue_topics:
+            show_key = f"show_korean_block_{category}_{topic_name}_{block_no}"
+            st.session_state.setdefault(show_key, False)
 
-        button_label = "🇰🇷 한국어 해석 숨기기" if st.session_state[show_korean_key] else "🇰🇷 한국어 해석 보기"
-        if st.button(button_label, use_container_width=True, key=f"{show_korean_key}_btn"):
+            button_label = (
+                f"🇰🇷 {block_no}번 해석 숨기기"
+                if st.session_state[show_key]
+                else f"🇰🇷 {block_no}번 한국어 해석 보기"
+            )
+
+            if st.button(
+                button_label,
+                use_container_width=True,
+                key=f"{show_key}_btn"
+            ):
+                st.session_state[show_key] = not st.session_state[show_key]
+                st.rerun()
+
+            if st.session_state[show_key]:
+                kor_html = "<br>".join(kor_chunk)
+                st.markdown(
+                    f"""
+                    <div class="korean-card" style="margin-top: 8px; margin-bottom: 18px;">
+                        {kor_html}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+            else:
+                st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+
+        # Ronaldo는 기존처럼 전체 해석을 한 번에 여는 방식 유지
+        elif topic_name == "⚽ Ronaldo":
+            pass
+
+    # Ronaldo만 기존 전체 한국어 해석 버튼 유지
+    if topic_name == "⚽ Ronaldo":
+        show_korean_key = f"show_korean_translation_{category}_{topic_name}"
+        st.session_state.setdefault(show_korean_key, False)
+
+        button_label = (
+            "🇰🇷 한국어 해석 숨기기"
+            if st.session_state[show_korean_key]
+            else "🇰🇷 한국어 해석 보기"
+        )
+
+        if st.button(
+            button_label,
+            use_container_width=True,
+            key=f"{show_korean_key}_btn"
+        ):
             st.session_state[show_korean_key] = not st.session_state[show_korean_key]
             st.rerun()
 
         if st.session_state[show_korean_key]:
             st.markdown("### 🇰🇷 한국어 해석")
-            for block_idx in range(0, len(korean_lines), chunk_size):
-                chunk = korean_lines[block_idx:block_idx + chunk_size]
+            for block_idx in range(0, len(korean_lines), 4):
+                chunk = korean_lines[block_idx:block_idx + 4]
                 html_lines = "<br>".join(chunk)
                 st.markdown(
                     f"""
@@ -3946,29 +3999,24 @@ def show_reading_blocks(dialogue, category, topic_name):
                     unsafe_allow_html=True
                 )
 
-
 tab_reading = st.container()
 
 # =========================================================
 
 with tab_reading:
     st.markdown("## 📖 Reading")
-    st.caption("본문을 먼저 읽고, 아래 Mission 1 문제를 풉니다. 교과서 1, 교과서 2와 Ronaldo 지문은 필요할 때 한국어 해석 보기 버튼을 눌러 확인할 수 있습니다.")
+
+    if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
+        st.caption("교과서 본문은 6줄씩 나누어 제시됩니다. 각 부분 아래의 한국어 해석 버튼을 눌러 필요한 부분만 확인할 수 있습니다.")
+    else:
+        st.caption("본문을 읽고 문장 매칭과 Key Expressions 활동을 해 보세요.")
 
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
     show_reading_blocks(dialogue, category, topic_name)
 
     st.markdown("---")
-    show_mission_quiz(category, topic_name, data)
-
-    st.markdown("---")
     show_sequence_matching_activity(category, topic_name, data)
 
     st.markdown("---")
-    show_lie_finding_activity(category, topic_name, data)
-
-    st.markdown("---")
-    show_letter_to_character_activity(category, topic_name, data)
-
-    st.markdown("---")
     show_key_expression_word_test(category, topic_name, data, max_words=10)
+
