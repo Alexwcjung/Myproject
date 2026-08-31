@@ -4005,8 +4005,8 @@ def show_reading_blocks(dialogue, category, topic_name):
         lines = [eng for _, eng, _ in dialogue]
         korean_lines = [kor for _, _, kor in dialogue]
 
-    # 교과서는 6줄씩, 나머지 읽기 자료는 기존처럼 4줄씩 표시
-    chunk_size = 6 if topic_name in dialogue_topics else 4
+    # 교과서는 4줄씩, 나머지 읽기 자료도 기존처럼 4줄씩 표시
+    chunk_size = 4 if topic_name in dialogue_topics else 4
 
     for block_idx in range(0, len(lines), chunk_size):
         block_no = block_idx // chunk_size + 1
@@ -4028,7 +4028,7 @@ def show_reading_blocks(dialogue, category, topic_name):
             unsafe_allow_html=True
         )
 
-        # 교과서는 각 6줄 묶음 바로 아래에 개별 한국어 해석 버튼을 둡니다.
+        # 교과서는 각 4줄 묶음 바로 아래에 개별 한국어 해석 버튼을 둡니다.
         if topic_name in dialogue_topics:
             show_key = f"show_korean_block_{category}_{topic_name}_{block_no}"
             st.session_state.setdefault(show_key, False)
@@ -4105,7 +4105,7 @@ with tab_reading:
     st.markdown("## 📖 Reading")
 
     if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
-        st.caption("교과서 본문은 6줄씩 나누어 제시됩니다. 각 부분 아래의 한국어 해석 버튼을 눌러 필요한 부분만 확인할 수 있습니다.")
+        st.caption("교과서 본문은 4줄씩 나누어 제시됩니다. 각 부분 아래의 한국어 해석 버튼을 눌러 필요한 부분만 확인할 수 있습니다.")
     else:
         st.caption("본문을 읽고 문장 매칭과 Key Expressions 활동을 해 보세요.")
 
