@@ -3291,6 +3291,104 @@ def show_lie_finding_activity(category, topic_name, data):
             st.rerun()
 
 
+
+def show_easy_grammar_practice(category, topic_name):
+    """교과서 본문에 반복해서 등장하는 쉬운 문법 포인트를 짧게 연습합니다."""
+    grammar_bank = {
+        "📘 교과서 1": {
+            "points": [
+                ("① want to + 동사원형", "‘~하고 싶다’라는 뜻입니다. 예: I want to be a new person."),
+                ("② need to + 동사원형", "‘~할 필요가 있다’라는 뜻입니다. 예: You need to make realistic plans."),
+                ("③ will + 동사원형", "앞으로의 계획이나 예상을 나타냅니다. 예: I will do my best."),
+                ("④ 비교급 + than", "두 대상을 비교할 때 씁니다. 예: Quality is more important than quantity.")
+            ],
+            "questions": [
+                ("1. I want ___ a new person this year.", ["be", "to be", "being", "am"], "to be"),
+                ("2. You need ___ realistic plans.", ["make", "making", "to make", "made"], "to make"),
+                ("3. I ___ do my best in everything.", ["will", "am", "did", "was"], "will"),
+                ("4. Quality is more important ___ quantity.", ["to", "of", "than", "with"], "than")
+            ]
+        },
+        "📗 교과서 2": {
+            "points": [
+                ("① be planning to + 동사원형", "‘~할 계획이다’라는 뜻입니다. 예: Which club are you planning to join?"),
+                ("② be interested in + -ing", "‘~하는 데 관심이 있다’라는 뜻입니다. 예: I’m interested in joining the school band."),
+                ("③ want to + 동사원형", "‘~하고 싶다’라는 뜻입니다. 예: I want to experience them all."),
+                ("④ should + 동사원형", "‘~해야 한다’라는 조언을 나타냅니다. 예: You should rank your options.")
+            ],
+            "questions": [
+                ("1. Which club are you planning ___?", ["join", "to join", "joining", "joined"], "to join"),
+                ("2. I’m interested in ___ the school band.", ["join", "to join", "joining", "joined"], "joining"),
+                ("3. I want ___ them all.", ["experience", "to experience", "experiencing", "experienced"], "to experience"),
+                ("4. You should ___ your options.", ["rank", "to rank", "ranking", "ranked"], "rank")
+            ]
+        }
+    }
+
+    if topic_name not in grammar_bank:
+        return
+
+    info = grammar_bank[topic_name]
+    st.markdown('<div class="section-box"><h3>📝 Grammar Point</h3></div>', unsafe_allow_html=True)
+    st.caption("본문에 자주 나온 쉬운 문법을 먼저 확인하고 4문제만 풀어 보세요.")
+
+    for title, explanation in info["points"]:
+        st.markdown(
+            f"""
+            <div style="padding:12px 15px; margin-bottom:8px; border-radius:16px;
+                        background:#fff7ed; border:1.5px solid #fed7aa;">
+                <div style="font-size:18px; font-weight:950; color:#c2410c;">{title}</div>
+                <div style="font-size:16px; font-weight:750; color:#475569; margin-top:4px;">
+                    {explanation}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("#### ✏️ Grammar Check")
+
+    for i, (question, options, answer) in enumerate(info["questions"], start=1):
+        state_key = f"grammar_done_{category}_{topic_name}_{i}"
+        choice_key = f"grammar_choice_{category}_{topic_name}_{i}"
+
+        st.markdown(f"**{question}**")
+
+        choice = st.radio(
+            "정답 선택",
+            options,
+            index=None,
+            key=choice_key,
+            horizontal=True,
+            label_visibility="collapsed",
+            disabled=st.session_state.get(state_key, False)
+        )
+
+        if st.session_state.get(state_key, False):
+            st.success("✅ 정답입니다!")
+        else:
+            if st.button("정답 확인", key=f"grammar_check_{category}_{topic_name}_{i}"):
+                if choice is None:
+                    st.warning("먼저 답을 선택해 주세요.")
+                elif choice == answer:
+                    st.session_state[state_key] = True
+                    st.rerun()
+                else:
+                    st.error("❌ 다시 생각해 보세요. 정답은 아직 공개하지 않습니다.")
+
+        st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+
+    completed = sum(
+        st.session_state.get(f"grammar_done_{category}_{topic_name}_{i}", False)
+        for i in range(1, len(info["questions"]) + 1)
+    )
+
+    if completed == len(info["questions"]):
+        st.success("🎉 Grammar Point 완료! 이제 Key Expressions로 넘어가세요.")
+    else:
+        st.caption(f"진행: {completed}/{len(info['questions'])}문제 정답")
+
+
 def show_key_expression_word_test(category, topic_name, data, max_words=10):
     """Key Expressions 학습: 테스트가 아니라 듣고 뜻을 확인하는 학습용 카드입니다."""
     key_words = get_key_words(topic_name, data)[:max_words]
@@ -4016,6 +4114,10 @@ with tab_reading:
 
     st.markdown("---")
     show_sequence_matching_activity(category, topic_name, data)
+
+    if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
+        st.markdown("---")
+        show_easy_grammar_practice(category, topic_name)
 
     st.markdown("---")
     show_key_expression_word_test(category, topic_name, data, max_words=10)
