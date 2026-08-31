@@ -5898,7 +5898,7 @@ song_choice = st.selectbox("👉 학습할 노래를 선택하세요", song_opti
 st.session_state.selected_song = song_choice
 data = SONGS[song_choice]
 
-tabs_list = ["🎬 배경 학습", "📖 가사 & 이해도 퀴즈", "🎯 Grammar", "🧩 문장 매칭 게임", "✍️ 생각 적기", "⭐ Key Expression 학습"]
+tabs_list = ["🎬 배경 학습", "📖 가사 퀴즈", "🎯 문법", "🧩 문장 매칭 게임", "✍️ 생각 적기", "⭐ 핵심 표현 학습"]
 selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
 
 if selected_tab == "🎬 배경 학습":
