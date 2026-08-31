@@ -989,23 +989,18 @@ data_bank = {
     }
 ,
     "교과서": {
-        "📘 교과서": {
-            "title": "Starting a New School Life",
-            "subtitle": "Realistic plans, wise choices, and priorities for a new start",
+        "📘 교과서 1": {
+            "title": "Plans for a New Start",
+            "subtitle": "Make realistic plans that fit your lifestyle",
             "video_url": "",
             "image_path": None,
             "facts": [
-                "Topic 1: Make realistic plans that fit your lifestyle",
-                "Topic 2: Use your time wisely and set priorities",
-                "Key idea: Quality and priority are more important than doing too much"
+                "Topic: making a realistic weekly plan",
+                "Problem: too many activities, not enough breaks or sleep",
+                "Key idea: Quality is more important than quantity"
             ],
             "dialogue": [
-                ("Title", "Starting a New School Life", "새로운 학교생활 시작하기"),
-                ("Narration", "Today is the first day of high school life.", "오늘은 고등학교 생활의 첫날이다."),
-                ("Narration", "For the exciting new start, students share their thoughts, goals, and ideas.", "설레는 새로운 시작을 맞아 학생들은 자신의 생각, 목표, 아이디어를 나눈다."),
-                ("Narration", "They want to find the best way to use their time and passion.", "그들은 자신의 시간과 열정을 가장 잘 활용하는 방법을 찾고 싶어 한다."),
-
-                ("Section", "Plans for a New Start", "새로운 시작을 위한 계획"),
+                ("Narration", "Today is the first day of high school life. For the exciting new start, students share their thoughts, goals, and ideas. They want to find the best way to use their time and passion.", "오늘은 고등학교 생활의 첫날이다. 설레는 새로운 시작을 맞아 학생들은 자신의 생각, 목표, 아이디어를 나눈다. 그들은 자신의 시간과 열정을 가장 잘 활용하는 방법을 찾고 싶어 한다."),
                 ("Jiho", "Hi, Kelly. Did you prepare anything special for this new start?", "안녕, Kelly. 이번 새로운 시작을 위해 특별히 준비한 것이 있니?"),
                 ("Kelly", "Sure! See? This is my weekly plan. Doesn’t it look great?", "물론이지! 봐. 이게 내 주간 계획표야. 멋져 보이지 않니?"),
                 ("Jiho", "Wow. Let me take a look. That’s cool. But don’t you think it’s too packed?", "와. 어디 한번 보자. 멋진데. 그런데 너무 빡빡하다고 생각하지 않니?"),
@@ -1022,9 +1017,38 @@ data_bank = {
                 ("Kelly", "Hmm... What do you think about this three-hour study time for math and English?", "음... 수학과 영어를 위한 이 세 시간의 공부 시간은 어떻게 생각해?"),
                 ("Jiho", "It also looks like a problem. I think you need to reduce it to one or two hours. That way, you can continue this routine without feeling stressed and tired.", "그것도 문제가 있어 보여. 한두 시간으로 줄일 필요가 있다고 생각해. 그렇게 하면 스트레스와 피로를 느끼지 않고 이 생활 습관을 계속할 수 있어."),
                 ("Kelly", "That’s a good point. After all, I want to make a new lifestyle, and not give up my plans too quickly.", "좋은 지적이야. 결국 나는 새로운 생활 방식을 만들고 싶은 것이지, 계획을 너무 빨리 포기하고 싶은 건 아니니까."),
-                ("Jiho", "Yes. Quality is more important than quantity. I hope everything goes well for you!", "맞아. 양보다 질이 더 중요해. 모든 일이 잘되길 바랄게!"),
+                ("Jiho", "Yes. Quality is more important than quantity. I hope everything goes well for you!", "맞아. 양보다 질이 더 중요해. 모든 일이 잘되길 바랄게!")
+            ],
+            "key_expressions": [
+                "too packed",
+                "On second thought",
+                "make realistic plans",
+                "fit your lifestyle",
+                "That makes sense.",
+                "concentrate on",
+                "reduce it to one or two hours",
+                "Quality is more important than quantity."
+            ],
+            "questions": [
+                ("1. Jiho가 Kelly의 계획에서 발견한 문제는 무엇인가요?", ["There are no breaks and her sleep time is too short.", "She has too much free time.", "She does not study at all.", "She sleeps too much."], "There are no breaks and her sleep time is too short."),
+                ("2. Jiho는 Kelly에게 어떤 계획을 세우라고 조언하나요?", ["Realistic plans that fit her lifestyle", "A more packed plan", "A plan with no exercise", "A plan made by someone else"], "Realistic plans that fit her lifestyle"),
+                ("3. Kelly는 무엇을 계획에서 삭제하기로 하나요?", ["The morning jog", "The afternoon workout", "Math study", "English study"], "The morning jog"),
+                ("4. Jiho가 강조한 말은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is always more important.", "Never change your plan.", "Sleep is not important."], "Quality is more important than quantity.")
+            ],
+            "reflection_prompt": "Kelly의 계획을 통해 현실적인 계획을 세우는 것이 왜 중요한지 생각해 봅시다."
+        },
 
-                ("Section", "Which Club to Join?", "어느 동아리에 가입할까?"),
+        "📗 교과서 2": {
+            "title": "Which Club to Join?",
+            "subtitle": "Use your time wisely and set priorities",
+            "video_url": "",
+            "image_path": None,
+            "facts": [
+                "Topic: choosing the right school club",
+                "Problem: Sujin wants to join too many clubs",
+                "Key idea: Set priorities and choose what adds the most value"
+            ],
+            "dialogue": [
                 ("Sujin", "Daniel, which club are you planning to join?", "Daniel, 너는 어느 동아리에 가입할 계획이야?"),
                 ("Daniel", "I’m thinking of joining the school broadcasting club. What about you?", "나는 학교 방송부에 가입할까 생각 중이야. 너는?"),
                 ("Sujin", "I want to join the film club, the volunteering club, and the sports club. I’m also interested in joining the school band.", "나는 영화 동아리, 봉사 동아리, 스포츠 동아리에 가입하고 싶어. 학교 밴드에도 관심이 있어."),
@@ -1041,28 +1065,23 @@ data_bank = {
                 ("Daniel", "No problem. I’m ready to help you anytime!", "천만에. 언제든 도와줄 준비가 되어 있어!")
             ],
             "key_expressions": [
-                "make realistic plans",
-                "fit your lifestyle",
-                "That makes sense.",
-                "concentrate on",
-                "Quality is more important than quantity.",
+                "be planning to",
+                "be interested in",
+                "sounds exhausting",
                 "use your time wisely",
                 "add the most value",
+                "rank your options",
                 "in the order of importance",
                 "set priorities",
                 "make the best decision"
             ],
             "questions": [
-                ("1. Jiho가 Kelly의 계획에서 발견한 문제는 무엇인가요?", ["There are no breaks and her sleep time is too short.", "She has too much free time.", "She does not study at all.", "She sleeps too much."], "There are no breaks and her sleep time is too short."),
-                ("2. Jiho는 Kelly에게 어떤 계획을 세우라고 조언하나요?", ["Realistic plans that fit her lifestyle", "A more packed plan", "A plan with no exercise", "A plan made by someone else"], "Realistic plans that fit her lifestyle"),
-                ("3. Kelly는 무엇을 계획에서 삭제하기로 하나요?", ["The morning jog", "The afternoon workout", "Math study", "English study"], "The morning jog"),
-                ("4. Jiho가 강조한 말은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is always more important.", "Never change your plan.", "Sleep is not important."], "Quality is more important than quantity."),
-                ("5. Sujin이 처음 관심을 가진 동아리는 몇 개인가요?", ["Four", "One", "Two", "Three"], "Four"),
-                ("6. Daniel은 선택이 어려울 때 무엇을 하라고 하나요?", ["Rank the options in the order of importance.", "Join every club.", "Ask the teacher to choose.", "Give up all clubs."], "Rank the options in the order of importance."),
-                ("7. Sujin이 마지막까지 고민하는 두 동아리는 무엇인가요?", ["The volunteering club and the sports club", "The film club and the school band", "The broadcasting club and the film club", "The sports club and the school band"], "The volunteering club and the sports club"),
-                ("8. 두 대화의 공통된 핵심 생각은 무엇인가요?", ["Use time wisely by making realistic choices and setting priorities.", "Do as many things as possible.", "Never change a plan.", "Choose only easy activities."], "Use time wisely by making realistic choices and setting priorities.")
+                ("1. Sujin이 처음 관심을 가진 동아리는 몇 개인가요?", ["Four", "One", "Two", "Three"], "Four"),
+                ("2. Daniel은 선택이 어려울 때 무엇을 하라고 하나요?", ["Rank the options in the order of importance.", "Join every club.", "Ask the teacher to choose.", "Give up all clubs."], "Rank the options in the order of importance."),
+                ("3. Sujin이 마지막까지 고민하는 두 동아리는 무엇인가요?", ["The volunteering club and the sports club", "The film club and the school band", "The broadcasting club and the film club", "The sports club and the school band"], "The volunteering club and the sports club"),
+                ("4. Daniel이 Sujin에게 기억하라고 한 핵심 단어는 무엇인가요?", ["Priority", "Quantity", "Exercise", "Routine"], "Priority")
             ],
-            "reflection_prompt": "새로운 학교생활에서 현실적인 계획과 우선순위가 왜 중요한지 생각해 봅시다."
+            "reflection_prompt": "Sujin의 동아리 선택을 통해 우선순위를 정하는 것이 왜 중요한지 생각해 봅시다."
         }
     }
 
@@ -1222,33 +1241,19 @@ key_word_bank = {
         ("remember the past", "과거를 기억하다"),
         ("better future", "더 나은 미래"),
     ],
-    "📘 교과서": [
-        ("new start", "새로운 시작"),
-        ("weekly plan", "주간 계획"),
-        ("packed", "빡빡한 / 일정이 꽉 찬"),
-        ("break", "휴식"),
-        ("sleep time", "수면 시간"),
-        ("overworking", "지나치게 무리함 / 과로"),
-        ("give up", "포기하다"),
-        ("realistic", "현실적인"),
-        ("fit your lifestyle", "생활 방식에 맞다"),
-        ("early bird", "아침형 인간"),
-        ("exercise", "운동하다"),
-        ("concentrate on", "~에 집중하다"),
-        ("reduce", "줄이다"),
-        ("routine", "일상적인 생활 / 루틴"),
-        ("quality", "질"),
-        ("quantity", "양"),
-        ("broadcasting club", "방송부"),
-        ("volunteering club", "봉사 동아리"),
-        ("exhausting", "매우 힘든 / 지치게 하는"),
-        ("wisely", "현명하게"),
-        ("add value", "가치를 더하다"),
-        ("rank", "순위를 정하다"),
-        ("in the order of importance", "중요도 순으로"),
-        ("priority", "우선순위"),
-        ("decision", "결정"),
-        ("advice", "조언"),
+    "📘 교과서 1": [
+        ("weekly plan", "주간 계획"), ("packed", "빡빡한"), ("break", "휴식"), ("sleep time", "수면 시간"),
+        ("overworking", "지나치게 무리함 / 과로"), ("give up", "포기하다"), ("realistic", "현실적인"),
+        ("fit your lifestyle", "생활 방식에 맞다"), ("early bird", "아침형 인간"), ("exercise", "운동하다"),
+        ("concentrate on", "~에 집중하다"), ("reduce", "줄이다"), ("routine", "루틴"),
+        ("quality", "질"), ("quantity", "양")
+    ],
+    "📗 교과서 2": [
+        ("broadcasting club", "방송부"), ("film club", "영화 동아리"), ("volunteering club", "봉사 동아리"),
+        ("sports club", "스포츠 동아리"), ("school band", "학교 밴드"), ("exhausting", "매우 힘든"),
+        ("wisely", "현명하게"), ("add value", "가치를 더하다"), ("rank", "순위를 정하다"),
+        ("in the order of importance", "중요도 순으로"), ("priority", "우선순위"),
+        ("decision", "결정"), ("advice", "조언")
     ],
 }
 
@@ -1404,15 +1409,17 @@ pre_reading_questions_bank = {
         ("7. 이런 장소는 우리가 무엇을 기억하도록 도와주나요?", ["The past", "Only homework", "A phone number", "A game rule"], "The past"),
         ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Understanding the past can help us build a better future", "History is not useful", "Palaces have no meaning", "Culture should be forgotten"], "Understanding the past can help us build a better future"),
     ],
-    "📘 교과서": [
-        ("1. Kelly의 주간 계획표에서 Jiho가 가장 먼저 지적한 문제는 무엇인가요?", ["There are no breaks.", "There is no study time.", "There is no exercise.", "There is too much sleep."], "There are no breaks."),
-        ("2. Jiho가 말한 지나친 무리의 위험은 무엇인가요?", ["You can get tired quickly and give up everything.", "You can become an early bird.", "You can have more free time.", "You can join more clubs."], "You can get tired quickly and give up everything."),
-        ("3. Kelly에게 아침 조깅이 현실적이지 않은 이유는 무엇인가요?", ["She is not an early bird.", "She hates all exercise.", "She has no afternoon workout.", "She wakes up too early."], "She is not an early bird."),
-        ("4. Kelly는 수학과 영어 공부 시간을 어떻게 바꾸는 것이 좋다고 하나요?", ["Reduce it to one or two hours.", "Increase it to five hours.", "Delete it completely.", "Study only in the morning."], "Reduce it to one or two hours."),
-        ("5. Jiho가 계획에 대해 강조한 핵심 문장은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is more important than quality.", "Never change your routine.", "Do everything at once."], "Quality is more important than quantity."),
-        ("6. Sujin이 처음 가입하고 싶어 한 동아리는 모두 몇 개인가요?", ["Four", "One", "Two", "Five"], "Four"),
-        ("7. Daniel은 Sujin에게 선택지를 어떻게 정리하라고 조언하나요?", ["Rank them in the order of importance.", "Choose them randomly.", "Join all of them.", "Let someone else decide."], "Rank them in the order of importance."),
-        ("8. 두 대화에서 공통으로 강조하는 태도는 무엇인가요?", ["Use time wisely and make realistic priorities.", "Fill every minute with activities.", "Never give up any option.", "Always choose the hardest plan."], "Use time wisely and make realistic priorities."),
+    "📘 교과서 1": [
+        ("1. Kelly의 주간 계획표에서 Jiho가 지적한 문제는 무엇인가요?", ["There are no breaks.", "There is no study time.", "There is no exercise.", "There is too much sleep."], "There are no breaks."),
+        ("2. Kelly에게 아침 조깅이 현실적이지 않은 이유는 무엇인가요?", ["She is not an early bird.", "She hates exercise.", "She has no afternoon workout.", "She wakes up too early."], "She is not an early bird."),
+        ("3. Kelly는 수학과 영어 공부 시간을 어떻게 바꾸는 것이 좋다고 하나요?", ["Reduce it to one or two hours.", "Increase it to five hours.", "Delete it.", "Study only in the morning."], "Reduce it to one or two hours."),
+        ("4. Jiho의 핵심 조언은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is more important.", "Never change a plan.", "Sleep is not important."], "Quality is more important than quantity.")
+    ],
+    "📗 교과서 2": [
+        ("1. Daniel은 어느 동아리에 가입하려고 하나요?", ["The school broadcasting club", "The film club", "The sports club", "The school band"], "The school broadcasting club"),
+        ("2. Sujin은 처음 몇 개의 동아리에 관심이 있나요?", ["Four", "One", "Two", "Three"], "Four"),
+        ("3. Daniel은 선택지를 어떻게 정리하라고 하나요?", ["Rank them in the order of importance.", "Choose randomly.", "Join all clubs.", "Ask a teacher."], "Rank them in the order of importance."),
+        ("4. Sujin이 선택의 기준으로 삼기로 한 것은 무엇인가요?", ["Priority", "Quantity", "Popularity", "Luck"], "Priority")
     ],
 }
 
@@ -1588,12 +1595,19 @@ story_card_hints = {
         "Action": "Learn about Joseon, the palace, and Geunjeongjeon Hall.",
         "Result": "Understanding the past helps build a better future."
     },
-    "📘 교과서": {
-        "Name": "Kelly and Sujin",
-        "Feeling": "motivated but unsure",
-        "Problem": "Kelly's plan is too packed, and Sujin wants to join too many clubs.",
-        "Action": "Make realistic plans, use time wisely, and set priorities.",
-        "Result": "They learn that quality and priority help them continue a better school life."
+    "📘 교과서 1": {
+        "Name": "Kelly",
+        "Feeling": "motivated but worried",
+        "Problem": "Her weekly plan is too packed and unrealistic.",
+        "Action": "Delete the morning jog and reduce study time.",
+        "Result": "She learns to make a realistic routine and focus on quality."
+    },
+    "📗 교과서 2": {
+        "Name": "Sujin",
+        "Feeling": "excited but unsure",
+        "Problem": "She wants to join too many clubs.",
+        "Action": "Rank her options and set priorities.",
+        "Result": "She learns to choose what adds the most value to her school life."
     },
 }
 
@@ -2313,12 +2327,19 @@ story_card_hints_ko = {
         "Action": "조선, 궁궐, 근정전에 대해 배운다.",
         "Result": "과거를 이해하면 더 나은 미래를 만들 수 있다."
     },
-    "📘 교과서": {
-        "Name": "Kelly와 Sujin",
-        "Feeling": "의욕이 있지만 고민됨",
-        "Problem": "Kelly의 계획은 너무 빡빡하고, Sujin은 너무 많은 동아리에 가입하고 싶어 한다.",
-        "Action": "현실적인 계획을 세우고, 시간을 현명하게 사용하며, 우선순위를 정한다.",
-        "Result": "양보다 질과 우선순위가 지속 가능한 학교생활에 중요하다는 것을 배운다."
+    "📘 교과서 1": {
+        "Name": "Kelly",
+        "Feeling": "의욕이 있지만 걱정됨",
+        "Problem": "주간 계획이 너무 빡빡하고 현실적이지 않다.",
+        "Action": "아침 조깅을 빼고 공부 시간을 줄인다.",
+        "Result": "현실적인 루틴과 양보다 질의 중요성을 배운다."
+    },
+    "📗 교과서 2": {
+        "Name": "Sujin",
+        "Feeling": "신나지만 선택이 어려움",
+        "Problem": "너무 많은 동아리에 가입하고 싶어 한다.",
+        "Action": "선택지의 순위를 정하고 우선순위를 세운다.",
+        "Result": "학교생활에 가장 큰 가치를 더하는 것을 선택하는 법을 배운다."
     },
 }
 
@@ -2428,12 +2449,17 @@ mission1_questions_bank = {
         ("4. 근정전에서는 무엇이 열렸다고 설명하나요?", ["중요한 국가 행사", "축구 경기", "요리 대회", "영화 촬영만"], "중요한 국가 행사"),
         ("5. 이 글의 마지막 교훈은 무엇인가요?", ["과거를 이해하면 더 나은 미래를 만들 수 있다", "역사는 필요 없다", "궁궐은 재미없다", "문화는 배울 필요가 없다"], "과거를 이해하면 더 나은 미래를 만들 수 있다"),
     ],
-    "📘 교과서": [
-        ("1. Kelly의 계획에서 가장 큰 문제는 무엇인가요?", ["쉬는 시간이 없고 수면 시간이 너무 짧다", "공부 시간이 전혀 없다", "운동을 전혀 하지 않는다", "학교생활 계획이 없다"], "쉬는 시간이 없고 수면 시간이 너무 짧다"),
-        ("2. Jiho는 Kelly에게 어떤 계획을 세우라고 조언하나요?", ["생활 방식에 맞는 현실적인 계획", "더 빡빡한 계획", "친구의 계획을 그대로 따라 하는 계획", "잠을 줄이는 계획"], "생활 방식에 맞는 현실적인 계획"),
-        ("3. Kelly는 아침 조깅 대신 무엇에 집중하기로 하나요?", ["오후 운동", "새벽 공부", "동아리 활동", "아침 운동 두 번"], "오후 운동"),
-        ("4. Daniel은 Sujin에게 동아리를 선택할 때 무엇을 기준으로 삼으라고 하나요?", ["우선순위", "친구 수", "동아리 이름", "활동 횟수"], "우선순위"),
-        ("5. 두 대화에서 공통으로 배울 수 있는 교훈은 무엇인가요?", ["시간을 현명하게 쓰고 현실적인 선택과 우선순위를 정해야 한다", "가능한 모든 활동을 해야 한다", "한번 세운 계획은 절대 바꾸면 안 된다", "양이 항상 질보다 중요하다"], "시간을 현명하게 쓰고 현실적인 선택과 우선순위를 정해야 한다"),
+    "📘 교과서 1": [
+        ("1. Kelly의 계획에서 가장 큰 문제는 무엇인가요?", ["쉬는 시간이 없고 수면 시간이 너무 짧다", "공부 시간이 없다", "운동을 하지 않는다", "동아리가 너무 많다"], "쉬는 시간이 없고 수면 시간이 너무 짧다"),
+        ("2. Jiho가 권한 계획은 무엇인가요?", ["생활 방식에 맞는 현실적인 계획", "더 빡빡한 계획", "잠을 줄이는 계획", "친구 계획을 복사한 계획"], "생활 방식에 맞는 현실적인 계획"),
+        ("3. Kelly는 무엇을 삭제하기로 하나요?", ["아침 조깅", "오후 운동", "영어 공부", "수학 공부"], "아침 조깅"),
+        ("4. Jiho가 강조한 핵심은 무엇인가요?", ["양보다 질이 중요하다", "양이 질보다 중요하다", "쉬지 않아야 한다", "계획은 바꾸면 안 된다"], "양보다 질이 중요하다")
+    ],
+    "📗 교과서 2": [
+        ("1. Sujin이 처음 관심을 가진 동아리는 몇 개인가요?", ["4개", "1개", "2개", "3개"], "4개"),
+        ("2. Daniel은 시간을 어떻게 사용해야 한다고 하나요?", ["현명하게 사용해야 한다", "모두 동아리에 써야 한다", "공부에만 써야 한다", "계획 없이 써야 한다"], "현명하게 사용해야 한다"),
+        ("3. 선택하기 어렵다면 무엇을 해야 하나요?", ["중요도 순으로 선택지의 순위를 정한다", "모두 선택한다", "무작위로 선택한다", "아무것도 선택하지 않는다"], "중요도 순으로 선택지의 순위를 정한다"),
+        ("4. Sujin이 선택의 기준으로 삼은 단어는 무엇인가요?", ["우선순위", "양", "속도", "운"], "우선순위")
     ],
 }
 
@@ -3443,7 +3469,8 @@ def get_display_target_name(topic_name, target_name):
         "🏜️ Grand Canyon": "그랜드캐니언",
         "🗽 New York": "뉴욕",
         "🏯 Gyeongbokgung": "경복궁",
-        "📘 교과서": "Kelly와 Sujin",
+        "📘 교과서 1": "Kelly",
+        "📗 교과서 2": "Sujin",
     }
     return name_map.get(topic_name, target_name)
 
