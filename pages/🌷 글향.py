@@ -3947,47 +3947,10 @@ def show_reading_blocks(dialogue, category, topic_name):
                 )
 
 
-tab_video, tab_reading = st.tabs([
-    "🎬 동영상",
-    "📖 Reading"
-])
+tab_reading = st.container()
 
 # =========================================================
-# 동영상
-# =========================================================
-with tab_video:
-    st.markdown("## 🎬 동영상")
 
-    video_url = data["video_url"]
-
-    if video_url and str(video_url).startswith("http"):
-        # YouTube Shorts 링크는 st.video에서 잘 안 보일 수 있어 iframe으로 직접 넣습니다.
-        if "youtube.com/shorts/" in video_url:
-            video_id = video_url.rstrip("/").split("/")[-1].split("?")[0]
-            components.html(
-                f"""
-                <div style="display:flex; justify-content:center; width:100%;">
-                    <iframe
-                        width="360"
-                        height="640"
-                        src="https://www.youtube.com/embed/{video_id}"
-                        title="YouTube Shorts video player"
-                        frameborder="0"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                """,
-                height=680,
-            )
-        else:
-            st.video(video_url)
-    else:
-        st.info("동영상 링크가 없는 자료입니다.")
-
-# =========================================================
-# Reading: 본문 → Mission 1 → 문장 매칭 → 거짓말 찾기 → 편지쓰기 → Key Expressions
-# =========================================================
 with tab_reading:
     st.markdown("## 📖 Reading")
     st.caption("본문을 먼저 읽고, 아래 Mission 1 문제를 풉니다. 교과서 1, 교과서 2와 Ronaldo 지문은 필요할 때 한국어 해석 보기 버튼을 눌러 확인할 수 있습니다.")
