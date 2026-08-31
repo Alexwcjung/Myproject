@@ -105,23 +105,6 @@ st.markdown("""
     font-weight: 900;
 }
 
-
-/* 활동 탭 글씨 크게: 배경학습, 가사 퀴즈, 문법, 문장매칭, 생각적기, 핵심 표현 듣기 */
-div[data-testid="stTabs"] button {
-    font-size: 1.65rem !important;
-    font-weight: 950 !important;
-    min-height: 64px !important;
-    padding-left: 20px !important;
-    padding-right: 20px !important;
-}
-
-div[data-testid="stTabs"] button p,
-div[data-testid="stTabs"] button span {
-    font-size: 1.65rem !important;
-    font-weight: 950 !important;
-    line-height: 1.25 !important;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
