@@ -341,11 +341,37 @@ st.markdown("""
 }
 
 
-/* 카테고리 / 주제 선택 글씨 크기 확대 */
+
+
+/* 카테고리 / 주제 선택 영역 전체 글씨 확대
+   - '카테고리', '주제 선택' 라벨
+   - 선택된 값: 인물, 교과서, 장소 / Ronaldo, 교과서 1 등
+   - 펼쳤을 때 나오는 선택 목록 */
 div[data-testid="stSelectbox"] > label p {
     font-size: 30px !important;
     font-weight: 950 !important;
     line-height: 1.2 !important;
+}
+
+div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
+    min-height: 58px !important;
+    font-size: 30px !important;
+    font-weight: 900 !important;
+}
+
+div[data-testid="stSelectbox"] div[data-baseweb="select"] span,
+div[data-testid="stSelectbox"] div[data-baseweb="select"] div {
+    font-size: 30px !important;
+    font-weight: 900 !important;
+}
+
+/* 드롭다운을 펼쳤을 때의 인물/교과서/장소 및 세부 주제 */
+div[role="listbox"] li,
+div[role="option"] {
+    font-size: 30px !important;
+    font-weight: 900 !important;
+    line-height: 1.35 !important;
+    min-height: 52px !important;
 }
 
 /* 소개 카드 */
