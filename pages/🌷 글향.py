@@ -3904,9 +3904,9 @@ def show_reading_blocks(dialogue, category, topic_name):
             unsafe_allow_html=True
         )
 
-    # 교과서와 Ronaldo 지문은 학생이 필요할 때만 한국어 해석을 열어 볼 수 있게 합니다.
+    # 교과서 1, 교과서 2와 Ronaldo 지문은 학생이 필요할 때만 한국어 해석을 열어 볼 수 있게 합니다.
     # st.button은 누를 때마다 session_state 값을 바꾸어 해석 보기/숨기기를 전환합니다.
-    korean_available_topics = {"📘 교과서", "⚽ Ronaldo"}
+    korean_available_topics = {"📘 교과서 1", "📗 교과서 2", "⚽ Ronaldo"}
     if topic_name in korean_available_topics:
         show_korean_key = f"show_korean_translation_{category}_{topic_name}"
         if show_korean_key not in st.session_state:
@@ -3975,7 +3975,7 @@ with tab_video:
 # =========================================================
 with tab_reading:
     st.markdown("## 📖 Reading")
-    st.caption("본문을 먼저 읽고, 아래 Mission 1 문제를 풉니다. 교과서와 Ronaldo 지문은 필요할 때 한국어 해석 보기 버튼을 눌러 확인할 수 있습니다.")
+    st.caption("본문을 먼저 읽고, 아래 Mission 1 문제를 풉니다. 교과서 1, 교과서 2와 Ronaldo 지문은 필요할 때 한국어 해석 보기 버튼을 눌러 확인할 수 있습니다.")
 
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
     show_reading_blocks(dialogue, category, topic_name)
