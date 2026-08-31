@@ -990,45 +990,79 @@ data_bank = {
 ,
     "교과서": {
         "📘 교과서": {
-            "title": "교과서",
-            "subtitle": "November 25th, 2075 · Future lunch and a new food machine",
+            "title": "Starting a New School Life",
+            "subtitle": "Realistic plans, wise choices, and priorities for a new start",
             "video_url": "",
             "image_path": None,
             "facts": [
-                "Date: November 25th, 2075",
-                "Topic: a new food machine at school",
-                "Key idea: future food can be fast, healthy, and personalized"
+                "Topic 1: Make realistic plans that fit your lifestyle",
+                "Topic 2: Use your time wisely and set priorities",
+                "Key idea: Quality and priority are more important than doing too much"
             ],
             "dialogue": [
-                ("Textbook", "November 25th, 2075", "2075년 11월 25일"),
-                ("Textbook", "Today's lunch was impressive.", "오늘의 점심은 인상적이었다."),
-                ("Textbook", "A new food machine had just arrived, and I was the first student to try it.", "새로운 음식 기계가 막 도착했고, 나는 그것을 처음으로 사용해 본 학생이었다."),
-                ("Textbook", "Once I chose a menu option, a healthy meal came out.", "내가 메뉴 선택지를 고르자마자 건강한 식사가 나왔다."),
-                ("Textbook", "Whatever meal I chose, it contained all the nutrients I needed.", "내가 어떤 식사를 고르든, 그것에는 내가 필요로 하는 모든 영양소가 들어 있었다."),
-                ("Textbook", "I was excited to be the first to press the button for the various options.", "나는 다양한 선택지를 위한 버튼을 처음으로 누르게 되어 신이 났다."),
-                ("Textbook", "Today, I chose a hamburger made from lab-grown beef.", "오늘 나는 실험실에서 배양한 소고기로 만든 햄버거를 선택했다."),
-                ("Textbook", "It contained all the nutrients needed for a teenager like me, including protein and minerals.", "그것에는 나 같은 십 대에게 필요한 단백질과 미네랄을 포함한 모든 영양소가 들어 있었다."),
-                ("Textbook", "Of course, it was also very delicious.", "물론 그것은 아주 맛있기도 했다."),
-                ("Textbook", "I tried low-fat ice cream for dessert which contained healthy nutrients.", "나는 디저트로 건강한 영양소가 들어 있는 저지방 아이스크림을 먹어 보았다."),
-                ("Textbook", "What surprised me more was the speed of service.", "나를 더 놀라게 한 것은 서비스의 속도였다."),
-                ("Textbook", "I don't think I'll have to wait in lines anymore!", "나는 더 이상 줄을 서서 기다릴 필요가 없을 것 같다!"),
-                ("Textbook", "I'm looking forward to trying spicy tteokbokki tomorrow.", "나는 내일 매운 떡볶이를 먹어 보는 것이 기대된다.")
+                ("Title", "Starting a New School Life", "새로운 학교생활 시작하기"),
+                ("Narration", "Today is the first day of high school life.", "오늘은 고등학교 생활의 첫날이다."),
+                ("Narration", "For the exciting new start, students share their thoughts, goals, and ideas.", "설레는 새로운 시작을 맞아 학생들은 자신의 생각, 목표, 아이디어를 나눈다."),
+                ("Narration", "They want to find the best way to use their time and passion.", "그들은 자신의 시간과 열정을 가장 잘 활용하는 방법을 찾고 싶어 한다."),
+
+                ("Section", "Plans for a New Start", "새로운 시작을 위한 계획"),
+                ("Jiho", "Hi, Kelly. Did you prepare anything special for this new start?", "안녕, Kelly. 이번 새로운 시작을 위해 특별히 준비한 것이 있니?"),
+                ("Kelly", "Sure! See? This is my weekly plan. Doesn’t it look great?", "물론이지! 봐. 이게 내 주간 계획표야. 멋져 보이지 않니?"),
+                ("Jiho", "Wow. Let me take a look. That’s cool. But don’t you think it’s too packed?", "와. 어디 한번 보자. 멋진데. 그런데 너무 빡빡하다고 생각하지 않니?"),
+                ("Kelly", "What do you mean?", "무슨 뜻이야?"),
+                ("Jiho", "There are no breaks in your plan. Also, your sleep time is too short, isn’t it?", "네 계획에는 쉬는 시간이 없어. 그리고 수면 시간도 너무 짧지 않니?"),
+                ("Kelly", "You’re right, but I want to be a new person this year. I will do my best in everything.", "네 말이 맞아. 하지만 올해는 새로운 사람이 되고 싶어. 모든 일에 최선을 다할 거야."),
+                ("Jiho", "I love the idea. But overworking can be more dangerous than being lazy. You can get tired very quickly and give up everything in the end.", "그 생각은 좋아. 하지만 지나치게 무리하는 것은 게으른 것보다 더 위험할 수 있어. 아주 빨리 지쳐서 결국 모든 것을 포기하게 될 수도 있어."),
+                ("Kelly", "On second thought, you’re right. What should I do then?", "다시 생각해 보니 네 말이 맞아. 그럼 어떻게 해야 할까?"),
+                ("Jiho", "You need to make realistic plans that fit your lifestyle. For example, let’s talk about your morning jog here. You are not an early bird, are you?", "네 생활 방식에 맞는 현실적인 계획을 세워야 해. 예를 들어 여기 아침 조깅에 대해 이야기해 보자. 너는 아침형 인간이 아니잖아, 그렇지?"),
+                ("Kelly", "Honestly, no. I was a bit afraid of that, too.", "솔직히 아니야. 나도 그 점이 조금 걱정됐어."),
+                ("Jiho", "Then it’s not a realistic plan. Also, I think if you exercise twice a day, you’ll be too tired. It might cause other problems in your daily schedule.", "그렇다면 그건 현실적인 계획이 아니야. 또 하루에 두 번 운동하면 너무 피곤할 것 같아. 일상 일정에 다른 문제를 일으킬 수도 있어."),
+                ("Kelly", "That makes sense. I’ll just delete the morning jog and concentrate on the afternoon workout.", "일리가 있네. 아침 조깅은 그냥 빼고 오후 운동에 집중할게."),
+                ("Jiho", "That’s a good idea. Is there anything else you want to change?", "좋은 생각이야. 또 바꾸고 싶은 것이 있니?"),
+                ("Kelly", "Hmm... What do you think about this three-hour study time for math and English?", "음... 수학과 영어를 위한 이 세 시간의 공부 시간은 어떻게 생각해?"),
+                ("Jiho", "It also looks like a problem. I think you need to reduce it to one or two hours. That way, you can continue this routine without feeling stressed and tired.", "그것도 문제가 있어 보여. 한두 시간으로 줄일 필요가 있다고 생각해. 그렇게 하면 스트레스와 피로를 느끼지 않고 이 생활 습관을 계속할 수 있어."),
+                ("Kelly", "That’s a good point. After all, I want to make a new lifestyle, and not give up my plans too quickly.", "좋은 지적이야. 결국 나는 새로운 생활 방식을 만들고 싶은 것이지, 계획을 너무 빨리 포기하고 싶은 건 아니니까."),
+                ("Jiho", "Yes. Quality is more important than quantity. I hope everything goes well for you!", "맞아. 양보다 질이 더 중요해. 모든 일이 잘되길 바랄게!"),
+
+                ("Section", "Which Club to Join?", "어느 동아리에 가입할까?"),
+                ("Sujin", "Daniel, which club are you planning to join?", "Daniel, 너는 어느 동아리에 가입할 계획이야?"),
+                ("Daniel", "I’m thinking of joining the school broadcasting club. What about you?", "나는 학교 방송부에 가입할까 생각 중이야. 너는?"),
+                ("Sujin", "I want to join the film club, the volunteering club, and the sports club. I’m also interested in joining the school band.", "나는 영화 동아리, 봉사 동아리, 스포츠 동아리에 가입하고 싶어. 학교 밴드에도 관심이 있어."),
+                ("Daniel", "Wow. That’s a lot. But doing all the activities for four clubs sounds exhausting.", "와. 정말 많네. 하지만 네 동아리의 모든 활동을 다 하는 건 힘들 것 같아."),
+                ("Sujin", "I know, but it’s so difficult to choose just one. Each club offers its own experiences, and I want to experience them all! What should I do?", "알아. 하지만 하나만 고르기가 너무 어려워. 각 동아리마다 고유한 경험을 제공하고, 나는 그것들을 모두 경험하고 싶어! 어떻게 해야 할까?"),
+                ("Daniel", "You need to find a way to use your time wisely. So, I will ask you one big question. Which club do you think will add the most value to your school life?", "시간을 현명하게 사용하는 방법을 찾아야 해. 그래서 중요한 질문 하나를 할게. 어느 동아리가 네 학교생활에 가장 큰 가치를 더해 줄 것 같니?"),
+                ("Sujin", "What do you mean by adding value?", "가치를 더한다는 게 무슨 뜻이야?"),
+                ("Daniel", "We both know that all clubs can be helpful, but there must be some differences between them. If you can’t decide, you should rank your options in the order of importance.", "모든 동아리가 도움이 될 수 있다는 건 우리 둘 다 알지만, 그 사이에는 분명 차이가 있을 거야. 결정할 수 없다면 선택지를 중요도 순으로 정해야 해."),
+                ("Sujin", "Okay. I can give up the film club and school band. But I’m still not sure between the volunteering club and the sports club.", "좋아. 영화 동아리와 학교 밴드는 포기할 수 있어. 하지만 봉사 동아리와 스포츠 동아리 중에서는 아직 잘 모르겠어."),
+                ("Daniel", "That’s a big improvement! At least you’ve started to set priorities.", "큰 발전이야! 적어도 우선순위를 정하기 시작했잖아."),
+                ("Sujin", "Priority! Yes! It should be the standard for my choices.", "우선순위! 맞아! 그게 내 선택의 기준이 되어야 해."),
+                ("Daniel", "Yes. Next time you want to make the best decision, remember the word, “priority.”", "맞아. 다음에 최고의 결정을 내리고 싶을 때는 '우선순위'라는 단어를 기억해."),
+                ("Sujin", "Thank you so much, Daniel. Your advice was very helpful.", "정말 고마워, Daniel. 네 조언이 정말 도움이 됐어."),
+                ("Daniel", "No problem. I’m ready to help you anytime!", "천만에. 언제든 도와줄 준비가 되어 있어!")
             ],
             "key_expressions": [
-                "Today's lunch was impressive.",
-                "A new food machine had just arrived.",
-                "Once I chose a menu option, a healthy meal came out.",
-                "Whatever meal I chose, it contained all the nutrients I needed.",
-                "What surprised me more was the speed of service.",
-                "I'm looking forward to trying spicy tteokbokki tomorrow."
+                "make realistic plans",
+                "fit your lifestyle",
+                "That makes sense.",
+                "concentrate on",
+                "Quality is more important than quantity.",
+                "use your time wisely",
+                "add the most value",
+                "in the order of importance",
+                "set priorities",
+                "make the best decision"
             ],
             "questions": [
-                ("1. 새로 도착한 기계는 무엇이었나요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
-                ("2. 글쓴이가 오늘 선택한 음식은 무엇인가요?", ["hamburger", "tteokbokki", "ice cream", "pizza"], "hamburger"),
-                ("3. 글쓴이가 선택한 음식에 포함된 영양소 2가지는 무엇인가요?", ["protein and minerals", "sugar and fat", "rice and salt", "water and oil"], "protein and minerals"),
-                ("4. 글쓴이는 왜 기분이 들떴나요?", ["다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에", "점심시간이 평소보다 늦게 시작되었기 때문에", "친구가 대신 음식을 골라 주었기 때문에", "내일 시험이 없어졌기 때문에"], "다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에")
+                ("1. Jiho가 Kelly의 계획에서 발견한 문제는 무엇인가요?", ["There are no breaks and her sleep time is too short.", "She has too much free time.", "She does not study at all.", "She sleeps too much."], "There are no breaks and her sleep time is too short."),
+                ("2. Jiho는 Kelly에게 어떤 계획을 세우라고 조언하나요?", ["Realistic plans that fit her lifestyle", "A more packed plan", "A plan with no exercise", "A plan made by someone else"], "Realistic plans that fit her lifestyle"),
+                ("3. Kelly는 무엇을 계획에서 삭제하기로 하나요?", ["The morning jog", "The afternoon workout", "Math study", "English study"], "The morning jog"),
+                ("4. Jiho가 강조한 말은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is always more important.", "Never change your plan.", "Sleep is not important."], "Quality is more important than quantity."),
+                ("5. Sujin이 처음 관심을 가진 동아리는 몇 개인가요?", ["Four", "One", "Two", "Three"], "Four"),
+                ("6. Daniel은 선택이 어려울 때 무엇을 하라고 하나요?", ["Rank the options in the order of importance.", "Join every club.", "Ask the teacher to choose.", "Give up all clubs."], "Rank the options in the order of importance."),
+                ("7. Sujin이 마지막까지 고민하는 두 동아리는 무엇인가요?", ["The volunteering club and the sports club", "The film club and the school band", "The broadcasting club and the film club", "The sports club and the school band"], "The volunteering club and the sports club"),
+                ("8. 두 대화의 공통된 핵심 생각은 무엇인가요?", ["Use time wisely by making realistic choices and setting priorities.", "Do as many things as possible.", "Never change a plan.", "Choose only easy activities."], "Use time wisely by making realistic choices and setting priorities.")
             ],
-            "reflection_prompt": "교과서 지문을 통해 내가 배울 점은 무엇인가요?"
+            "reflection_prompt": "새로운 학교생활에서 현실적인 계획과 우선순위가 왜 중요한지 생각해 봅시다."
         }
     }
 
@@ -1189,27 +1223,32 @@ key_word_bank = {
         ("better future", "더 나은 미래"),
     ],
     "📘 교과서": [
-        ("impressive", "인상적인"),
-        ("food machine", "음식 기계"),
-        ("arrive", "도착하다"),
-        ("first student", "첫 번째 학생"),
-        ("try", "시도하다 / 먹어 보다"),
-        ("menu option", "메뉴 선택지"),
-        ("healthy meal", "건강한 식사"),
-        ("whatever", "무엇이든 / 어떤 ~든"),
-        ("contain", "포함하다 / 들어 있다"),
-        ("nutrient", "영양소"),
-        ("various", "다양한"),
-        ("lab-grown beef", "실험실에서 배양한 소고기"),
-        ("teenager", "십 대"),
-        ("protein", "단백질"),
-        ("mineral", "미네랄"),
-        ("low-fat", "저지방의"),
-        ("dessert", "디저트"),
-        ("speed of service", "서비스의 속도"),
-        ("wait in lines", "줄을 서서 기다리다"),
-        ("look forward to", "기대하다"),
-        ("spicy tteokbokki", "매운 떡볶이"),
+        ("new start", "새로운 시작"),
+        ("weekly plan", "주간 계획"),
+        ("packed", "빡빡한 / 일정이 꽉 찬"),
+        ("break", "휴식"),
+        ("sleep time", "수면 시간"),
+        ("overworking", "지나치게 무리함 / 과로"),
+        ("give up", "포기하다"),
+        ("realistic", "현실적인"),
+        ("fit your lifestyle", "생활 방식에 맞다"),
+        ("early bird", "아침형 인간"),
+        ("exercise", "운동하다"),
+        ("concentrate on", "~에 집중하다"),
+        ("reduce", "줄이다"),
+        ("routine", "일상적인 생활 / 루틴"),
+        ("quality", "질"),
+        ("quantity", "양"),
+        ("broadcasting club", "방송부"),
+        ("volunteering club", "봉사 동아리"),
+        ("exhausting", "매우 힘든 / 지치게 하는"),
+        ("wisely", "현명하게"),
+        ("add value", "가치를 더하다"),
+        ("rank", "순위를 정하다"),
+        ("in the order of importance", "중요도 순으로"),
+        ("priority", "우선순위"),
+        ("decision", "결정"),
+        ("advice", "조언"),
     ],
 }
 
@@ -1366,10 +1405,14 @@ pre_reading_questions_bank = {
         ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Understanding the past can help us build a better future", "History is not useful", "Palaces have no meaning", "Culture should be forgotten"], "Understanding the past can help us build a better future"),
     ],
     "📘 교과서": [
-        ("1. 새로 도착한 기계는 무엇이었나요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
-        ("2. 글쓴이가 오늘 선택한 음식은 무엇인가요?", ["hamburger", "tteokbokki", "ice cream", "pizza"], "hamburger"),
-        ("3. 글쓴이가 선택한 음식에 포함된 영양소 2가지는 무엇인가요?", ["protein and minerals", "sugar and fat", "rice and salt", "water and oil"], "protein and minerals"),
-        ("4. 글쓴이는 왜 기분이 들떴나요?", ["다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에", "점심시간이 평소보다 늦게 시작되었기 때문에", "친구가 대신 음식을 골라 주었기 때문에", "내일 시험이 없어졌기 때문에"], "다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에"),
+        ("1. Kelly의 주간 계획표에서 Jiho가 가장 먼저 지적한 문제는 무엇인가요?", ["There are no breaks.", "There is no study time.", "There is no exercise.", "There is too much sleep."], "There are no breaks."),
+        ("2. Jiho가 말한 지나친 무리의 위험은 무엇인가요?", ["You can get tired quickly and give up everything.", "You can become an early bird.", "You can have more free time.", "You can join more clubs."], "You can get tired quickly and give up everything."),
+        ("3. Kelly에게 아침 조깅이 현실적이지 않은 이유는 무엇인가요?", ["She is not an early bird.", "She hates all exercise.", "She has no afternoon workout.", "She wakes up too early."], "She is not an early bird."),
+        ("4. Kelly는 수학과 영어 공부 시간을 어떻게 바꾸는 것이 좋다고 하나요?", ["Reduce it to one or two hours.", "Increase it to five hours.", "Delete it completely.", "Study only in the morning."], "Reduce it to one or two hours."),
+        ("5. Jiho가 계획에 대해 강조한 핵심 문장은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is more important than quality.", "Never change your routine.", "Do everything at once."], "Quality is more important than quantity."),
+        ("6. Sujin이 처음 가입하고 싶어 한 동아리는 모두 몇 개인가요?", ["Four", "One", "Two", "Five"], "Four"),
+        ("7. Daniel은 Sujin에게 선택지를 어떻게 정리하라고 조언하나요?", ["Rank them in the order of importance.", "Choose them randomly.", "Join all of them.", "Let someone else decide."], "Rank them in the order of importance."),
+        ("8. 두 대화에서 공통으로 강조하는 태도는 무엇인가요?", ["Use time wisely and make realistic priorities.", "Fill every minute with activities.", "Never give up any option.", "Always choose the hardest plan."], "Use time wisely and make realistic priorities."),
     ],
 }
 
@@ -1546,11 +1589,11 @@ story_card_hints = {
         "Result": "Understanding the past helps build a better future."
     },
     "📘 교과서": {
-        "Name": "The student",
-        "Feeling": "impressed / excited",
-        "Problem": "Students had to wait in line for lunch before.",
-        "Action": "The student tries a new food machine.",
-        "Result": "A fast, healthy meal comes out and the student looks forward to tomorrow."
+        "Name": "Kelly and Sujin",
+        "Feeling": "motivated but unsure",
+        "Problem": "Kelly's plan is too packed, and Sujin wants to join too many clubs.",
+        "Action": "Make realistic plans, use time wisely, and set priorities.",
+        "Result": "They learn that quality and priority help them continue a better school life."
     },
 }
 
@@ -2271,11 +2314,11 @@ story_card_hints_ko = {
         "Result": "과거를 이해하면 더 나은 미래를 만들 수 있다."
     },
     "📘 교과서": {
-        "Name": "학생",
-        "Feeling": "인상 깊음 / 신남",
-        "Problem": "학생들은 전에는 점심시간에 줄을 서서 기다려야 했다.",
-        "Action": "학생은 새로운 음식 기계를 사용해 본다.",
-        "Result": "빠르고 건강한 식사가 나오고 학생은 내일을 기대한다."
+        "Name": "Kelly와 Sujin",
+        "Feeling": "의욕이 있지만 고민됨",
+        "Problem": "Kelly의 계획은 너무 빡빡하고, Sujin은 너무 많은 동아리에 가입하고 싶어 한다.",
+        "Action": "현실적인 계획을 세우고, 시간을 현명하게 사용하며, 우선순위를 정한다.",
+        "Result": "양보다 질과 우선순위가 지속 가능한 학교생활에 중요하다는 것을 배운다."
     },
 }
 
@@ -2386,10 +2429,11 @@ mission1_questions_bank = {
         ("5. 이 글의 마지막 교훈은 무엇인가요?", ["과거를 이해하면 더 나은 미래를 만들 수 있다", "역사는 필요 없다", "궁궐은 재미없다", "문화는 배울 필요가 없다"], "과거를 이해하면 더 나은 미래를 만들 수 있다"),
     ],
     "📘 교과서": [
-        ("1. 새로 도착한 기계는 무엇이었나요?", ["새로운 음식 기계", "새로운 로봇 선생님", "새로운 버스", "새로운 도서관"], "새로운 음식 기계"),
-        ("2. 글쓴이가 오늘 선택한 음식은 무엇인가요?", ["햄버거", "떡볶이", "아이스크림", "피자"], "햄버거"),
-        ("3. 글쓴이가 선택한 음식에 포함된 영양소 2가지는 무엇인가요?", ["단백질과 미네랄", "설탕과 지방", "쌀과 소금", "물과 기름"], "단백질과 미네랄"),
-        ("4. 글쓴이는 왜 기분이 들떴나요?", ["다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에", "점심시간이 평소보다 늦게 시작되었기 때문에", "친구가 대신 음식을 골라 주었기 때문에", "내일 시험이 없어졌기 때문에"], "다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에"),
+        ("1. Kelly의 계획에서 가장 큰 문제는 무엇인가요?", ["쉬는 시간이 없고 수면 시간이 너무 짧다", "공부 시간이 전혀 없다", "운동을 전혀 하지 않는다", "학교생활 계획이 없다"], "쉬는 시간이 없고 수면 시간이 너무 짧다"),
+        ("2. Jiho는 Kelly에게 어떤 계획을 세우라고 조언하나요?", ["생활 방식에 맞는 현실적인 계획", "더 빡빡한 계획", "친구의 계획을 그대로 따라 하는 계획", "잠을 줄이는 계획"], "생활 방식에 맞는 현실적인 계획"),
+        ("3. Kelly는 아침 조깅 대신 무엇에 집중하기로 하나요?", ["오후 운동", "새벽 공부", "동아리 활동", "아침 운동 두 번"], "오후 운동"),
+        ("4. Daniel은 Sujin에게 동아리를 선택할 때 무엇을 기준으로 삼으라고 하나요?", ["우선순위", "친구 수", "동아리 이름", "활동 횟수"], "우선순위"),
+        ("5. 두 대화에서 공통으로 배울 수 있는 교훈은 무엇인가요?", ["시간을 현명하게 쓰고 현실적인 선택과 우선순위를 정해야 한다", "가능한 모든 활동을 해야 한다", "한번 세운 계획은 절대 바꾸면 안 된다", "양이 항상 질보다 중요하다"], "시간을 현명하게 쓰고 현실적인 선택과 우선순위를 정해야 한다"),
     ],
 }
 
@@ -3399,7 +3443,7 @@ def get_display_target_name(topic_name, target_name):
         "🏜️ Grand Canyon": "그랜드캐니언",
         "🗽 New York": "뉴욕",
         "🏯 Gyeongbokgung": "경복궁",
-        "📘 교과서": "교과서 속 주인공",
+        "📘 교과서": "Kelly와 Sujin",
     }
     return name_map.get(topic_name, target_name)
 
