@@ -340,6 +340,14 @@ st.markdown("""
     box-shadow: 0 8px 20px rgba(15,23,42,0.06);
 }
 
+
+/* 카테고리 / 주제 선택 글씨 크기 확대 */
+div[data-testid="stSelectbox"] > label p {
+    font-size: 30px !important;
+    font-weight: 950 !important;
+    line-height: 1.2 !important;
+}
+
 /* 소개 카드 */
 .info-card {
     position: relative;
