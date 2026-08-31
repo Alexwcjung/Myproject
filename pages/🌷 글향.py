@@ -3884,8 +3884,23 @@ def show_reading_blocks(dialogue, category, topic_name):
     full_english = make_full_listening_text(dialogue)
     play_persistent_full_audio(full_english, key=f"{category}_{topic_name}_full_only_audio_v1", button_label="🎧 전체 듣기", lang="en")
 
-    lines = [eng for _, eng, _ in dialogue]
-    korean_lines = [kor for _, _, kor in dialogue]
+    # 대화형 교과서 본문은 화자 이름까지 함께 표시합니다.
+    # 예: Jiho: Hi, Kelly. / Kelly: Sure! / Sujin: Daniel, ... / Daniel: ...
+    dialogue_topics = {"📘 교과서 1", "📗 교과서 2"}
+
+    if topic_name in dialogue_topics:
+        lines = [
+            f"<strong>{speaker}:</strong> {eng}" if speaker not in {"Narration", "Title", "Section"} else eng
+            for speaker, eng, _ in dialogue
+        ]
+        korean_lines = [
+            f"<strong>{speaker}:</strong> {kor}" if speaker not in {"Narration", "Title", "Section"} else kor
+            for speaker, _, kor in dialogue
+        ]
+    else:
+        lines = [eng for _, eng, _ in dialogue]
+        korean_lines = [kor for _, _, kor in dialogue]
+
     chunk_size = 4
 
     for block_idx in range(0, len(lines), chunk_size):
