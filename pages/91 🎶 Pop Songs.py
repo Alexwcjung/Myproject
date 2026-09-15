@@ -3348,7 +3348,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                         'reflect_questions': ['내가 경험해 보고 싶은 “완전히 새로운 세상”은 무엇인가요?',
                                                               '누군가가 나에게 새로운 관점을 보여 준 적이 있나요?',
                                                               '두려움보다 설렘이 더 컸던 경험이 있나요?']},
- '4. Stand By Me - Ben E. King': {'video_url': 'https://www.youtube.com/watch?v=c5hDjpi_HM0',
+ '4. Stand By Me - Ben E. King': {'video_url': 'https://www.youtube.com/watch?v=vQ7dyaeYJj8&list=RDvQ7dyaeYJj8&start_radio=1',
                                   'bg': '\n'
                                         '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#15803d;">\n'
                                         '        🤝 Stand By Me: 곁에 있어 주는 힘\n'
