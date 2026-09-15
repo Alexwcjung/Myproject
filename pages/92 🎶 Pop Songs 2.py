@@ -2242,7 +2242,7 @@ SONGS = {'22. Die for You - The Weeknd': {'video_url': 'https://www.youtube.com/
                                                                 '내가 앞으로 나아가기 위해 내려놓고 싶은 감정은 무엇인가요?',
                                                                 "Don't look back in anger라는 말을 내 삶에 적용한다면 어떤 의미인가요?"]},
  '24. Die With a Smile - Lady Gaga & Bruno Mars': {
-     'video_url': 'https://www.youtube.com/watch?v=cs05ifhA2Qw&list=RDcs05ifhA2Qw&start_radio=1',
+     'video_url': 'https://www.youtube.com/watch?v=kPa7bsKwL-c',
      'lyrics': [("I, I just woke up from a dream", '나는 방금 꿈에서 깨어났어'),
                 ('Where you and I had to say goodbye', '그 꿈에서 너와 나는 작별해야 했어'),
                 ("And I don't know what it all means", '그 모든 것이 무슨 뜻인지 모르겠어'),
