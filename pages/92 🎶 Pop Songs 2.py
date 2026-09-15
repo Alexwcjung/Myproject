@@ -1893,7 +1893,7 @@ def make_polished_feedback(song_title, question, student_answer):
     return polished_ko, english_translation, advice
 
 
-SONGS = {'22. Die for You - The Weeknd': {'video_url': 'https://www.youtube.com/results?search_query=The+Weeknd+Die+For+You',
+SONGS = {'22. Die for You - The Weeknd': {'video_url': 'https://www.youtube.com/watch?v=JfiNzijVQGA&list=RDJfiNzijVQGA&start_radio=1',
                                   'lyrics': [("I'm findin' ways to articulate the feelin' I'm goin' through",
                                               '내가 겪고 있는 감정을 표현할 방법을 찾고 있어'),
                                              ("I just can't say I don't love you (Yeah)", '나는 너를 사랑하지 않는다고는 도저히 말할 수 없어 (Yeah)'),
