@@ -665,6 +665,11 @@ def check_target_grammar_sentence(target, sentence):
 
 
 
+    if target == "would + 동사":
+        if re.search(r"\bwould\s+(?!to\b)\w+", low):
+            return ok("좋아요. would + 동사 형태를 잘 썼습니다.")
+        return no("would + 동사 구조를 써 보세요. 예: I would help you.")
+
     if target == "Every + 명사 + 주어 + 동사":
         if re.search(r"^every\s+\w+(?:\s+\w+)?\s+(i|you|we|they|he|she|it|[a-z]+)\s+\w+", low):
             return ok("좋아요. Every + 명사 + 주어 + 동사 형태를 잘 썼습니다.")
@@ -1872,7 +1877,28 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/명사 +
                                                          'stay young',
                                                          'help my friends',
                                                          'follow my dream'],
-                                    'sentence_suffix': ''}}
+                                    'sentence_suffix': '',
+ '22. Die for You - The Weeknd': {'target': 'would + 동사',
+                                  'examples': ['I would die for you.', 'I would stay for you.', 'I would wait for you.', 'I would help you.', 'I would be there for you.'],
+                                  'frequent_options': ['would', 'can', 'used to', "won't"],
+                                  'frequent_answer': 'would',
+                                  'form_options': ['would + 과거형', 'would + to + 동사', 'would + -ing 형태', 'would + 동사'],
+                                  'form_answer': 'would + 동사',
+                                  'meaning_examples': [('I would die for you.', '나는 너를 위해서라면 죽을 수도 있어.'),
+                                                       ('I would stay for you.', '나는 너를 위해서라면 머물 거야.'),
+                                                       ('I would help you.', '나는 너를 위해서라면 도울 거야.')],
+                                  'meaning_options': ['~할 것이다 / ~할 수도 있다', '~할 수 있다', '예전에 ~했다', '~하지 않을 것이다'],
+                                  'meaning_answer': '~할 것이다 / ~할 수도 있다',
+                                  'rule_answer': 'would + 동사 = ~할 것이다 / ~할 수도 있다',
+                                  'rule_options': ['would + 동사 = ~할 것이다 / ~할 수도 있다', 'would + 과거형 = 어제 ~했다', 'would + ing = ~하고 있는 중이다', 'would + to + 동사 = ~해야 한다'],
+                                  'practice': [('빈칸: I would _____ for you.', ['dies', 'died', 'die', 'dying'], 'die', 'would 뒤에는 동사가 옵니다.'),
+                                               ('맞는 문장은?', ['I would to die for you.', 'I would dying for you.', 'I would died for you.', 'I would die for you.'], 'I would die for you.', 'would + 동사'),
+                                               ('I would die for you.의 뜻은?', ['나는 너를 위해서라면 죽을 수도 있어.', '나는 너를 잊고 싶어.', '나는 너와 멀리 떨어져 있어.', '나는 너를 사랑하지 않아.'], '나는 너를 위해서라면 죽을 수도 있어.', '강한 사랑과 헌신을 나타내는 표현입니다.'),
+                                               ('빈칸: I would _____ you.', ['helps', 'helped', 'help', 'helping'], 'help', 'would + 동사'),
+                                               ('알맞은 구조는?', ['would + 과거형', 'would + 동사', 'would + ing', 'would + to + 동사'], 'would + 동사', 'would 뒤에는 동사가 옵니다.')],
+                                  'sentence_prefix': 'I would',
+                                  'sentence_choices': ['help you', 'stay with you', 'wait for you', 'be there for you', 'die for you'],
+                                  'sentence_suffix': ''}}}
 
 
 
@@ -5590,7 +5616,43 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                  ('Youth is like diamonds in the sun', '젊음은 햇빛 속의 다이아몬드 같아')],
                                     'reflect_questions': ['나는 언제 “forever young”처럼 계속 간직하고 싶은 마음을 느끼나요?',
                                                           '시간이 지나도 내가 잃고 싶지 않은 나의 모습은 무엇인가요?',
-                                                          '이 노래를 들으며 젊음, 꿈, 미래에 대해 어떤 생각이 들었나요?']}}
+                                                          '이 노래를 들으며 젊음, 꿈, 미래에 대해 어떤 생각이 들었나요?'],
+ '22. Die for You - The Weeknd': {'video_url': 'https://www.youtube.com/results?search_query=The+Weeknd+Die+For+You',
+                                  'lyrics': [("I'm findin' ways to articulate the feelin' I'm goin' through", '내가 겪고 있는 감정을 표현할 방법을 찾고 있어'),
+                                             ("I just can't say I don't love you (Yeah)", '나는 너를 사랑하지 않는다고는 도저히 말할 수 없어 (Yeah)'),
+                                             ("'Cause I love you, yeah", '왜냐하면 나는 너를 사랑하니까, yeah'),
+                                             ("It's hard for me to communicate the thoughts that I hold", '내가 품고 있는 생각을 말로 전하는 건 어려워'),
+                                             ("But tonight, I'm gon' let you know", '하지만 오늘 밤에는 네게 알려 줄게'),
+                                             ('Let me tell the truth', '내가 진실을 말하게 해 줘'),
+                                             ('Baby, let me tell the truth, yeah', 'Baby, 내가 진실을 말하게 해 줘, yeah'),
+                                             ("You know what I'm thinkin', see it in your eyes", '내가 무슨 생각을 하는지 너는 알고 있어, 네 눈을 보면 알 수 있어'),
+                                             ('You hate that you want me, hate it when you cry', '너는 나를 원한다는 사실을 싫어하고, 네가 울 때도 싫어해'),
+                                             ("You're scared to be lonely, 'specially in the night", '너는 혼자가 되는 게 두려워, 특히 밤에는'),
+                                             ("I'm scared that I'll miss you, happens every time", '나는 네가 그리워질까 봐 두려워, 매번 그렇게 돼'),
+                                             ("I don't want this feelin', I can't afford love", '나는 이런 감정을 원하지 않아, 사랑을 감당할 수 없어'),
+                                             ('I try to find a reason to pull us apart', '나는 우리를 떼어 놓을 이유를 찾으려고 해'),
+                                             ("It ain't workin' 'cause you're perfect", '그건 통하지 않아, 네가 완벽하니까'),
+                                             ("And I know that you're worth it", '그리고 나는 네가 그럴 가치가 있다는 걸 알아'),
+                                             ("I can't walk away, oh", '나는 떠날 수 없어, oh'),
+                                             ("Even though we're goin' through it", '비록 우리가 힘든 시간을 겪고 있어도'),
+                                             ('And it makes you feel alone', '그리고 그것 때문에 네가 외롭다고 느껴도'),
+                                             ('Just know that I would die for you', '내가 너를 위해서라면 죽을 수도 있다는 것만 알아 줘'),
+                                             ('Baby, I would die for you, yeah', 'Baby, 나는 너를 위해서라면 죽을 수도 있어, yeah'),
+                                             ('The distance and the time between us', '우리 사이의 거리와 시간도'),
+                                             ("It'll never change my mind 'cause", '내 마음을 절대 바꾸지 못할 거야, 왜냐하면'),
+                                             ('Baby, I would die for you', 'Baby, 나는 너를 위해서라면 죽을 수도 있어'),
+                                             ('Baby, I would die for you, yeah (Say)', 'Baby, 나는 너를 위해서라면 죽을 수도 있어, yeah (Say)')],
+                                  'quiz': [{'q': '1. 화자는 자신의 감정을 어떻게 표현하려고 하나요?', 'options': ['감정을 말로 표현할 방법을 찾고 있다', '모든 감정을 숨기려고 한다', '상대를 완전히 잊으려고 한다', '새로운 도시로 떠나려고 한다'], 'answer': '감정을 말로 표현할 방법을 찾고 있다'},
+                                           {'q': "2. 'It's hard for me to communicate'의 의미로 알맞은 것은?", 'options': ['나에게는 의사소통하는 것이 어렵다', '나는 쉽게 모든 것을 말할 수 있다', '나는 아무 생각이 없다', '나는 지금 집에 가고 싶다'], 'answer': '나에게는 의사소통하는 것이 어렵다'},
+                                           {'q': '3. 상대는 특히 언제 혼자가 되는 것을 두려워하나요?', 'options': ['밤에', '아침에', '학교에서', '여행할 때'], 'answer': '밤에'},
+                                           {'q': "4. 'pull us apart'의 뜻으로 알맞은 것은?", 'options': ['우리를 갈라놓다', '우리를 다시 만나게 하다', '우리를 웃게 하다', '우리를 집으로 데려가다'], 'answer': '우리를 갈라놓다'},
+                                           {'q': "5. 화자가 'I can't walk away'라고 말하는 이유는 무엇인가요?", 'options': ['상대를 떠날 수 없기 때문에', '길을 잃었기 때문에', '집에 가야 하기 때문에', '노래를 끝내고 싶기 때문에'], 'answer': '상대를 떠날 수 없기 때문에'},
+                                           {'q': "6. 'Even though we're goin' through it'에서 화자는 무엇을 말하나요?", 'options': ['두 사람이 힘든 시간을 겪고 있다', '두 사람이 여행을 준비하고 있다', '두 사람이 처음 만났다', '두 사람이 노래를 연습하고 있다'], 'answer': '두 사람이 힘든 시간을 겪고 있다'},
+                                           {'q': "7. 'The distance and the time between us'는 무엇을 의미하나요?", 'options': ['두 사람 사이의 거리와 시간', '두 사람의 직업', '두 사람이 사는 집', '두 사람의 취미'], 'answer': '두 사람 사이의 거리와 시간'},
+                                           {'q': '8. 후렴에서 가장 강하게 반복되는 마음은 무엇인가요?', 'options': ['상대를 위해 큰 희생도 할 만큼 사랑한다', '상대를 더 이상 보고 싶지 않다', '혼자 있는 것이 가장 좋다', '새로운 사람을 만나고 싶다'], 'answer': '상대를 위해 큰 희생도 할 만큼 사랑한다'}],
+                                  'key_expressions': [('articulate the feeling', '감정을 분명하게 표현하다'), ('go through', '겪다'), ("It's hard for me to communicate", '내가 의사소통하기는 어렵다'), ('let you know', '네게 알려 주다'), ('tell the truth', '진실을 말하다'), ('scared to be lonely', '혼자가 되는 것이 두렵다'), ("I can't afford love", '나는 사랑을 감당할 수 없다'), ('pull us apart', '우리를 갈라놓다'), ("you're worth it", '너는 그럴 가치가 있다'), ('I would die for you', '나는 너를 위해서라면 죽을 수도 있다')],
+                                  'matching': [('articulate the feeling', '감정을 분명하게 표현하다'), ('go through', '겪다'), ('let you know', '네게 알려 주다'), ('tell the truth', '진실을 말하다'), ('pull us apart', '우리를 갈라놓다'), ('I would die for you', '나는 너를 위해서라면 죽을 수도 있다')],
+                                  'reflect_questions': ['내 감정을 말로 표현하기 어려웠던 경험이 있나요?', '거리나 시간이 관계에 영향을 준다고 생각하나요?', '사랑하는 사람에게 진심을 전할 때 가장 중요한 것은 무엇이라고 생각하나요?']}}}
 
 BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 숨겨 왔던 자신을 받아들이는 순간',
                                'paragraphs': ['Let It Go는 영화 Frozen의 대표곡으로, 엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 '
@@ -6448,7 +6510,12 @@ elif selected_tab == "🧩 문장 매칭 게임":
 
                 status_{component_id}.textContent = "먼저 영어 또는 한국어 박스를 하나 선택하세요.";
                 render_{component_id}();
-            }});
+            ,
+ '22. Die for You - The Weeknd': {'title': '❤️ Die for You: 멀어져도 변하지 않는 마음',
+                                  'paragraphs': ['Die for You는 자신의 감정을 말로 표현하기 어려워하면서도 상대를 여전히 사랑하고 있다는 마음을 솔직하게 드러내는 노래입니다. 화자는 articulate the feeling, communicate the thoughts처럼 마음속 생각과 감정을 표현하는 일이 쉽지 않다고 말합니다.',
+                                                 "Pre-Chorus에서는 두 사람 모두 외로움과 이별을 두려워하는 모습이 나타납니다. scared to be lonely, I'll miss you, pull us apart 같은 표현을 통해 서로에게 끌리면서도 관계에서 멀어지려고 하는 복잡한 감정을 보여 줍니다.",
+                                                 "후렴의 핵심 표현은 I would die for you입니다. 여기서 would + 동사 구조를 통해 상대를 위해 큰 희생도 할 수 있을 만큼 강한 마음을 강조합니다. distance and time between us라는 표현과 함께 물리적인 거리와 시간이 자신의 마음을 바꾸지 못한다고 말합니다.",
+                                                 "수업에서는 articulate the feeling, go through, It's hard for me to communicate, let you know, tell the truth, scared to be lonely, can't afford love, pull us apart, worth it, I would die for you 같은 표현을 중심으로 배울 수 있습니다."]}}});
 
             render_{component_id}();
         </script>
