@@ -1,6 +1,4 @@
-import streamlit as st
-from gtts import gTTS
-import io
+ import streamlit as st
 
 st.set_page_config(
     page_title="Fun English",
@@ -31,23 +29,8 @@ expressions = [
     ("if the party was over and our time on earth was through", "파티가 끝나고 지구에서의 우리의 시간이 끝난다면")
 ]
 
-@st.cache_data
-def make_audio(text):
-    audio = io.BytesIO()
-    tts = gTTS(text=text, lang="en", slow=False)
-    tts.write_to_fp(audio)
-    audio.seek(0)
-    return audio.getvalue()
-
 st.title("📚 Fun English")
 
 for i, (english, korean) in enumerate(expressions, start=1):
-    st.markdown(f"### {i}. {english}")
+    st.markdown(f"**{i}. {english}**")
     st.write(korean)
-
-    try:
-        st.audio(make_audio(english), format="audio/mp3")
-    except Exception:
-        st.warning("음성을 불러올 수 없습니다.")
-
-    st.divider()
