@@ -1,6 +1,14 @@
 import streamlit as st
-import streamlit.components.v1 as components
+from pathlib import Path
+from gtts import gTTS
+import io
+import base64
+import random
 import json
+import re
+import uuid
+from urllib.parse import quote
+import streamlit.components.v1 as components
 
 1.  weekly plan : 주간 계획표
 2. there are no breaks : 계획표에 쉬는 시간이 없다
