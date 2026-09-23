@@ -1,3 +1,7 @@
+import streamlit as st
+import streamlit.components.v1 as components
+import json
+
 1.  weekly plan : 주간 계획표
 2. there are no breaks : 계획표에 쉬는 시간이 없다
 3. Let me take a look: 내가 한 번 살펴볼게
