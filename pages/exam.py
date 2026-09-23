@@ -3,7 +3,7 @@ import streamlit as st
 st.set_page_config(
     page_title="Fun English",
     page_icon="📚",
-    layout="centered"
+    layout="wide"
 )
 
 expressions = [
@@ -18,7 +18,7 @@ expressions = [
     ("I will delete the morning jog and concentrate on the afternoon workout", "나는 아침 조깅을 없애고 오후 근력 운동에 집중하겠다"),
     ("quality is more important than quantity", "양보다 질이 중요하다"),
     ("I am out of time", "나는 이미 늦어버렸다"),
-    ("you begged me with drowning eyes to stay", "너는 간절한 눈빛으로 나에게 머물러 달라고 말했다."),
+    ("you begged me with drowning eyes to stay", "너는 간절한 눈빛으로 나에게 머물러 달라고 말했다"),
     ("say goodbye", "작별 인사하다"),
     ("survive", "살아남다"),
     ("follow", "따라가다"),
@@ -29,8 +29,31 @@ expressions = [
     ("if the party was over and our time on earth was through", "파티가 끝나고 지구에서의 우리의 시간이 끝난다면")
 ]
 
+st.markdown("""
+<style>
+.expression {
+    font-size: 28px;
+    line-height: 1.7;
+    margin-bottom: 12px;
+}
+.english {
+    font-weight: 700;
+}
+.korean {
+    font-weight: 400;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.title("📚 Fun English")
 
 for i, (english, korean) in enumerate(expressions, start=1):
-    st.markdown(f"**{i}. {english}**")
-    st.write(korean)
+    st.markdown(
+        f"""
+        <div class="expression">
+            <span class="english">{i}. {english}</span>
+            <span class="korean"> : {korean}</span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
