@@ -6503,19 +6503,10 @@ elif selected_tab == "🧩 문장 매칭 게임":
 
                 const doneMsg = root_{component_id}.querySelector(".done-message");
                 if (doneMsg) doneMsg.remove();
-
-                if (certBox_{component_id}) {{
-                    certBox_{component_id}.style.display = "none";
-                }}
-
+                if (certBox_{component_id}) certBox_{component_id}.style.display = "none";
                 status_{component_id}.textContent = "먼저 영어 또는 한국어 박스를 하나 선택하세요.";
                 render_{component_id}();
-            ,
- '22. Die for You - The Weeknd': {'title': '❤️ Die for You: 멀어져도 변하지 않는 마음',
-                                  'paragraphs': ['Die for You는 자신의 감정을 말로 표현하기 어려워하면서도 상대를 여전히 사랑하고 있다는 마음을 솔직하게 드러내는 노래입니다. 화자는 articulate the feeling, communicate the thoughts처럼 마음속 생각과 감정을 표현하는 일이 쉽지 않다고 말합니다.',
-                                                 "Pre-Chorus에서는 두 사람 모두 외로움과 이별을 두려워하는 모습이 나타납니다. scared to be lonely, I'll miss you, pull us apart 같은 표현을 통해 서로에게 끌리면서도 관계에서 멀어지려고 하는 복잡한 감정을 보여 줍니다.",
-                                                 "후렴의 핵심 표현은 I would die for you입니다. 여기서 would + 동사 구조를 통해 상대를 위해 큰 희생도 할 수 있을 만큼 강한 마음을 강조합니다. distance and time between us라는 표현과 함께 물리적인 거리와 시간이 자신의 마음을 바꾸지 못한다고 말합니다.",
-                                                 "수업에서는 articulate the feeling, go through, It's hard for me to communicate, let you know, tell the truth, scared to be lonely, can't afford love, pull us apart, worth it, I would die for you 같은 표현을 중심으로 배울 수 있습니다."]}}});
+            }});
 
             render_{component_id}();
         </script>
