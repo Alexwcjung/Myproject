@@ -4320,7 +4320,29 @@ def show_context_cloze_activity(category, topic_name, data):
             if len(english) <= 190 and masked != english and (word.lower(), masked) not in [(x[0].lower(),x[1]) for x in candidates]:
                 candidates.append((word, masked, meaning))
                 break
-    # 지문에서 실제로 등장하는 표현만 출제하며 최대 15문제를 제공합니다.
+    # 인물 지문에서도 15문제를 충분히 만들 수 있도록 본문 어휘로 보충합니다.
+    # 핵심 단어 매칭을 우선하고, 부족한 수만큼 서로 다른 문장의 내용어를 사용합니다.
+    stopwords = {"about", "after", "again", "always", "because", "before", "could",
+                 "every", "great", "hello", "there", "their", "these", "those",
+                 "would", "should", "really", "sometimes", "something", "someone",
+                 "which", "where", "while", "with", "from", "that", "this", "what",
+                 "when", "your", "have", "were", "they", "them", "then", "just"}
+    if len(candidates) < 15:
+        for _, english, korean in dialogue:
+            if len(candidates) >= 15:
+                break
+            if not (12 <= len(english) <= 190):
+                continue
+            tokens = re.findall(r"\b[A-Za-z]{5,}\b", english)
+            tokens = [t for t in tokens if t.lower() not in stopwords]
+            if not tokens:
+                continue
+            # 동일한 문장에서는 최대 한 문제만 출제합니다.
+            word = max(tokens, key=lambda t: (len(t), t.lower()))
+            masked = re.sub(r"(?<![A-Za-z])" + re.escape(word) + r"(?![A-Za-z])",
+                            "________", english, count=1, flags=re.I)
+            if masked != english and masked not in [item[1] for item in candidates]:
+                candidates.append((word, masked, korean))
     candidates = _stable_shuffle(candidates, f"cloze-{category}-{topic_name}")[:15]
     st.markdown('<div class="section-box"><h3>✏️ 본문 빈칸 채우기</h3></div>', unsafe_allow_html=True)
     st.caption("본문에 나온 문장을 읽고 빈칸에 들어갈 영어 표현을 고르세요. 정답을 맞히면 다음 문제로 넘어갈 수 있습니다.")
@@ -4328,7 +4350,7 @@ def show_context_cloze_activity(category, topic_name, data):
         st.info("이 주제에서 빈칸 문제를 만들 수 있는 표현이 없습니다.")
         return
     prefix = f"cloze_{category}_{topic_name}_"
-    pool = list(dict.fromkeys(w for w, _ in words))
+    pool = list(dict.fromkeys([w for w, _ in words] + [a for a, _, _ in candidates]))
     for i, (answer, sentence, meaning) in enumerate(candidates):
         done_key = f"{prefix}{i}_done"
         st.session_state.setdefault(done_key, False)
