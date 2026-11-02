@@ -1208,183 +1208,226 @@ data_bank = {
 # Key Expressions를 단어 중심으로 바꾸기 위한 자료
 # - 활동 탭에서 영어 단어의 한국어 뜻을 쓰는 빈칸 문제로 사용합니다.
 # =========================================================
-key_word_bank = {
-    "⚽ Ronaldo": [
-        ("was born in", "~에서 태어났다"),
-        ("Portugal", "포르투갈"),
-        ("1985", "1985년"),
-        ("grew up", "자랐다"),
-        ("Madeira", "마데이라"),
-        ("one brother and two sisters", "남자 형제 한 명과 여자 형제 두 명"),
-        ("Hugo", "후고"),
-        ("Elma and Katia", "엘마와 카티아"),
-        ("Sporting CP", "스포르팅 CP"),
-        ("Manchester United", "맨체스터 유나이티드"),
-        ("England", "영국"),
-        ("Ballon d'Or", "발롱도르"),
-        ("Champions League", "챔피언스리그"),
-        ("Euro 2016", "유로 2016"),
-        ("good habits", "좋은 습관"),
-    ],
-    "🏀 Jordan": [
-        ("basketball", "농구"),
-        ("championship", "우승 / 선수권 대회"),
-        ("Chicago Bulls", "시카고 불스"),
-        ("failure", "실패"),
-        ("motivation", "동기"),
-        ("miss a shot", "슛을 놓치다"),
-        ("mistake", "실수"),
-        ("confidence", "자신감"),
-        ("competitive", "승부욕이 강한"),
-        ("competitiveness", "승부욕"),
-        ("preparation", "준비"),
-        ("focus", "집중"),
-        ("responsibility", "책임감"),
-        ("challenge", "도전"),
-        ("effort", "노력"),
-    ],
-    "⚽ Son Heung-min": [
-        ("soccer", "축구"),
-        ("team", "팀"),
-        ("respect", "존중"),
-        ("communication", "소통"),
-        ("hard work", "노력"),
-        ("father", "아버지"),
-        ("strong basics", "탄탄한 기본기"),
-        ("ball control", "볼 컨트롤"),
-        ("shooting", "슈팅"),
-        ("real game", "실제 경기"),
-        ("teammate", "팀 동료"),
-        ("stay humble", "겸손함을 유지하다"),
-        ("discipline", "훈련 / 절제"),
-        ("attitude", "태도"),
-    ],
-    "🎤 IU": [
-        ("music", "음악"),
-        ("happy", "행복한"),
-        ("warm message", "따뜻한 메시지"),
-        ("comfort", "위로하다"),
-        ("express", "표현하다"),
-        ("feeling", "감정"),
-        ("listen to your heart", "너의 마음에 귀 기울이다"),
-        ("sentence", "문장"),
-        ("honest", "솔직한"),
-        ("powerful words", "힘 있는 말"),
-        ("sincerity", "진심"),
-        ("touch people", "사람들의 마음에 닿다"),
-        ("trust your voice", "너의 목소리를 믿다"),
-    ],
-    "⛸️ Kim Yuna": [
-        ("figure skating", "피겨스케이팅"),
-        ("beautiful", "아름다운"),
-        ("difficult", "어려운"),
-        ("balance", "균형"),
-        ("practice", "연습"),
-        ("focus", "집중"),
-        ("nervous", "긴장한"),
-        ("competition", "경기 / 대회"),
-        ("control your mind", "마음을 다스리다"),
-        ("trust your training", "너의 훈련을 믿다"),
-        ("worry", "걱정하다"),
-        ("step by step", "차근차근"),
-        ("under pressure", "압박감 속에서"),
-        ("growth", "성장"),
-    ],
-    "🎤 BTS Jungkook": [
-        ("music", "음악"),
-        ("dancing", "춤"),
-        ("singing", "노래하기"),
-        ("performance", "공연"),
-        ("practice", "연습하다 / 연습"),
-        ("make a big difference", "큰 차이를 만들다"),
-        ("nervous", "긴장한"),
-        ("stage", "무대"),
-        ("confident", "자신감 있는"),
-        ("message", "메시지"),
-        ("talent", "재능"),
-        ("effort", "노력"),
-        ("attitude", "태도"),
-        ("compare", "비교하다"),
-        ("growth", "성장"),
-    ],
-    "🏜️ Grand Canyon": [
-        ("welcome", "환영하다"),
-        ("huge", "거대한"),
-        ("beautiful", "아름다운"),
-        ("nature", "자연"),
-        ("feel small", "작게 느끼다"),
-        ("canyon", "협곡"),
-        ("shape", "형성하다"),
-        ("Colorado River", "콜로라도강"),
-        ("erosion", "침식"),
-        ("change the land", "땅을 바꾸다"),
-        ("rock layer", "암석층"),
-        ("Earth's history", "지구의 역사"),
-        ("protect nature", "자연을 보호하다"),
-        ("respect", "존중하다"),
-    ],
-    "🗽 New York": [
-        ("New York", "뉴욕"),
-        ("people", "사람들"),
-        ("culture", "문화"),
-        ("busy", "바쁜"),
-        ("exciting", "신나는"),
-        ("global city", "세계적인 도시"),
-        ("idea", "생각 / 아이디어"),
-        ("art", "예술"),
-        ("Times Square", "타임스퀘어"),
-        ("energy", "에너지"),
-        ("Statue of Liberty", "자유의 여신상"),
-        ("freedom", "자유"),
-        ("expensive", "비싼"),
-        ("competitive", "경쟁적인"),
-        ("respect different cultures", "다양한 문화를 존중하다"),
-    ],
-    "🏯 Gyeongbokgung": [
-        ("palace", "궁궐"),
-        ("beautiful", "아름다운"),
-        ("Joseon Dynasty", "조선 시대 / 조선 왕조"),
-        ("old", "오래된"),
-        ("main royal palace", "중심 궁궐"),
-        ("mean", "뜻하다"),
-        ("blessed by heaven", "하늘이 복을 내린"),
-        ("impressive", "인상적인"),
-        ("history", "역사"),
-        ("architecture", "건축"),
-        ("royal culture", "왕실 문화"),
-        ("traditional color", "전통적인 색"),
-        ("state event", "국가 행사"),
-        ("remember the past", "과거를 기억하다"),
-        ("better future", "더 나은 미래"),
-    ],
-    "📘 교과서 1": [
-        ("weekly plan", "주간 계획"), ("packed", "빡빡한"), ("break", "휴식"), ("sleep time", "수면 시간"),
-        ("overworking", "지나치게 무리함 / 과로"), ("give up", "포기하다"), ("realistic", "현실적인"),
-        ("fit your lifestyle", "생활 방식에 맞다"), ("early bird", "아침형 인간"), ("exercise", "운동하다"),
-        ("concentrate on", "~에 집중하다"), ("reduce", "줄이다"), ("routine", "루틴"),
-        ("quality", "질"), ("quantity", "양")
-    ],
-    "📗 교과서 2": [('job fair', '직업 박람회'),
- ('expert', '전문가'),
- ('industry', '산업'),
- ('opportunity', '기회'),
- ('attract', '마음을 끌다'),
- ('audio engineer', '음향 엔지니어'),
- ('tense', '긴장한'),
- ('distinct from', '~와 다른'),
- ('interactive', '상호작용적인'),
- ('pamphlet', '소책자'),
- ('art director', '아트 디렉터'),
- ('texture', '질감'),
- ('appealing', '매력적인'),
- ('imagination', '상상력'),
- ('release', '출시하다'),
- ('make a living', '생계를 꾸리다'),
- ('challenging', '어려운'),
- ('bug', '오류'),
- ('eye-opening', '놀랄 만한')],
-}
-
+key_word_bank = {'⚽ Ronaldo': [('was born in', '~에서 태어났다'),
+               ('Portugal', '포르투갈'),
+               ('1985', '1985년'),
+               ('grew up', '자랐다'),
+               ('Madeira', '마데이라'),
+               ('one brother and two sisters', '남자 형제 한 명과 여자 형제 두 명'),
+               ('Hugo', '후고'),
+               ('Elma and Katia', '엘마와 카티아'),
+               ('Sporting CP', '스포르팅 CP'),
+               ('Manchester United', '맨체스터 유나이티드'),
+               ('England', '영국'),
+               ("Ballon d'Or", '발롱도르'),
+               ('Champions League', '챔피언스리그'),
+               ('Euro 2016', '유로 2016'),
+               ('good habits', '좋은 습관'),
+               ('talent', '재능'),
+               ('important', '중요한'),
+               ('team', '팀'),
+               ('won', '우승했다'),
+               ('sister', '여자 형제')],
+ '🏀 Jordan': [('basketball', '농구'),
+              ('championship', '우승 / 선수권 대회'),
+              ('Chicago Bulls', '시카고 불스'),
+              ('failure', '실패'),
+              ('motivation', '동기'),
+              ('miss a shot', '슛을 놓치다'),
+              ('mistake', '실수'),
+              ('confidence', '자신감'),
+              ('competitive', '승부욕이 강한'),
+              ('competitiveness', '승부욕'),
+              ('preparation', '준비'),
+              ('focus', '집중'),
+              ('responsibility', '책임감'),
+              ('challenge', '도전'),
+              ('effort', '노력'),
+              ('player', '선수'),
+              ('practice', '연습하다'),
+              ('win', '이기다'),
+              ('shot', '슛'),
+              ('mindset', '마음가짐')],
+ '⚽ Son Heung-min': [('soccer', '축구'),
+                     ('team', '팀'),
+                     ('respect', '존중'),
+                     ('communication', '소통'),
+                     ('hard work', '노력'),
+                     ('father', '아버지'),
+                     ('strong basics', '탄탄한 기본기'),
+                     ('ball control', '볼 컨트롤'),
+                     ('shooting', '슈팅'),
+                     ('real game', '실제 경기'),
+                     ('teammate', '팀 동료'),
+                     ('stay humble', '겸손함을 유지하다'),
+                     ('discipline', '훈련 / 절제'),
+                     ('attitude', '태도'),
+                     ('soccer', '축구'),
+                     ('teammate', '팀 동료'),
+                     ('shooting', '슈팅'),
+                     ('humble', '겸손한'),
+                     ('training', '훈련'),
+                     ('respect', '존중하다')],
+ '🎤 IU': [('music', '음악'),
+          ('happy', '행복한'),
+          ('warm message', '따뜻한 메시지'),
+          ('comfort', '위로하다'),
+          ('express', '표현하다'),
+          ('feeling', '감정'),
+          ('listen to your heart', '너의 마음에 귀 기울이다'),
+          ('sentence', '문장'),
+          ('honest', '솔직한'),
+          ('powerful words', '힘 있는 말'),
+          ('sincerity', '진심'),
+          ('touch people', '사람들의 마음에 닿다'),
+          ('trust your voice', '너의 목소리를 믿다'),
+          ('song', '노래'),
+          ('feelings', '감정'),
+          ('writing', '글쓰기'),
+          ('honest', '솔직한'),
+          ('express', '표현하다'),
+          ('music', '음악'),
+          ('heart', '마음')],
+ '⛸️ Kim Yuna': [('figure skating', '피겨스케이팅'),
+                 ('beautiful', '아름다운'),
+                 ('difficult', '어려운'),
+                 ('balance', '균형'),
+                 ('practice', '연습'),
+                 ('focus', '집중'),
+                 ('nervous', '긴장한'),
+                 ('competition', '경기 / 대회'),
+                 ('control your mind', '마음을 다스리다'),
+                 ('trust your training', '너의 훈련을 믿다'),
+                 ('worry', '걱정하다'),
+                 ('step by step', '차근차근'),
+                 ('under pressure', '압박감 속에서'),
+                 ('growth', '성장'),
+                 ('skating', '스케이팅'),
+                 ('nervous', '긴장한'),
+                 ('competition', '대회'),
+                 ('balance', '균형'),
+                 ('calm', '침착한'),
+                 ('pressure', '압박감')],
+ '🎤 BTS Jungkook': [('music', '음악'),
+                    ('dancing', '춤'),
+                    ('singing', '노래하기'),
+                    ('performance', '공연'),
+                    ('practice', '연습하다 / 연습'),
+                    ('make a big difference', '큰 차이를 만들다'),
+                    ('nervous', '긴장한'),
+                    ('stage', '무대'),
+                    ('confident', '자신감 있는'),
+                    ('message', '메시지'),
+                    ('talent', '재능'),
+                    ('effort', '노력'),
+                    ('attitude', '태도'),
+                    ('compare', '비교하다'),
+                    ('growth', '성장'),
+                    ('perform', '공연하다'),
+                    ('stage', '무대'),
+                    ('practice', '연습'),
+                    ('talent', '재능'),
+                    ('growth', '성장')],
+ '🏜️ Grand Canyon': [('welcome', '환영하다'),
+                     ('huge', '거대한'),
+                     ('beautiful', '아름다운'),
+                     ('nature', '자연'),
+                     ('feel small', '작게 느끼다'),
+                     ('canyon', '협곡'),
+                     ('shape', '형성하다'),
+                     ('Colorado River', '콜로라도강'),
+                     ('erosion', '침식'),
+                     ('change the land', '땅을 바꾸다'),
+                     ('rock layer', '암석층'),
+                     ("Earth's history", '지구의 역사'),
+                     ('protect nature', '자연을 보호하다'),
+                     ('respect', '존중하다'),
+                     ('river', '강'),
+                     ('slowly', '천천히'),
+                     ('time', '시간'),
+                     ('water', '물'),
+                     ('stories', '이야기'),
+                     ('rocks', '바위')],
+ '🗽 New York': [('New York', '뉴욕'),
+                ('people', '사람들'),
+                ('culture', '문화'),
+                ('busy', '바쁜'),
+                ('exciting', '신나는'),
+                ('global city', '세계적인 도시'),
+                ('idea', '생각 / 아이디어'),
+                ('art', '예술'),
+                ('Times Square', '타임스퀘어'),
+                ('energy', '에너지'),
+                ('Statue of Liberty', '자유의 여신상'),
+                ('freedom', '자유'),
+                ('expensive', '비싼'),
+                ('competitive', '경쟁적인'),
+                ('respect different cultures', '다양한 문화를 존중하다'),
+                ('diversity', '다양성'),
+                ('dream', '꿈'),
+                ('country', '나라'),
+                ('learning', '배움'),
+                ('city life', '도시 생활')],
+ '🏯 Gyeongbokgung': [('palace', '궁궐'),
+                     ('beautiful', '아름다운'),
+                     ('Joseon Dynasty', '조선 시대 / 조선 왕조'),
+                     ('old', '오래된'),
+                     ('main royal palace', '중심 궁궐'),
+                     ('mean', '뜻하다'),
+                     ('blessed by heaven', '하늘이 복을 내린'),
+                     ('impressive', '인상적인'),
+                     ('history', '역사'),
+                     ('architecture', '건축'),
+                     ('royal culture', '왕실 문화'),
+                     ('traditional color', '전통적인 색'),
+                     ('state event', '국가 행사'),
+                     ('remember the past', '과거를 기억하다'),
+                     ('better future', '더 나은 미래'),
+                     ('building', '건물'),
+                     ('king', '왕'),
+                     ('Korean', '한국의'),
+                     ('learn', '배우다'),
+                     ('important', '중요한')],
+ '📘 교과서 1': [('weekly plan', '주간 계획'),
+             ('packed', '빡빡한'),
+             ('break', '휴식'),
+             ('sleep time', '수면 시간'),
+             ('overworking', '지나치게 무리함 / 과로'),
+             ('give up', '포기하다'),
+             ('realistic', '현실적인'),
+             ('fit your lifestyle', '생활 방식에 맞다'),
+             ('early bird', '아침형 인간'),
+             ('exercise', '운동하다'),
+             ('concentrate on', '~에 집중하다'),
+             ('reduce', '줄이다'),
+             ('routine', '루틴'),
+             ('quality', '질'),
+             ('quantity', '양'),
+             ('new start', '새로운 시작'),
+             ('goal', '목표'),
+             ('passion', '열정'),
+             ('morning jog', '아침 조깅'),
+             ('time management', '시간 관리')],
+ '📗 교과서 2': [('job fair', '직업 박람회'),
+             ('expert', '전문가'),
+             ('industry', '산업'),
+             ('opportunity', '기회'),
+             ('attract', '마음을 끌다'),
+             ('audio engineer', '음향 엔지니어'),
+             ('tense', '긴장한'),
+             ('distinct from', '~와 다른'),
+             ('interactive', '상호작용적인'),
+             ('pamphlet', '소책자'),
+             ('art director', '아트 디렉터'),
+             ('texture', '질감'),
+             ('appealing', '매력적인'),
+             ('imagination', '상상력'),
+             ('release', '출시하다'),
+             ('make a living', '생계를 꾸리다'),
+             ('challenging', '어려운'),
+             ('bug', '오류'),
+             ('eye-opening', '놀랄 만한'),
+             ('video game', '비디오 게임')]}
 
 def get_key_words(topic_name, data):
     """주제별 핵심 단어를 가져옵니다. 없으면 기존 key_expressions에서 간단히 추출합니다."""
@@ -3518,7 +3561,7 @@ def show_easy_grammar_practice(category, topic_name):
         st.caption(f"진행: {completed}/{len(info['questions'])}문제 정답")
 
 
-def show_key_expression_word_test(category, topic_name, data, max_words=10):
+def show_key_expression_word_test(category, topic_name, data, max_words=20):
     """Key Expressions 학습: 테스트가 아니라 듣고 뜻을 확인하는 학습용 카드입니다."""
     key_words = get_key_words(topic_name, data)[:max_words]
 
@@ -4238,6 +4281,56 @@ def show_reading_blocks(dialogue, category, topic_name):
                     unsafe_allow_html=True
                 )
 
+
+def show_context_cloze_activity(category, topic_name, data):
+    """본문 속 단어 빈칸 채우기: 정답을 맞힐 때까지 다시 선택할 수 있습니다."""
+    words = get_key_words(topic_name, data)
+    dialogue = data.get("dialogue", [])
+    candidates = []
+    for _, english, _ in dialogue:
+        for word, meaning in words:
+            if len(word) < 3 or not re.search(r"(?<![A-Za-z])" + re.escape(word) + r"(?![A-Za-z])", english, re.I):
+                continue
+            masked = re.sub(r"(?<![A-Za-z])" + re.escape(word) + r"(?![A-Za-z])", "________", english, count=1, flags=re.I)
+            if len(english) <= 190 and masked != english and (word.lower(), masked) not in [(x[0].lower(),x[1]) for x in candidates]:
+                candidates.append((word, masked, meaning))
+                break
+    # 지문에서 실제로 등장하는 표현만 출제합니다.
+    candidates = _stable_shuffle(candidates, f"cloze-{category}-{topic_name}")[:8]
+    st.markdown('<div class="section-box"><h3>✏️ 본문 빈칸 채우기</h3></div>', unsafe_allow_html=True)
+    st.caption("본문에 나온 문장을 읽고 빈칸에 들어갈 영어 표현을 고르세요. 정답을 맞히면 다음 문제로 넘어갈 수 있습니다.")
+    if not candidates:
+        st.info("이 주제에서 빈칸 문제를 만들 수 있는 표현이 없습니다.")
+        return
+    prefix = f"cloze_{category}_{topic_name}_"
+    pool = list(dict.fromkeys(w for w, _ in words))
+    for i, (answer, sentence, meaning) in enumerate(candidates):
+        done_key = f"{prefix}{i}_done"
+        st.session_state.setdefault(done_key, False)
+        st.markdown(f"**{i+1}. {sentence}**")
+        if st.session_state[done_key]:
+            st.success(f"정답! {answer} — {meaning}")
+            continue
+        others = [w for w in pool if w != answer]
+        options = _stable_shuffle([answer] + _stable_shuffle(others, f"{prefix}{i}_wrong")[:3], f"{prefix}{i}_options")
+        choice = st.radio("정답 선택", options, index=None, key=f"{prefix}{i}_choice", horizontal=True, label_visibility="collapsed")
+        if st.button("정답 확인", key=f"{prefix}{i}_check"):
+            if choice is None:
+                st.warning("표현을 선택해 주세요.")
+            elif choice == answer:
+                st.session_state[done_key] = True
+                st.rerun()
+            else:
+                st.error("다시 생각해 보세요. 정답은 공개하지 않습니다.")
+        st.divider()
+    completed = sum(st.session_state.get(f"{prefix}{i}_done", False) for i in range(len(candidates)))
+    st.progress(completed / len(candidates), text=f"진행 상황: {completed}/{len(candidates)}")
+    if completed == len(candidates):
+        st.success("🎉 빈칸 채우기 완료!")
+        if st.button("🔄 다시 풀기", key=f"{prefix}reset"):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
+
 tab_reading = st.container()
 
 # =========================================================
@@ -4248,7 +4341,7 @@ with tab_reading:
     if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
         st.caption("교과서 본문은 4줄씩 나누어 제시됩니다. 각 부분 아래의 한국어 해석 버튼을 눌러 필요한 부분만 확인할 수 있습니다.")
     else:
-        st.caption("본문을 읽고 문장 매칭과 Key Expressions 활동을 해 보세요.")
+        st.caption("본문을 읽고 문장 매칭, 빈칸 채우기, Key Expressions 활동을 해 보세요.")
 
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
     show_reading_blocks(dialogue, category, topic_name)
@@ -4256,10 +4349,13 @@ with tab_reading:
     st.markdown("---")
     show_sequence_matching_activity(category, topic_name, data)
 
+    st.markdown("---")
+    show_context_cloze_activity(category, topic_name, data)
+
     if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
         st.markdown("---")
         show_easy_grammar_practice(category, topic_name)
 
     st.markdown("---")
-    show_key_expression_word_test(category, topic_name, data, max_words=10)
+    show_key_expression_word_test(category, topic_name, data, max_words=20)
 
