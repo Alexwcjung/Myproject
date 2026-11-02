@@ -1072,51 +1072,113 @@ data_bank = {
             "reflection_prompt": "Kelly의 계획을 통해 현실적인 계획을 세우는 것이 왜 중요한지 생각해 봅시다."
         },
 
-        "📗 교과서 2": {
-            "title": "Which Club to Join?",
-            "subtitle": "Use your time wisely and set priorities",
-            "video_url": "",
-            "image_path": None,
-            "facts": [
-                "Topic: choosing the right school club",
-                "Problem: Sujin wants to join too many clubs",
-                "Key idea: Set priorities and choose what adds the most value"
-            ],
-            "dialogue": [
-                ("Sujin", "Daniel, which club are you planning to join?", "Daniel, 너는 어느 동아리에 가입할 계획이야?"),
-                ("Daniel", "I’m thinking of joining the school broadcasting club. What about you?", "나는 학교 방송부에 가입할까 생각 중이야. 너는?"),
-                ("Sujin", "I want to join the film club, the volunteering club, and the sports club. I’m also interested in joining the school band.", "나는 영화 동아리, 봉사 동아리, 스포츠 동아리에 가입하고 싶어. 학교 밴드에도 관심이 있어."),
-                ("Daniel", "Wow. That’s a lot. But doing all the activities for four clubs sounds exhausting.", "와. 정말 많네. 하지만 네 동아리의 모든 활동을 다 하는 건 힘들 것 같아."),
-                ("Sujin", "I know, but it’s so difficult to choose just one. Each club offers its own experiences, and I want to experience them all! What should I do?", "알아. 하지만 하나만 고르기가 너무 어려워. 각 동아리마다 고유한 경험을 제공하고, 나는 그것들을 모두 경험하고 싶어! 어떻게 해야 할까?"),
-                ("Daniel", "You need to find a way to use your time wisely. So, I will ask you one big question. Which club do you think will add the most value to your school life?", "시간을 현명하게 사용하는 방법을 찾아야 해. 그래서 중요한 질문 하나를 할게. 어느 동아리가 네 학교생활에 가장 큰 가치를 더해 줄 것 같니?"),
-                ("Sujin", "What do you mean by adding value?", "가치를 더한다는 게 무슨 뜻이야?"),
-                ("Daniel", "We both know that all clubs can be helpful, but there must be some differences between them. If you can’t decide, you should rank your options in the order of importance.", "모든 동아리가 도움이 될 수 있다는 건 우리 둘 다 알지만, 그 사이에는 분명 차이가 있을 거야. 결정할 수 없다면 선택지를 중요도 순으로 정해야 해."),
-                ("Sujin", "Okay. I can give up the film club and school band. But I’m still not sure between the volunteering club and the sports club.", "좋아. 영화 동아리와 학교 밴드는 포기할 수 있어. 하지만 봉사 동아리와 스포츠 동아리 중에서는 아직 잘 모르겠어."),
-                ("Daniel", "That’s a big improvement! At least you’ve started to set priorities.", "큰 발전이야! 적어도 우선순위를 정하기 시작했잖아."),
-                ("Sujin", "Priority! Yes! It should be the standard for my choices.", "우선순위! 맞아! 그게 내 선택의 기준이 되어야 해."),
-                ("Daniel", "Yes. Next time you want to make the best decision, remember the word, “priority.”", "맞아. 다음에 최고의 결정을 내리고 싶을 때는 '우선순위'라는 단어를 기억해."),
-                ("Sujin", "Thank you so much, Daniel. Your advice was very helpful.", "정말 고마워, Daniel. 네 조언이 정말 도움이 됐어."),
-                ("Daniel", "No problem. I’m ready to help you anytime!", "천만에. 언제든 도와줄 준비가 되어 있어!")
-            ],
-            "key_expressions": [
-                "be planning to",
-                "be interested in",
-                "sounds exhausting",
-                "use your time wisely",
-                "add the most value",
-                "rank your options",
-                "in the order of importance",
-                "set priorities",
-                "make the best decision"
-            ],
-            "questions": [
-                ("1. Sujin이 처음 관심을 가진 동아리는 몇 개인가요?", ["Four", "One", "Two", "Three"], "Four"),
-                ("2. Daniel은 선택이 어려울 때 무엇을 하라고 하나요?", ["Rank the options in the order of importance.", "Join every club.", "Ask the teacher to choose.", "Give up all clubs."], "Rank the options in the order of importance."),
-                ("3. Sujin이 마지막까지 고민하는 두 동아리는 무엇인가요?", ["The volunteering club and the sports club", "The film club and the school band", "The broadcasting club and the film club", "The sports club and the school band"], "The volunteering club and the sports club"),
-                ("4. Daniel이 Sujin에게 기억하라고 한 핵심 단어는 무엇인가요?", ["Priority", "Quantity", "Exercise", "Routine"], "Priority")
-            ],
-            "reflection_prompt": "Sujin의 동아리 선택을 통해 우선순위를 정하는 것이 왜 중요한지 생각해 봅시다."
-        }
+        "📗 교과서 2": {'title': 'A Day at the Job Fair',
+         'subtitle': 'Explore careers in the video game industry',
+         'video_url': '',
+         'image_path': None,
+         'facts': ['International multimedia and technology job fair',
+                   'Careers: audio engineer, character designer, video game tester',
+                   'Key idea: Find a career path that matches your strengths'],
+         'dialogue': [('Narration',
+                       'Minho and his classmates visited the international multimedia and technology job fair. '
+                       'International experts in the field introduced various jobs. They advised the students to pay more '
+                       'attention to this industry.',
+                       '민호와 반 친구들은 국제 멀티미디어 및 기술 직업 박람회를 방문했다. 이 분야의 국제 전문가들이 다양한 직업을 소개했다. 그들은 학생들에게 이 산업에 더 많은 관심을 '
+                       '기울이라고 조언했다.'),
+                      ('Narration',
+                       'Minho loves playing video games and was so excited to see that there are many job opportunities '
+                       'in the video game industry. Indeed, this industry has become one of the largest industries in the '
+                       'world.',
+                       '민호는 비디오 게임을 좋아해서 게임 산업에 많은 취업 기회가 있다는 사실에 매우 신이 났다. 실제로 이 산업은 세계에서 가장 큰 산업 중 하나가 되었다.'),
+                      ('Narration',
+                       'Loud music attracted Jiho, as he is a big music lover. Alice, an audio engineer, was '
+                       'demonstrating how she made music used in game battle scenes. Alice played one of the latest songs '
+                       'she made.',
+                       '큰 음악 소리가 음악 애호가인 지호의 관심을 끌었다. 음향 엔지니어인 앨리스는 게임 전투 장면에 쓰이는 음악을 어떻게 만드는지 보여 주고 있었다. 앨리스는 자신이 만든 최신 '
+                       '곡 중 하나를 틀었다.'),
+                      ('Narration',
+                       'As soon as the music started playing, it created a tense mood. Jiho felt strong and powerful, '
+                       'like a warrior on the march. He asked Alice how video game music was distinct from movie '
+                       'soundtracks.',
+                       '음악이 시작되자마자 긴장감 있는 분위기가 만들어졌다. 지호는 행군하는 전사처럼 강하고 힘이 넘치는 기분이 들었다. 그는 게임 음악이 영화 음악과 어떻게 다른지 물었다.'),
+                      ('Narration',
+                       'Alice explained that video game music is more interactive, as listeners are active players in the '
+                       'game. Jiho found concert pamphlets about a video game concert held at the Rowling Arts Center.',
+                       '앨리스는 청취자가 게임에 능동적으로 참여하기 때문에 게임 음악이 더 상호작용적이라고 설명했다. 지호는 롤링 아트 센터에서 열린 게임 음악 콘서트의 소책자를 발견했다.'),
+                      ('Narration',
+                       'The newspaper article on the wall said that the video game music concert entertained many people '
+                       'and was a huge success. The idea of making his own music for video games truly excited him.',
+                       '벽에 붙은 신문 기사는 게임 음악 콘서트가 많은 사람을 즐겁게 했고 크게 성공했다고 전했다. 게임 음악을 직접 만든다는 생각에 지호는 정말 신이 났다.'),
+                      ('Narration',
+                       'Many students were surprised by the various job opportunities. At first, they believed most jobs '
+                       'would only be related to computers and technology. But it was much more than they had expected.',
+                       '많은 학생들이 다양한 취업 기회에 놀랐다. 처음에는 대부분의 직업이 컴퓨터와 기술에만 관련될 것이라고 생각했지만, 예상보다 훨씬 다양했다.'),
+                      ('Narration',
+                       'For example, Hajin is one of the most talented students in her class as to drawing and painting. '
+                       'To no one’s surprise, she was interested in the booth for video game artists.',
+                       '예를 들어 하진은 반에서 그림을 그리고 색칠하는 데 가장 재능 있는 학생 중 한 명이다. 예상대로 하진은 게임 아티스트 부스에 관심을 보였다.'),
+                      ('Narration',
+                       'Bob, a video game art director, explained that there are many different types of designers. For '
+                       'example, character designers and texture artists work together to make scenes more realistic and '
+                       'appealing.',
+                       '게임 아트 디렉터인 밥은 다양한 종류의 디자이너가 있다고 설명했다. 예를 들어 캐릭터 디자이너와 텍스처 아티스트는 장면을 더 사실적이고 매력적으로 만들기 위해 협력한다.'),
+                      ('Narration',
+                       'Hajin loves using her imagination to create her own characters. Bob advised her that she might be '
+                       'a good fit for a character designer.',
+                       '하진은 상상력을 발휘해 자신만의 캐릭터를 만드는 것을 좋아한다. 밥은 하진이 캐릭터 디자이너에 잘 어울릴 수 있다고 조언했다.'),
+                      ('Narration',
+                       'Minho believes he has found his dream job: a video game tester. Jim, a video game tester, '
+                       'explained that his job is to test games before they are released to the public.',
+                       '민호는 자신의 꿈의 직업인 게임 테스터를 찾았다고 믿는다. 게임 테스터인 짐은 게임이 대중에게 출시되기 전에 시험하는 것이 자신의 일이라고 설명했다.'),
+                      ('Narration',
+                       'At only 19, Jim is the youngest member of his team. What a wonderful job it must be! He can make '
+                       'a living by playing new games every day. But, of course, Jim said it is more challenging than it '
+                       'seems.',
+                       '19세인 짐은 팀에서 가장 어린 구성원이다. 정말 멋진 직업임에 틀림없다! 그는 매일 새 게임을 하며 생계를 유지할 수 있다. 하지만 짐은 이 일이 보기보다 어렵다고 '
+                       '말했다.'),
+                      ('Narration',
+                       'While playing a new game, he needs to take a look at the flow of the game and analyze complicated '
+                       'instructions. The most crucial part of his job is checking for any technical errors or bugs.',
+                       '새 게임을 하면서 게임의 흐름을 살피고 복잡한 지시 사항을 분석해야 한다. 가장 중요한 업무는 기술적 오류나 버그가 있는지 확인하는 것이다.'),
+                      ('Narration',
+                       'When the game is completely tested, it is finally released to the market. After the job fair, '
+                       'Minho shared what he had learned with his friends.',
+                       '게임의 테스트가 완전히 끝나면 마침내 시장에 출시된다. 박람회가 끝난 후 민호는 배운 내용을 친구들과 공유했다.'),
+                      ('Narration',
+                       'His dream changed from becoming a professional gamer to a video game tester. To become a '
+                       'progamer, Minho knows he needs to be very talented. In addition, he must spend a lot of time '
+                       'practicing, which is far from just enjoying the game.',
+                       '민호의 꿈은 프로게이머에서 게임 테스터로 바뀌었다. 프로게이머가 되려면 뛰어난 재능이 필요하고 단순히 게임을 즐기는 것과는 달리 많은 시간을 연습에 써야 한다는 것을 알고 '
+                       '있다.'),
+                      ('Narration',
+                       'The job fair encouraged him to see other opportunities in the video game industry. It truly was '
+                       'an eye-opening experience for everyone. All the students discovered career paths that matched '
+                       'their strengths.',
+                       '박람회는 그가 게임 산업의 다른 기회도 살펴보도록 격려했다. 모두에게 정말 시야를 넓혀 주는 경험이었다. 학생들은 각자의 강점에 맞는 진로를 발견했다.')],
+         'key_expressions': ['pay attention to',
+                             'job opportunities',
+                             'as soon as',
+                             'distinct from',
+                             'be related to',
+                             'be a good fit for',
+                             'make a living',
+                             'take a look at',
+                             'in addition',
+                             'eye-opening'],
+         'questions': [('1. Minho와 친구들은 어디를 방문했나요?', ['A job fair', 'A museum', 'A hospital', 'A stadium'], 'A job fair'),
+                       ('2. Alice의 직업은 무엇인가요?',
+                        ['Audio engineer', 'Character designer', 'Game tester', 'Teacher'],
+                        'Audio engineer'),
+                       ('3. Bob이 Hajin에게 추천한 직업은 무엇인가요?',
+                        ['Character designer', 'Audio engineer', 'Programmer', 'Singer'],
+                        'Character designer'),
+                       ('4. Jim의 가장 중요한 업무는 무엇인가요?',
+                        ['Checking technical errors or bugs', 'Drawing characters', 'Writing music', 'Selling tickets'],
+                        'Checking technical errors or bugs'),
+                       ('5. Minho의 꿈은 무엇으로 바뀌었나요?',
+                        ['Video game tester', 'Professional singer', 'Art director', 'Movie actor'],
+                        'Video game tester')],
+         'reflection_prompt': '직업 박람회에서 소개된 직업 중 자신의 강점과 가장 잘 맞는 직업은 무엇인지 생각해 봅시다.'},
     }
 
 }
@@ -1282,13 +1344,25 @@ key_word_bank = {
         ("concentrate on", "~에 집중하다"), ("reduce", "줄이다"), ("routine", "루틴"),
         ("quality", "질"), ("quantity", "양")
     ],
-    "📗 교과서 2": [
-        ("broadcasting club", "방송부"), ("film club", "영화 동아리"), ("volunteering club", "봉사 동아리"),
-        ("sports club", "스포츠 동아리"), ("school band", "학교 밴드"), ("exhausting", "매우 힘든"),
-        ("wisely", "현명하게"), ("add value", "가치를 더하다"), ("rank", "순위를 정하다"),
-        ("in the order of importance", "중요도 순으로"), ("priority", "우선순위"),
-        ("decision", "결정"), ("advice", "조언")
-    ],
+    "📗 교과서 2": [('job fair', '직업 박람회'),
+ ('expert', '전문가'),
+ ('industry', '산업'),
+ ('opportunity', '기회'),
+ ('attract', '마음을 끌다'),
+ ('audio engineer', '음향 엔지니어'),
+ ('tense', '긴장한'),
+ ('distinct from', '~와 다른'),
+ ('interactive', '상호작용적인'),
+ ('pamphlet', '소책자'),
+ ('art director', '아트 디렉터'),
+ ('texture', '질감'),
+ ('appealing', '매력적인'),
+ ('imagination', '상상력'),
+ ('release', '출시하다'),
+ ('make a living', '생계를 꾸리다'),
+ ('challenging', '어려운'),
+ ('bug', '오류'),
+ ('eye-opening', '놀랄 만한')],
 }
 
 
@@ -1449,12 +1523,18 @@ pre_reading_questions_bank = {
         ("3. Kelly는 수학과 영어 공부 시간을 어떻게 바꾸는 것이 좋다고 하나요?", ["Reduce it to one or two hours.", "Increase it to five hours.", "Delete it.", "Study only in the morning."], "Reduce it to one or two hours."),
         ("4. Jiho의 핵심 조언은 무엇인가요?", ["Quality is more important than quantity.", "Quantity is more important.", "Never change a plan.", "Sleep is not important."], "Quality is more important than quantity.")
     ],
-    "📗 교과서 2": [
-        ("1. Daniel은 어느 동아리에 가입하려고 하나요?", ["The school broadcasting club", "The film club", "The sports club", "The school band"], "The school broadcasting club"),
-        ("2. Sujin은 처음 몇 개의 동아리에 관심이 있나요?", ["Four", "One", "Two", "Three"], "Four"),
-        ("3. Daniel은 선택지를 어떻게 정리하라고 하나요?", ["Rank them in the order of importance.", "Choose randomly.", "Join all clubs.", "Ask a teacher."], "Rank them in the order of importance."),
-        ("4. Sujin이 선택의 기준으로 삼기로 한 것은 무엇인가요?", ["Priority", "Quantity", "Popularity", "Luck"], "Priority")
-    ],
+    "📗 교과서 2": [('1. 학생들이 방문한 곳은?',
+  ['International multimedia and technology job fair', 'Sports stadium', 'Zoo', 'Airport'],
+  'International multimedia and technology job fair'),
+ ('2. Jiho가 관심을 가진 분야는?', ['Video game music', 'Cooking', 'Medicine', 'Architecture'], 'Video game music'),
+ ('3. Alice의 직업은?', ['Audio engineer', 'Game tester', 'Character designer', 'Pilot'], 'Audio engineer'),
+ ('4. Hajin이 관심을 가진 부스는?', ['Video game artists', 'Bankers', 'Chefs', 'Doctors'], 'Video game artists'),
+ ('5. Bob이 추천한 직업은?', ['Character designer', 'Audio engineer', 'Lawyer', 'Teacher'], 'Character designer'),
+ ('6. Jim의 직업은?', ['Video game tester', 'Singer', 'Painter', 'Driver'], 'Video game tester'),
+ ('7. Jim이 가장 중요하게 확인하는 것은?',
+  ['Technical errors or bugs', 'Ticket prices', 'Music charts', 'School grades'],
+  'Technical errors or bugs'),
+ ('8. Minho의 새로운 꿈은?', ['Video game tester', 'Professional gamer', 'Singer', 'Coach'], 'Video game tester')],
 }
 
 
@@ -1636,13 +1716,11 @@ story_card_hints = {
         "Action": "Delete the morning jog and reduce study time.",
         "Result": "She learns to make a realistic routine and focus on quality."
     },
-    "📗 교과서 2": {
-        "Name": "Sujin",
-        "Feeling": "excited but unsure",
-        "Problem": "She wants to join too many clubs.",
-        "Action": "Rank her options and set priorities.",
-        "Result": "She learns to choose what adds the most value to her school life."
-    },
+    "📗 교과서 2": {'Name': 'Minho',
+ 'Feeling': 'excited and curious',
+ 'Problem': 'He wants to find a career in the video game industry.',
+ 'Action': 'He learns about audio engineering, art directing, and game testing.',
+ 'Result': 'He decides to become a video game tester.'},
 }
 
 
@@ -2368,13 +2446,11 @@ story_card_hints_ko = {
         "Action": "아침 조깅을 빼고 공부 시간을 줄인다.",
         "Result": "현실적인 루틴과 양보다 질의 중요성을 배운다."
     },
-    "📗 교과서 2": {
-        "Name": "Sujin",
-        "Feeling": "신나지만 선택이 어려움",
-        "Problem": "너무 많은 동아리에 가입하고 싶어 한다.",
-        "Action": "선택지의 순위를 정하고 우선순위를 세운다.",
-        "Result": "학교생활에 가장 큰 가치를 더하는 것을 선택하는 법을 배운다."
-    },
+    "📗 교과서 2": {'Name': '민호',
+ 'Feeling': '신나고 호기심이 많음',
+ 'Problem': '게임 산업에서 자신에게 맞는 진로를 찾고 싶어 한다.',
+ 'Action': '음향 엔지니어, 아트 디렉터, 게임 테스터에 대해 배운다.',
+ 'Result': '게임 테스터가 되기로 꿈을 바꾼다.'},
 }
 
 
@@ -2489,12 +2565,11 @@ mission1_questions_bank = {
         ("3. Kelly는 무엇을 삭제하기로 하나요?", ["아침 조깅", "오후 운동", "영어 공부", "수학 공부"], "아침 조깅"),
         ("4. Jiho가 강조한 핵심은 무엇인가요?", ["양보다 질이 중요하다", "양이 질보다 중요하다", "쉬지 않아야 한다", "계획은 바꾸면 안 된다"], "양보다 질이 중요하다")
     ],
-    "📗 교과서 2": [
-        ("1. Sujin이 처음 관심을 가진 동아리는 몇 개인가요?", ["4개", "1개", "2개", "3개"], "4개"),
-        ("2. Daniel은 시간을 어떻게 사용해야 한다고 하나요?", ["현명하게 사용해야 한다", "모두 동아리에 써야 한다", "공부에만 써야 한다", "계획 없이 써야 한다"], "현명하게 사용해야 한다"),
-        ("3. 선택하기 어렵다면 무엇을 해야 하나요?", ["중요도 순으로 선택지의 순위를 정한다", "모두 선택한다", "무작위로 선택한다", "아무것도 선택하지 않는다"], "중요도 순으로 선택지의 순위를 정한다"),
-        ("4. Sujin이 선택의 기준으로 삼은 단어는 무엇인가요?", ["우선순위", "양", "속도", "운"], "우선순위")
-    ],
+    "📗 교과서 2": [('1. 학생들이 방문한 곳은?', ['국제 멀티미디어 및 기술 직업 박람회', '영화관', '도서관', '체육관'], '국제 멀티미디어 및 기술 직업 박람회'),
+ ('2. 앨리스가 하는 일은?', ['게임 음악 제작', '캐릭터 디자인', '게임 버그 검사', '게임 판매'], '게임 음악 제작'),
+ ('3. 밥이 하진에게 추천한 직업은?', ['캐릭터 디자이너', '음향 엔지니어', '게임 테스터', '기자'], '캐릭터 디자이너'),
+ ('4. 짐이 확인하는 가장 중요한 것은?', ['기술적 오류와 버그', '콘서트 일정', '캐릭터 색상', '음악 가사'], '기술적 오류와 버그'),
+ ('5. 민호의 새로운 꿈은?', ['게임 테스터', '프로게이머', '가수', '미술 교사'], '게임 테스터')],
 }
 
 
@@ -3343,20 +3418,20 @@ def show_easy_grammar_practice(category, topic_name):
                 ("4. Quality is more important ___ quantity.", ["to", "of", "than", "with"], "than")
             ]
         },
-        "📗 교과서 2": {
-            "points": [
-                ("① be planning to + 동사원형", "‘~할 계획이다’라는 뜻입니다. 예: Which club are you planning to join?"),
-                ("② be interested in + -ing", "‘~하는 데 관심이 있다’라는 뜻입니다. 예: I’m interested in joining the school band."),
-                ("③ want to + 동사원형", "‘~하고 싶다’라는 뜻입니다. 예: I want to experience them all."),
-                ("④ should + 동사원형", "‘~해야 한다’라는 조언을 나타냅니다. 예: You should rank your options.")
-            ],
-            "questions": [
-                ("1. Which club are you planning ___?", ["join", "to join", "joining", "joined"], "to join"),
-                ("2. I’m interested in ___ the school band.", ["join", "to join", "joining", "joined"], "joining"),
-                ("3. I want ___ them all.", ["experience", "to experience", "experiencing", "experienced"], "to experience"),
-                ("4. You should ___ your options.", ["rank", "to rank", "ranking", "ranked"], "rank")
-            ]
-        }
+        "📗 교과서 2": {'points': [('① as soon as + 주어 + 동사', '~하자마자. 예: As soon as the music started playing, it created a tense mood.'),
+                    ('② 비교급 + than', '~보다 더. 예: Video game music is more interactive.'),
+                    ('③ 관계대명사 which', '앞의 내용을 보충 설명합니다. 예: ...practicing, which is far from just enjoying the game.'),
+                    ('④ 수동태 be + 과거분사', '~되다. 예: It is finally released to the market.')],
+         'questions': [('1. ___ the music started, Jiho felt powerful.',
+                        ['As soon as', 'Because of', 'Instead of', 'In addition'],
+                        'As soon as'),
+                       ('2. It is more challenging ___ it seems.', ['than', 'to', 'with', 'of'], 'than'),
+                       ('3. The game is finally ___ to the market.',
+                        ['released', 'release', 'releasing', 'releases'],
+                        'released'),
+                       ('4. The concert ___ many people.',
+                        ['entertained', 'entertain', 'entertaining', 'entertainment'],
+                        'entertained')]},
     }
 
     if topic_name not in grammar_bank:
@@ -3602,7 +3677,7 @@ def get_display_target_name(topic_name, target_name):
         "🗽 New York": "뉴욕",
         "🏯 Gyeongbokgung": "경복궁",
         "📘 교과서 1": "Kelly",
-        "📗 교과서 2": "Sujin",
+        "📗 교과서 2": "Minho",
     }
     return name_map.get(topic_name, target_name)
 
