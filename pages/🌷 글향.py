@@ -4378,6 +4378,77 @@ def show_context_cloze_activity(category, topic_name, data):
             reset_keys_by_prefix(prefix)
             st.rerun()
 
+
+
+def show_word_order_activity(category, topic_name, data, max_questions=10):
+    """본문 문장을 단어 순서대로 클릭해 완성하는 활동."""
+    st.markdown('<div class="section-box"><h3>🔀 Sentence Ordering | 단어 순서 배열하기</h3></div>', unsafe_allow_html=True)
+    st.caption("섞인 단어를 올바른 순서로 눌러 영어 문장을 완성하세요. 정답을 맞히면 다음 문제로 넘어갑니다.")
+
+    candidates = []
+    seen = set()
+    for entry in data.get("dialogue", []):
+        if len(entry) < 3:
+            continue
+        english, korean = str(entry[1]).strip(), str(entry[2]).strip()
+        # 짧고 완결된 문장을 골라 기초 학습자가 풀 수 있도록 구성
+        for sentence in re.split(r"(?<=[.!?])\s+", english):
+            sentence = sentence.strip()
+            tokens = sentence.split()
+            if 5 <= len(tokens) <= 11 and sentence not in seen and re.search(r"[.!?]$", sentence):
+                seen.add(sentence)
+                candidates.append((sentence, korean))
+    if not candidates:
+        st.info("단어 배열 문제를 만들 수 있는 본문 문장이 없습니다.")
+        return
+    candidates = candidates[:max_questions]
+    prefix = f"ordering_{category}_{topic_name}_"
+    for i, (sentence, meaning) in enumerate(candidates):
+        tokens = sentence.split()
+        indices = list(range(len(tokens)))
+        rng = random.Random(f"{category}|{topic_name}|{i}|ordering")
+        rng.shuffle(indices)
+        if indices == list(range(len(tokens))):
+            indices.reverse()
+        selected_key = f"{prefix}{i}_selected"
+        done_key = f"{prefix}{i}_done"
+        st.session_state.setdefault(selected_key, [])
+        st.session_state.setdefault(done_key, False)
+        st.markdown(f"**문제 {i + 1}.**")
+        st.caption(f"본문 힌트: {meaning}")
+        if st.session_state[done_key]:
+            st.success(f"✅ {sentence}")
+            st.divider()
+            continue
+        selected = st.session_state[selected_key]
+        st.markdown("**내가 만든 문장:** " + (" ".join(tokens[j] for j in selected) if selected else "(아래 단어를 선택하세요)"))
+        columns = st.columns(min(4, len(tokens)))
+        for pos, token_index in enumerate(indices):
+            with columns[pos % len(columns)]:
+                if st.button(tokens[token_index], key=f"{prefix}{i}_token_{token_index}", disabled=token_index in selected, use_container_width=True):
+                    st.session_state[selected_key] = selected + [token_index]
+                    st.rerun()
+        a, b = st.columns(2)
+        with a:
+            if st.button("정답 확인", key=f"{prefix}{i}_check", disabled=len(selected) != len(tokens), use_container_width=True):
+                if selected == list(range(len(tokens))):
+                    st.session_state[done_key] = True
+                    st.rerun()
+                else:
+                    st.error("순서가 다릅니다. 다시 배열해 보세요.")
+        with b:
+            if st.button("↩ 다시 배열", key=f"{prefix}{i}_clear", use_container_width=True):
+                st.session_state[selected_key] = []
+                st.rerun()
+        st.divider()
+    completed = sum(st.session_state[f"{prefix}{i}_done"] for i in range(len(candidates)))
+    st.progress(completed / len(candidates), text=f"문장 배열 진행: {completed}/{len(candidates)}")
+    if completed == len(candidates):
+        st.success("🎉 문장 배열 활동 완료!")
+        if st.button("🔄 문장 배열 다시 풀기", key=f"{prefix}reset"):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
+
 tab_reading = st.container()
 
 # =========================================================
@@ -4402,6 +4473,9 @@ with tab_reading:
     if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
         st.markdown("---")
         show_easy_grammar_practice(category, topic_name)
+
+    st.markdown("---")
+    show_word_order_activity(category, topic_name, data, max_questions=10)
 
     st.markdown("---")
     show_key_expression_word_test(category, topic_name, data, max_words=20)
