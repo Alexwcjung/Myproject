@@ -4135,7 +4135,7 @@ def show_reading_blocks(dialogue, category, topic_name):
         korean_lines = [kor for _, _, kor in dialogue]
 
     # 교과서는 4줄씩, 나머지 읽기 자료도 기존처럼 4줄씩 표시
-    chunk_size = 4 if topic_name in dialogue_topics else 4
+    chunk_size = 2 if topic_name == "📗 교과서 2" else 4
 
     for block_idx in range(0, len(lines), chunk_size):
         block_no = block_idx // chunk_size + 1
@@ -4157,7 +4157,19 @@ def show_reading_blocks(dialogue, category, topic_name):
             unsafe_allow_html=True
         )
 
-        # 교과서는 각 4줄 묶음 바로 아래에 개별 한국어 해석 버튼을 둡니다.
+        # 교과서 2: 각 섹션의 영어 문장만 따로 들을 수 있는 MP3 플레이어
+        # 해석 버튼을 눌러도 재생 위치를 최대한 유지합니다.
+        if topic_name == "📗 교과서 2":
+            section_dialogue = dialogue[block_idx:block_idx + chunk_size]
+            section_english = make_full_listening_text(section_dialogue)
+            play_persistent_full_audio(
+                section_english,
+                key=f"{category}_{topic_name}_section_{block_no}_audio_v1",
+                button_label=f"🎧 섹션 {block_no} 듣기",
+                lang="en"
+            )
+
+        # 교과서는 각 묶음 바로 아래에 개별 한국어 해석 버튼을 둡니다.
         if topic_name in dialogue_topics:
             show_key = f"show_korean_block_{category}_{topic_name}_{block_no}"
             st.session_state.setdefault(show_key, False)
