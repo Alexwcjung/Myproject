@@ -1442,6 +1442,31 @@ def get_key_words(topic_name, data):
     return fallback
 
 
+# 모든 주제의 Key Expressions를 정확히 20개로 구성합니다.
+# 기존 핵심 어휘를 우선 유지하고, 부족한 항목은 해당 본문의 영문과 한국어 해석에서 보충합니다.
+for _category_items in data_bank.values():
+    for _topic, _data in _category_items.items():
+        _existing = list(get_key_words(_topic, _data))
+        _result = []
+        _seen = set()
+        for _eng, _kor in _existing:
+            _key = str(_eng).strip().casefold()
+            if _key and _key not in _seen:
+                _result.append((str(_eng).strip(), str(_kor).strip()))
+                _seen.add(_key)
+        for _entry in _data.get("dialogue", []):
+            if len(_result) >= 20:
+                break
+            if len(_entry) < 3:
+                continue
+            _eng, _kor = str(_entry[1]).strip(), str(_entry[2]).strip()
+            _key = _eng.casefold()
+            if _eng and _kor and _key not in _seen:
+                _result.append((_eng, _kor))
+                _seen.add(_key)
+        key_word_bank[_topic] = _result[:20]
+
+
 def normalize_answer(text):
     """학생 답안 비교를 조금 관대하게 하기 위한 정리 함수입니다."""
     return str(text).strip().lower().replace(" ", "").replace("/", "")
@@ -4295,8 +4320,8 @@ def show_context_cloze_activity(category, topic_name, data):
             if len(english) <= 190 and masked != english and (word.lower(), masked) not in [(x[0].lower(),x[1]) for x in candidates]:
                 candidates.append((word, masked, meaning))
                 break
-    # 지문에서 실제로 등장하는 표현만 출제합니다.
-    candidates = _stable_shuffle(candidates, f"cloze-{category}-{topic_name}")[:8]
+    # 지문에서 실제로 등장하는 표현만 출제하며 최대 15문제를 제공합니다.
+    candidates = _stable_shuffle(candidates, f"cloze-{category}-{topic_name}")[:15]
     st.markdown('<div class="section-box"><h3>✏️ 본문 빈칸 채우기</h3></div>', unsafe_allow_html=True)
     st.caption("본문에 나온 문장을 읽고 빈칸에 들어갈 영어 표현을 고르세요. 정답을 맞히면 다음 문제로 넘어갈 수 있습니다.")
     if not candidates:
