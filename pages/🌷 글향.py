@@ -1080,81 +1080,101 @@ data_bank = {
                    'Careers: audio engineer, character designer, video game tester',
                    'Key idea: Find a career path that matches your strengths'],
          'dialogue': [('Narration',
-                       'Minho and his classmates visited the international multimedia and technology job fair. '
-                       'International experts in the field introduced various jobs. They advised the students to pay more '
-                       'attention to this industry.',
-                       '민호와 반 친구들은 국제 멀티미디어 및 기술 직업 박람회를 방문했다. 이 분야의 국제 전문가들이 다양한 직업을 소개했다. 그들은 학생들에게 이 산업에 더 많은 관심을 '
-                       '기울이라고 조언했다.'),
-                      ('Narration',
-                       'Minho loves playing video games and was so excited to see that there are many job opportunities '
-                       'in the video game industry. Indeed, this industry has become one of the largest industries in the '
-                       'world.',
-                       '민호는 비디오 게임을 좋아해서 게임 산업에 많은 취업 기회가 있다는 사실에 매우 신이 났다. 실제로 이 산업은 세계에서 가장 큰 산업 중 하나가 되었다.'),
-                      ('Narration',
-                       'Loud music attracted Jiho, as he is a big music lover. Alice, an audio engineer, was '
-                       'demonstrating how she made music used in game battle scenes. Alice played one of the latest songs '
-                       'she made.',
-                       '큰 음악 소리가 음악 애호가인 지호의 관심을 끌었다. 음향 엔지니어인 앨리스는 게임 전투 장면에 쓰이는 음악을 어떻게 만드는지 보여 주고 있었다. 앨리스는 자신이 만든 최신 '
-                       '곡 중 하나를 틀었다.'),
-                      ('Narration',
-                       'As soon as the music started playing, it created a tense mood. Jiho felt strong and powerful, '
-                       'like a warrior on the march. He asked Alice how video game music was distinct from movie '
-                       'soundtracks.',
-                       '음악이 시작되자마자 긴장감 있는 분위기가 만들어졌다. 지호는 행군하는 전사처럼 강하고 힘이 넘치는 기분이 들었다. 그는 게임 음악이 영화 음악과 어떻게 다른지 물었다.'),
-                      ('Narration',
-                       'Alice explained that video game music is more interactive, as listeners are active players in the '
-                       'game. Jiho found concert pamphlets about a video game concert held at the Rowling Arts Center.',
-                       '앨리스는 청취자가 게임에 능동적으로 참여하기 때문에 게임 음악이 더 상호작용적이라고 설명했다. 지호는 롤링 아트 센터에서 열린 게임 음악 콘서트의 소책자를 발견했다.'),
-                      ('Narration',
-                       'The newspaper article on the wall said that the video game music concert entertained many people '
-                       'and was a huge success. The idea of making his own music for video games truly excited him.',
-                       '벽에 붙은 신문 기사는 게임 음악 콘서트가 많은 사람을 즐겁게 했고 크게 성공했다고 전했다. 게임 음악을 직접 만든다는 생각에 지호는 정말 신이 났다.'),
-                      ('Narration',
-                       'Many students were surprised by the various job opportunities. At first, they believed most jobs '
-                       'would only be related to computers and technology. But it was much more than they had expected.',
-                       '많은 학생들이 다양한 취업 기회에 놀랐다. 처음에는 대부분의 직업이 컴퓨터와 기술에만 관련될 것이라고 생각했지만, 예상보다 훨씬 다양했다.'),
-                      ('Narration',
-                       'For example, Hajin is one of the most talented students in her class as to drawing and painting. '
-                       'To no one’s surprise, she was interested in the booth for video game artists.',
-                       '예를 들어 하진은 반에서 그림을 그리고 색칠하는 데 가장 재능 있는 학생 중 한 명이다. 예상대로 하진은 게임 아티스트 부스에 관심을 보였다.'),
-                      ('Narration',
-                       'Bob, a video game art director, explained that there are many different types of designers. For '
-                       'example, character designers and texture artists work together to make scenes more realistic and '
-                       'appealing.',
-                       '게임 아트 디렉터인 밥은 다양한 종류의 디자이너가 있다고 설명했다. 예를 들어 캐릭터 디자이너와 텍스처 아티스트는 장면을 더 사실적이고 매력적으로 만들기 위해 협력한다.'),
-                      ('Narration',
-                       'Hajin loves using her imagination to create her own characters. Bob advised her that she might be '
-                       'a good fit for a character designer.',
-                       '하진은 상상력을 발휘해 자신만의 캐릭터를 만드는 것을 좋아한다. 밥은 하진이 캐릭터 디자이너에 잘 어울릴 수 있다고 조언했다.'),
-                      ('Narration',
-                       'Minho believes he has found his dream job: a video game tester. Jim, a video game tester, '
-                       'explained that his job is to test games before they are released to the public.',
-                       '민호는 자신의 꿈의 직업인 게임 테스터를 찾았다고 믿는다. 게임 테스터인 짐은 게임이 대중에게 출시되기 전에 시험하는 것이 자신의 일이라고 설명했다.'),
-                      ('Narration',
-                       'At only 19, Jim is the youngest member of his team. What a wonderful job it must be! He can make '
-                       'a living by playing new games every day. But, of course, Jim said it is more challenging than it '
-                       'seems.',
-                       '19세인 짐은 팀에서 가장 어린 구성원이다. 정말 멋진 직업임에 틀림없다! 그는 매일 새 게임을 하며 생계를 유지할 수 있다. 하지만 짐은 이 일이 보기보다 어렵다고 '
-                       '말했다.'),
-                      ('Narration',
-                       'While playing a new game, he needs to take a look at the flow of the game and analyze complicated '
-                       'instructions. The most crucial part of his job is checking for any technical errors or bugs.',
-                       '새 게임을 하면서 게임의 흐름을 살피고 복잡한 지시 사항을 분석해야 한다. 가장 중요한 업무는 기술적 오류나 버그가 있는지 확인하는 것이다.'),
-                      ('Narration',
-                       'When the game is completely tested, it is finally released to the market. After the job fair, '
-                       'Minho shared what he had learned with his friends.',
-                       '게임의 테스트가 완전히 끝나면 마침내 시장에 출시된다. 박람회가 끝난 후 민호는 배운 내용을 친구들과 공유했다.'),
-                      ('Narration',
-                       'His dream changed from becoming a professional gamer to a video game tester. To become a '
-                       'progamer, Minho knows he needs to be very talented. In addition, he must spend a lot of time '
-                       'practicing, which is far from just enjoying the game.',
-                       '민호의 꿈은 프로게이머에서 게임 테스터로 바뀌었다. 프로게이머가 되려면 뛰어난 재능이 필요하고 단순히 게임을 즐기는 것과는 달리 많은 시간을 연습에 써야 한다는 것을 알고 '
-                       '있다.'),
-                      ('Narration',
-                       'The job fair encouraged him to see other opportunities in the video game industry. It truly was '
-                       'an eye-opening experience for everyone. All the students discovered career paths that matched '
-                       'their strengths.',
-                       '박람회는 그가 게임 산업의 다른 기회도 살펴보도록 격려했다. 모두에게 정말 시야를 넓혀 주는 경험이었다. 학생들은 각자의 강점에 맞는 진로를 발견했다.')],
+  'Minho and his classmates visited the international multimedia and technology job fair. International '
+  'experts in the field introduced various jobs. They advised the students to pay more attention to this '
+  'industry.',
+  '민호와 반 친구들은 국제 멀티미디어 및 기술 직업 박람회를 방문했다. 이 분야의 국제 전문가들이 다양한 직업을 소개했다. 그들은 학생들에게 이 산업에 더 많은 관심을 기울이라고 조언했다.'),
+ ('Narration',
+  'Minho loves playing video games and was so excited to see that there are many job opportunities in the '
+  'video game industry. Indeed, this industry has become one of the largest industries in the world.',
+  '민호는 비디오 게임을 좋아해서 게임 산업에 많은 취업 기회가 있다는 사실에 매우 신이 났다. 실제로 이 산업은 세계에서 가장 큰 산업 중 하나가 되었다.'),
+ ('Narration', 'Loud music attracted Jiho, as he is a big music lover.', '큰 음악 소리가 음악 애호가인 지호의 관심을 끌었다.'),
+ ('Narration',
+  'Alice, an audio engineer, was demonstrating how she made music used in game battle scenes.',
+  '음향 엔지니어인 앨리스는 게임 전투 장면에 쓰이는 음악을 어떻게 만드는지 보여 주고 있었다.'),
+ ('Narration', 'Alice played one of the latest songs she made.', '앨리스는 자신이 만든 최신 곡 중 하나를 틀었다.'),
+ ('Narration',
+  'As soon as the music started playing, it created a tense mood.',
+  '음악이 시작되자마자 긴장감 있는 분위기가 만들어졌다.'),
+ ('Narration',
+  'Jiho felt strong and powerful, like a warrior on the march.',
+  '지호는 행군하는 전사처럼 강하고 힘이 넘치는 기분이 들었다.'),
+ ('Narration',
+  'He asked Alice how video game music was distinct from movie soundtracks.',
+  '그는 게임 음악이 영화 음악과 어떻게 다른지 물었다.'),
+ ('Narration',
+  'Alice explained that video game music is more interactive, as listeners are active players in the game.',
+  '앨리스는 청취자가 게임에 능동적으로 참여하기 때문에 게임 음악이 더 상호작용적이라고 설명했다.'),
+ ('Narration',
+  'Jiho found concert pamphlets about a video game concert held at the Rowling Arts Center.',
+  '지호는 롤링 아트 센터에서 열린 게임 음악 콘서트의 소책자를 발견했다.'),
+ ('Narration',
+  'The newspaper article on the wall said that the video game music concert entertained many people and was '
+  'a huge success.',
+  '벽에 붙은 신문 기사는 게임 음악 콘서트가 많은 사람을 즐겁게 했고 크게 성공했다고 전했다.'),
+ ('Narration',
+  'The idea of making his own music for video games truly excited him.',
+  '게임 음악을 직접 만든다는 생각에 지호는 정말 신이 났다.'),
+ ('Narration',
+  'Many students were surprised by the various job opportunities. At first, they believed most jobs would '
+  'only be related to computers and technology. But it was much more than they had expected.',
+  '많은 학생들이 다양한 취업 기회에 놀랐다. 처음에는 대부분의 직업이 컴퓨터와 기술에만 관련될 것이라고 생각했지만, 예상보다 훨씬 다양했다.'),
+ ('Narration',
+  'For example, Hajin is one of the most talented students in her class as to drawing and painting.',
+  '예를 들어 하진은 반에서 그림을 그리고 색칠하는 데 가장 재능 있는 학생 중 한 명이다.'),
+ ('Narration',
+  'To no one’s surprise, she was interested in the booth for video game artists.',
+  '예상대로 하진은 게임 아티스트 부스에 관심을 보였다.'),
+ ('Narration',
+  'Bob, a video game art director, explained that there are many different types of designers.',
+  '게임 아트 디렉터인 밥은 다양한 종류의 디자이너가 있다고 설명했다.'),
+ ('Narration',
+  'For example, character designers and texture artists work together to make scenes more realistic and '
+  'appealing.',
+  '예를 들어 캐릭터 디자이너와 텍스처 아티스트는 장면을 더 사실적이고 매력적으로 만들기 위해 협력한다.'),
+ ('Narration',
+  'Hajin loves using her imagination to create her own characters.',
+  '하진은 상상력을 발휘해 자신만의 캐릭터를 만드는 것을 좋아한다.'),
+ ('Narration',
+  'Bob advised her that she might be a good fit for a character designer.',
+  '밥은 하진이 캐릭터 디자이너에 잘 어울릴 수 있다고 조언했다.'),
+ ('Narration',
+  'Minho believes he has found his dream job: a video game tester.',
+  '민호는 자신의 꿈의 직업인 게임 테스터를 찾았다고 믿는다.'),
+ ('Narration',
+  'Jim, a video game tester, explained that his job is to test games before they are released to the public.',
+  '게임 테스터인 짐은 게임이 대중에게 출시되기 전에 시험하는 것이 자신의 일이라고 설명했다.'),
+ ('Narration', 'At only 19, Jim is the youngest member of his team.', '19세인 짐은 팀에서 가장 어린 구성원이다.'),
+ ('Narration', 'What a wonderful job it must be!', '정말 멋진 직업임에 틀림없다!'),
+ ('Narration', 'He can make a living by playing new games every day.', '그는 매일 새 게임을 하며 생계를 유지할 수 있다.'),
+ ('Narration',
+  'But, of course, Jim said it is more challenging than it seems.',
+  '하지만 짐은 이 일이 보기보다 어렵다고 말했다.'),
+ ('Narration',
+  'While playing a new game, he needs to take a look at the flow of the game and analyze complicated '
+  'instructions.',
+  '새 게임을 하면서 게임의 흐름을 살피고 복잡한 지시 사항을 분석해야 한다.'),
+ ('Narration',
+  'The most crucial part of his job is checking for any technical errors or bugs.',
+  '가장 중요한 업무는 기술적 오류나 버그가 있는지 확인하는 것이다.'),
+ ('Narration',
+  'When the game is completely tested, it is finally released to the market.',
+  '게임의 테스트가 완전히 끝나면 마침내 시장에 출시된다.'),
+ ('Narration',
+  'After the job fair, Minho shared what he had learned with his friends.',
+  '박람회가 끝난 후 민호는 배운 내용을 친구들과 공유했다.'),
+ ('Narration',
+  'His dream changed from becoming a professional gamer to a video game tester. To become a progamer, Minho '
+  'knows he needs to be very talented. In addition, he must spend a lot of time practicing, which is far '
+  'from just enjoying the game.',
+  '민호의 꿈은 프로게이머에서 게임 테스터로 바뀌었다. 프로게이머가 되려면 뛰어난 재능이 필요하고 단순히 게임을 즐기는 것과는 달리 많은 시간을 연습에 써야 한다는 것을 알고 있다.'),
+ ('Narration',
+  'The job fair encouraged him to see other opportunities in the video game industry.',
+  '박람회는 그가 게임 산업의 다른 기회도 살펴보도록 격려했다.'),
+ ('Narration', 'It truly was an eye-opening experience for everyone.', '모두에게 정말 시야를 넓혀 주는 경험이었다.'),
+ ('Narration',
+  'All the students discovered career paths that matched their strengths.',
+  '학생들은 각자의 강점에 맞는 진로를 발견했다.')],
          'key_expressions': ['pay attention to',
                              'job opportunities',
                              'as soon as',
