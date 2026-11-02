@@ -4380,10 +4380,48 @@ def show_context_cloze_activity(category, topic_name, data):
 
 
 
+def make_order_chunks(sentence):
+    """단어가 아닌 의미 단위(보통 2~4단어)로 문장을 나눕니다."""
+    words = sentence.split()
+    # 고유명사와 자주 함께 쓰는 표현은 하나의 선택지로 유지
+    phrases = ["Son Heung-min", "Cristiano Ronaldo", "Michael Jordan", "Kim Yuna",
+               "Grand Canyon", "New York", "New York City", "Central Park",
+               "Times Square", "Statue of Liberty", "Manchester United",
+               "Sporting CP", "Chicago Bulls", "NBA championships",
+               "South Korea", "United States", "high school", "video games"]
+    units = []
+    i = 0
+    while i < len(words):
+        match = None
+        for phrase in sorted(phrases, key=lambda x: -len(x.split())):
+            n = len(phrase.split())
+            if [w.strip('.,!?;:').lower() for w in words[i:i+n]] == [w.lower() for w in phrase.split()]:
+                match = n
+                break
+        if match:
+            units.append(' '.join(words[i:i+match]))
+            i += match
+        else:
+            units.append(words[i])
+            i += 1
+    # 문장당 약 3~5개의 선택지로 구성; 가능한 한 2~4단어 묶음
+    target = min(5, max(3, round(len(words) / 2.7)))
+    target = min(target, len(units))
+    chunks = []
+    start = 0
+    for k in range(target):
+        remaining_units = len(units) - start
+        remaining_chunks = target - k
+        take = (remaining_units + remaining_chunks - 1) // remaining_chunks
+        chunks.append(' '.join(units[start:start+take]))
+        start += take
+    return chunks
+
+
 def show_word_order_activity(category, topic_name, data, max_questions=10):
     """본문 문장을 단어 순서대로 클릭해 완성하는 활동."""
-    st.markdown('<div class="section-box"><h3>🔀 Sentence Ordering | 단어 순서 배열하기</h3></div>', unsafe_allow_html=True)
-    st.caption("섞인 단어를 올바른 순서로 눌러 영어 문장을 완성하세요. 정답을 맞히면 다음 문제로 넘어갑니다.")
+    st.markdown('<div class="section-box"><h3>🔀 Sentence Ordering | 의미 단위 문장 배열하기</h3></div>', unsafe_allow_html=True)
+    st.caption("섞인 단어 묶음을 올바른 순서로 눌러 영어 문장을 완성하세요. 정답을 맞히면 다음 문제로 넘어갑니다.")
 
     candidates = []
     seen = set()
@@ -4404,7 +4442,7 @@ def show_word_order_activity(category, topic_name, data, max_questions=10):
     candidates = candidates[:max_questions]
     prefix = f"ordering_{category}_{topic_name}_"
     for i, (sentence, meaning) in enumerate(candidates):
-        tokens = sentence.split()
+        tokens = make_order_chunks(sentence)
         indices = list(range(len(tokens)))
         rng = random.Random(f"{category}|{topic_name}|{i}|ordering")
         rng.shuffle(indices)
@@ -4421,7 +4459,7 @@ def show_word_order_activity(category, topic_name, data, max_questions=10):
             st.divider()
             continue
         selected = st.session_state[selected_key]
-        st.markdown("**내가 만든 문장:** " + (" ".join(tokens[j] for j in selected) if selected else "(아래 단어를 선택하세요)"))
+        st.markdown("**내가 만든 문장:** " + (" ".join(tokens[j] for j in selected) if selected else "(아래 표현을 선택하세요)"))
         columns = st.columns(min(4, len(tokens)))
         for pos, token_index in enumerate(indices):
             with columns[pos % len(columns)]:
