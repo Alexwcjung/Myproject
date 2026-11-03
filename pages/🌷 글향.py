@@ -4529,82 +4529,120 @@ def compact_activity(category, topic_name, kind, items):
 
 
 def compact_matching_items(data):
-    pairs = data.get("matching_pairs") or [(eng, ko) for _,eng,ko in data.get("dialogue",[])[:6]]
-    pairs = [(str(en),str(ko)) for en,ko in pairs[:6]]
-    choices=[ko for en,ko in pairs]
-    return [(en, choices, ko) for en,ko in pairs]
+    pairs = list(data.get("matching_pairs") or [])
+    used_en = {str(en).strip().casefold() for en, ko in pairs}
+    used_ko = {str(ko).strip() for en, ko in pairs}
+    for entry in data.get("dialogue", []):
+        if len(entry) < 3:
+            continue
+        en, ko = str(entry[1]).strip(), str(entry[2]).strip()
+        if en and ko and en.casefold() not in used_en and ko not in used_ko:
+            pairs.append((en, ko))
+            used_en.add(en.casefold())
+            used_ko.add(ko)
+        if len(pairs) >= 10:
+            break
+    pairs = [(str(en), str(ko)) for en, ko in pairs[:10]]
+    choices = [ko for en, ko in pairs]
+    return [(en, choices, ko) for en, ko in pairs]
 
 
 def compact_cloze_items(category, topic_name, data):
-    words=get_key_words(topic_name,data)
-    dialogue=data.get("dialogue",[])
-    candidates=[]
-    seen=set()
+    words = get_key_words(topic_name, data)
+    dialogue = data.get("dialogue", [])
+    candidates = []
+    seen = set()
     for _, english, korean in dialogue:
-        for word,meaning in words:
-            if len(word)<3: continue
-            pattern=r"(?<![A-Za-z])"+re.escape(word)+r"(?![A-Za-z])"
-            if re.search(pattern,english,re.I):
-                masked=re.sub(pattern,"________",english,count=1,flags=re.I)
-                if masked not in seen and len(english)<=190:
-                    candidates.append((word,masked))
+        for word, meaning in words:
+            if len(word) < 3:
+                continue
+            pattern = r"(?<![A-Za-z])" + re.escape(word) + r"(?![A-Za-z])"
+            if re.search(pattern, english, re.I):
+                masked = re.sub(pattern, "________", english, count=1, flags=re.I)
+                if masked not in seen and len(english) <= 190:
+                    candidates.append((word, masked))
                     seen.add(masked)
                 break
-        if len(candidates)>=6: break
-    if len(candidates)<6:
-        stop={"about","after","again","there","their","these","those","would","should","really","sometimes","which","where","while","with","from","that","this","what","when","your","have","were","they","them","then"}
-        for _,english,korean in dialogue:
-            if len(candidates)>=6: break
-            if not 12<=len(english)<=190: continue
-            tokens=[w for w in re.findall(r"\b[A-Za-z]{5,}\b",english) if w.lower() not in stop]
-            if not tokens: continue
-            word=max(tokens,key=len)
-            masked=re.sub(r"(?<![A-Za-z])"+re.escape(word)+r"(?![A-Za-z])","________",english,count=1,flags=re.I)
+        if len(candidates) >= 10:
+            break
+    if len(candidates) < 10:
+        stop = {"about", "after", "again", "there", "their", "these", "those", "would", "should", "really", "sometimes", "which", "where", "while", "with", "from", "that", "this", "what", "when", "your", "have", "were", "they", "them", "then"}
+        for _, english, korean in dialogue:
+            if len(candidates) >= 10:
+                break
+            if not 12 <= len(english) <= 190:
+                continue
+            tokens = [w for w in re.findall(r"\b[A-Za-z]{5,}\b", english) if w.lower() not in stop]
+            if not tokens:
+                continue
+            word = max(tokens, key=len)
+            masked = re.sub(r"(?<![A-Za-z])" + re.escape(word) + r"(?![A-Za-z])", "________", english, count=1, flags=re.I)
             if masked not in seen:
-                candidates.append((word,masked));seen.add(masked)
-    candidates=candidates[:6]
-    pool=list(dict.fromkeys([word for word,_ in words]+[w for w,_ in candidates]))
-    output=[]
-    for i,(answer,sentence) in enumerate(candidates):
-        others=[w for w in pool if w.lower()!=answer.lower()]
-        choices=[answer]+_stable_shuffle(others,f"{category}{topic_name}cloze{i}")[:3]
-        output.append((sentence,choices,answer))
+                candidates.append((word, masked))
+                seen.add(masked)
+    candidates = candidates[:10]
+    pool = list(dict.fromkeys([word for word, _ in words] + [w for w, _ in candidates]))
+    output = []
+    for i, (answer, sentence) in enumerate(candidates):
+        others = [w for w in pool if w.lower() != answer.lower()]
+        choices = [answer] + _stable_shuffle(others, f"{category}{topic_name}cloze{i}")[:3]
+        output.append((sentence, choices, answer))
     return output
 
 
 def compact_order_items(data):
-    result=[];seen=set()
-    for entry in data.get("dialogue",[]):
-        if len(entry)<3: continue
-        for sentence in re.split(r"(?<=[.!?])\s+",str(entry[1]).strip()):
-            sentence=sentence.strip()
-            if sentence in seen or not 5<=len(sentence.split())<=11: continue
-            chunks=make_order_chunks(sentence)
-            if len(chunks)<2: continue
+    result = []
+    seen = set()
+    for entry in data.get("dialogue", []):
+        if len(entry) < 3:
+            continue
+        for sentence in re.split(r"(?<=[.!?])\s+", str(entry[1]).strip()):
+            sentence = sentence.strip()
+            if sentence in seen or not 4 <= len(sentence.split()) <= 22:
+                continue
+            chunks = make_order_chunks(sentence)
+            if len(chunks) < 2:
+                continue
             seen.add(sentence)
-            # 안정성을 위해 클릭형 단어 배열 대신 보기형 문장 배열 사용
-            options=[" / ".join(chunks)]
-            for shift in range(1,min(len(chunks),4)):
-                rotated=chunks[shift:]+chunks[:shift]
+            options = [" / ".join(chunks)]
+            for shift in range(1, min(len(chunks), 5)):
+                rotated = chunks[shift:] + chunks[:shift]
                 options.append(" / ".join(rotated))
-            if len(set(options))<2: continue
-            result.append((f"올바른 어순을 고르세요. (뜻: {entry[2]})",options,options[0]))
-            if len(result)>=4:return result
+            if len(set(options)) < 2:
+                continue
+            result.append((f"올바른 어순을 고르세요. (뜻: {entry[2]})", options, options[0]))
+            if len(result) >= 10:
+                return result
     return result
 
 
-def compact_grammar_items(topic_name):
-    bank={
-      "📘 교과서 1":[
-        ("I want ___ a new person this year.",["be","to be","being","am"],"to be"),
-        ("You need ___ realistic plans.",["make","making","to make","made"],"to make"),
-        ("Quality is more important ___ quantity.",["to","of","than","with"],"than")],
-      "📗 교과서 2":[
-        ("___ the music started, Jiho felt powerful.",["As soon as","Because of","Instead of","In addition"],"As soon as"),
-        ("It is more challenging ___ it seems.",["than","to","with","of"],"than"),
-        ("The game is finally ___ to the market.",["released","release","releasing","releases"],"released")]
+def compact_grammar_items(topic_name, data=None):
+    bank = {
+      "📘 교과서 1": [
+        ("I want ___ a new person this year.", ["be", "to be", "being", "am"], "to be"),
+        ("You need ___ realistic plans.", ["make", "making", "to make", "made"], "to make"),
+        ("Quality is more important ___ quantity.", ["to", "of", "than", "with"], "than"),
+        ("There ___ no breaks in your plan.", ["is", "are", "was", "be"], "are"),
+        ("Your sleep time is too short, ___ it?", ["is", "isn't", "does", "was"], "isn't"),
+        ("I will do ___ best in everything.", ["me", "my", "mine", "I"], "my"),
+        ("Overworking can be ___ dangerous than being lazy.", ["more", "most", "much", "many"], "more"),
+        ("You can get tired very ___.", ["quick", "quickly", "quicker", "quickness"], "quickly"),
+        ("What should I ___ then?", ["doing", "did", "do", "does"], "do"),
+        ("You are not an early bird, ___ you?", ["are", "aren't", "do", "don't"], "are")],
+      "📗 교과서 2": [
+        ("___ the music started, Jiho felt powerful.", ["As soon as", "Because of", "Instead of", "In addition"], "As soon as"),
+        ("It is more challenging ___ it seems.", ["than", "to", "with", "of"], "than"),
+        ("The game is finally ___ to the market.", ["released", "release", "releasing", "releases"], "released")]
     }
-    return bank.get(topic_name,[])
+    items = list(bank.get(topic_name, []))
+    # 교과서 2는 본문 문장을 활용한 추가 문법·어휘 선택 문제를 생성합니다.
+    if len(items) < 10 and data:
+        extra = compact_cloze_items("교과서", topic_name, data)
+        for question, options, answer in extra:
+            if len(items) >= 10:
+                break
+            items.append((question, options, answer))
+    return items[:10]
 
 
 st.markdown("## 📖 Reading")
@@ -4612,10 +4650,10 @@ st.caption("본문을 읽은 다음, 활동을 하나씩 선택해 풀어 보세
 with st.expander("📖 본문 읽기 · 듣기 · 한국어 해석", expanded=True):
     show_reading_blocks(dialogue,category,topic_name)
 
-activities=["🧩 문장 매칭 (6문제)","✏️ 본문 빈칸 채우기 (6문제)"]
+activities=["🧩 문장 매칭 (10문제)","✏️ 본문 빈칸 채우기 (10문제)"]
 if topic_name in {"📘 교과서 1","📗 교과서 2"}:
-    activities.append("📝 문법 확인 (3문제)")
-activities.extend(["🔀 문장 배열 (4문제)","⭐ Key Expressions (20개)"])
+    activities.append("📝 문법 확인 (10문제)")
+activities.extend(["🔀 문장 배열 (10문제)","⭐ Key Expressions (20개)"])
 selected_activity=st.selectbox("학습 활동 선택",activities,key=f"compact_section_{category}_{topic_name}")
 if selected_activity.startswith("🧩"):
     st.subheader("🧩 영어 문장과 한국어 뜻 연결하기")
@@ -4625,9 +4663,59 @@ elif selected_activity.startswith("✏️"):
     compact_activity(category,topic_name,"cloze",compact_cloze_items(category,topic_name,data))
 elif selected_activity.startswith("📝"):
     st.subheader("📝 문법 확인")
-    compact_activity(category,topic_name,"grammar",compact_grammar_items(topic_name))
+    compact_activity(category,topic_name,"grammar",compact_grammar_items(topic_name, data))
 elif selected_activity.startswith("🔀"):
     st.subheader("🔀 의미 단위 문장 배열하기")
     compact_activity(category,topic_name,"ordering",compact_order_items(data))
 else:
     show_key_expression_word_test(category,topic_name,data,max_words=20)
+
+# =========================================================
+# 모든 평가 섹션 만점 시 인증서 발급
+# =========================================================
+def show_completion_certificate(category, topic_name, data):
+    from datetime import datetime
+    from html import escape
+    required = [
+        ("matching", "문장 매칭", compact_matching_items(data)),
+        ("cloze", "본문 빈칸", compact_cloze_items(category, topic_name, data)),
+    ]
+    if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
+        required.append(("grammar", "문법 확인", compact_grammar_items(topic_name, data)))
+    required.append(("ordering", "문장 배열", compact_order_items(data)))
+    done = []
+    for kind, label, items in required:
+        result = st.session_state.get(f"compact_{category}_{topic_name}_{kind}_result", {})
+        score = result.get("score", 0)
+        done.append((label, len(items), score, len(items) == 10 and score >= 8))
+    passed = sum(ok for _, _, _, ok in done)
+    st.markdown("### 🏆 학습 성취 인증서")
+    st.progress(passed / len(done), text=f"8점 이상 통과한 평가 섹션: {passed}/{len(done)}")
+    if passed != len(done):
+        st.info("각 평가 섹션 10문제 중 8문제 이상 정답을 맞히면 인증서가 발급됩니다. Key Expressions는 평가에서 제외됩니다.")
+        return
+    st.success("🎉 모든 평가 섹션에서 8점 이상! 인증서를 발급받으세요.")
+    name = st.text_input("학생 이름", key=f"certificate_name_{category}_{topic_name}", max_chars=40)
+    if not name.strip():
+        return
+    total = sum(n for _, n, _, _ in done)
+    correct = sum(score for _, _, score, _ in done)
+    rows = "".join(f"<li>{escape(label)}: {score}/{n}</li>" for label, n, score, _ in done)
+    html = f'''<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>Certificate of Achievement</title>
+<style>@page{{size:A4 landscape;margin:12mm}}body{{font-family:Arial,'Malgun Gothic',sans-serif;background:#f7fafc;text-align:center;color:#24344b}}
+article{{background:white;border:9px double #c7a052;max-width:1000px;margin:20px auto;padding:65px 30px;box-sizing:border-box}}
+h1{{font-size:42px;color:#b28732}}h2{{font-size:28px}}.name{{font-size:36px;font-weight:bold;color:#166534}}
+p{{font-size:19px;line-height:1.8}}ul{{list-style:none;padding:0;display:flex;justify-content:center;gap:20px;flex-wrap:wrap}}
+@media print{{button{{display:none}}body{{background:white}}article{{margin:0 auto}}}}</style></head><body>
+<button onclick="window.print()">인쇄 / PDF 저장</button><article><div style="font-size:46px">🏆 🌟 📚</div>
+<h1>Certificate of Achievement</h1><h2>Fun English Reading 학습 성취 인증서</h2>
+<div class="name">{escape(name.strip())}</div><p>위 학생은 <b>{escape(data.get('title', topic_name))}</b> 학습에서<br>
+모든 평가 섹션에서 10문제 중 8문제 이상을 맞혀 이 인증서를 수여합니다.</p>
+<p><b>전체 {correct}/{total}문제 정답</b></p><ul>{rows}</ul>
+<p>발급일: {datetime.now().strftime('%Y-%m-%d')}<br>Fun English Reading</p></article></body></html>'''
+    st.download_button("🏆 인증서 다운로드", html.encode("utf-8"),
+                       file_name="Fun_English_Reading_Certificate.html", mime="text/html",
+                       key=f"certificate_download_{category}_{topic_name}", use_container_width=True)
+    st.caption("다운로드한 인증서를 브라우저에서 열고 '인쇄 / PDF 저장' 버튼을 누르면 PDF로 보관할 수 있습니다.")
+
+show_completion_certificate(category, topic_name, data)
