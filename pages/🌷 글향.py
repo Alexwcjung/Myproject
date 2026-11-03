@@ -4267,74 +4267,29 @@ def show_reading_blocks(dialogue, category, topic_name):
                 lang="en"
             )
 
-        # 교과서는 각 묶음 바로 아래에 개별 한국어 해석 버튼을 둡니다.
-        if topic_name in dialogue_topics:
-            show_key = f"show_korean_block_{category}_{topic_name}_{block_no}"
-            st.session_state.setdefault(show_key, False)
+    # 전체 영어 지문이 끝난 뒤 한국어 해석 버튼을 한 번만 표시합니다.
+    show_key = f"show_korean_full_{category}_{topic_name}"
+    st.session_state.setdefault(show_key, False)
+    button_label = (
+        "🇰🇷 전체 한국어 해석 숨기기"
+        if st.session_state[show_key]
+        else "🇰🇷 전체 한국어 해석 보기"
+    )
+    if st.button(button_label, use_container_width=True, key=f"{show_key}_btn"):
+        st.session_state[show_key] = not st.session_state[show_key]
+        st.rerun()
 
-            button_label = (
-                f"🇰🇷 {block_no}번 해석 숨기기"
-                if st.session_state[show_key]
-                else f"🇰🇷 {block_no}번 한국어 해석 보기"
-            )
-
-            if st.button(
-                button_label,
-                use_container_width=True,
-                key=f"{show_key}_btn"
-            ):
-                st.session_state[show_key] = not st.session_state[show_key]
-                st.rerun()
-
-            if st.session_state[show_key]:
-                kor_html = "<br>".join(kor_chunk)
-                st.markdown(
-                    f"""
-                    <div class="korean-card" style="margin-top: 8px; margin-bottom: 18px;">
-                        {kor_html}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-            else:
-                st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
-
-        # Ronaldo는 기존처럼 전체 해석을 한 번에 여는 방식 유지
-        elif topic_name == "⚽ Ronaldo":
-            pass
-
-    # Ronaldo만 기존 전체 한국어 해석 버튼 유지
-    if topic_name == "⚽ Ronaldo":
-        show_korean_key = f"show_korean_translation_{category}_{topic_name}"
-        st.session_state.setdefault(show_korean_key, False)
-
-        button_label = (
-            "🇰🇷 한국어 해석 숨기기"
-            if st.session_state[show_korean_key]
-            else "🇰🇷 한국어 해석 보기"
+    if st.session_state[show_key]:
+        # 본문 전체의 한국어 해석을 순서대로 한 번에 표시합니다.
+        kor_html = "<br>".join(korean_lines)
+        st.markdown(
+            f"""
+            <div class="korean-card" style="margin-top: 8px; margin-bottom: 18px;">
+                {kor_html}
+            </div>
+            """,
+            unsafe_allow_html=True
         )
-
-        if st.button(
-            button_label,
-            use_container_width=True,
-            key=f"{show_korean_key}_btn"
-        ):
-            st.session_state[show_korean_key] = not st.session_state[show_korean_key]
-            st.rerun()
-
-        if st.session_state[show_korean_key]:
-            st.markdown("### 🇰🇷 한국어 해석")
-            for block_idx in range(0, len(korean_lines), 4):
-                chunk = korean_lines[block_idx:block_idx + 4]
-                html_lines = "<br>".join(chunk)
-                st.markdown(
-                    f"""
-                    <div class="korean-card" style="margin-bottom: 16px;">
-                        {html_lines}
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
 
 
 def show_context_cloze_activity(category, topic_name, data):
