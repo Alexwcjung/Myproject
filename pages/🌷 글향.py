@@ -1721,7 +1721,7 @@ def show_pre_reading_questions(category, topic_name, data):
                 if st.session_state[status_key]:
                     st.success("정답입니다.")
                 else:
-                    st.error(f"정답: {answer}")
+                    st.error("오답입니다. 다시 생각해 보세요.")
 
     score = sum(1 for key in status_keys if st.session_state.get(key) is True)
     checked = sum(1 for key in status_keys if key in st.session_state)
@@ -4002,10 +4002,7 @@ def show_mission_quiz(category, topic_name, data):
 
         if attempts >= 2 or (locked and score >= pass_need):
             if attempts >= 2:
-                st.info("2차 제출 후에는 정답을 확인할 수 있습니다.")
-                st.markdown("### 정답")
-                for i, (_, _, answer) in enumerate(questions, start=1):
-                    st.markdown(f"{i}. **{answer}**")
+                st.info("오답 문항의 정답은 공개하지 않습니다. 본문을 다시 읽고 복습해 보세요.")
             st.caption("이 주제의 Mission 1 기회는 종료되었습니다.")
 
 
@@ -4508,7 +4505,7 @@ def compact_activity(category, topic_name, kind, items):
             if user_answer == answer:
                 st.success(f"{i+1}번 정답입니다.")
             else:
-                st.error(f"{i+1}번 오답 | 내 답: {user_answer or '미응답'} | 정답: {answer}")
+                st.error(f"{i+1}번 오답입니다. 다시 도전해 보세요.")
         if st.button("🔄 이 섹션 다시 풀기", key=prefix+"retry"):
             del st.session_state[submitted_key]
             st.rerun()
