@@ -2228,16 +2228,27 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-col_cat, col_topic = st.columns([1, 2])
-
-with col_cat:
-    category = st.selectbox("카테고리", list(data_bank.keys()))
-
-with col_topic:
-    topic_name = st.selectbox("주제 선택", list(data_bank[category].keys()))
-
-
-st.markdown('</div>', unsafe_allow_html=True)
+# 카테고리와 주제를 항상 펼쳐진 선택 메뉴로 표시
+st.markdown("## 🧭 STEP 1. 카테고리를 선택하세요")
+st.caption("아래에서 인물·장소·교과서 중 하나를 선택하세요. 화살표를 누를 필요가 없습니다.")
+category = st.radio(
+    "카테고리 선택",
+    options=list(data_bank.keys()),
+    horizontal=True,
+    key="visible_category_selection",
+    label_visibility="collapsed",
+)
+st.markdown("---")
+st.markdown("## 📚 STEP 2. 학습 주제를 선택하세요")
+st.caption("선택 가능한 주제가 모두 표시됩니다. 원하는 주제를 클릭하세요.")
+topic_name = st.radio(
+    "주제 선택",
+    options=list(data_bank[category].keys()),
+    horizontal=True,
+    key=f"visible_topic_selection_{category}",
+    label_visibility="collapsed",
+)
+st.success(f"✅ 현재 선택: {category}  ·  {topic_name}")
 
 # =========================================================
 # 단순 정보형 지문 자료로 덮어쓰기
