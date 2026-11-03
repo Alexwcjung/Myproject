@@ -591,6 +591,28 @@ div[data-testid="stImage"] img {
     box-shadow: 0 10px 24px rgba(15,23,42,0.12);
 }
 
+/* 학습 활동 선택: 모든 항목을 한눈에 보이는 버튼형 메뉴로 표시 */
+div[data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    padding: 16px !important;
+    background: #fff7fb !important;
+    border: 2px solid #f9a8d4 !important;
+}
+div[data-testid="stRadio"] div[role="radiogroup"] label {
+    padding: 12px 16px !important;
+    background: white !important;
+    border: 2px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    font-weight: 900 !important;
+    cursor: pointer !important;
+}
+div[data-testid="stRadio"] div[role="radiogroup"] label:has(input:checked) {
+    border-color: #be185d !important;
+    background: #fce7f3 !important;
+}
+
 /* 모바일 */
 @media (max-width: 768px) {
     .main-title {
@@ -4661,7 +4683,17 @@ activities=["🧩 문장 매칭 (10문제)","✏️ 본문 빈칸 채우기 (10�
 if topic_name in {"📘 교과서 1","📗 교과서 2"}:
     activities.append("📝 문법 확인 (10문제)")
 activities.extend(["🔀 문장 배열 (10문제)","⭐ Key Expressions (20개)"])
-selected_activity=st.selectbox("학습 활동 선택",activities,key=f"compact_section_{category}_{topic_name}")
+st.markdown("### 👇 학습 활동을 선택하세요")
+st.info("아래 활동이 모두 표시됩니다. 원하는 활동을 바로 클릭하세요. 각 활동을 완료한 뒤 다른 활동으로 이동할 수 있습니다.")
+# 드롭다운 대신 모든 활동을 한눈에 볼 수 있는 가로형 선택 메뉴
+selected_activity = st.radio(
+    "학습 활동 선택",
+    options=activities,
+    horizontal=True,
+    key=f"compact_section_{category}_{topic_name}",
+    label_visibility="collapsed",
+)
+
 if selected_activity.startswith("🧩"):
     st.subheader("🧩 영어 문장과 한국어 뜻 연결하기")
     compact_activity(category,topic_name,"matching",compact_matching_items(data))
