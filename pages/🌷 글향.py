@@ -4499,7 +4499,10 @@ def compact_activity(category, topic_name, kind, items):
     submitted_key = prefix + "result"
     if submitted_key in st.session_state:
         result = st.session_state[submitted_key]
-        st.success(f"채점 결과: {result['score']} / {len(items)}문제") if result['score']==len(items) else st.info(f"채점 결과: {result['score']} / {len(items)}문제")
+        if result["score"] == len(items):
+            st.success(f"채점 결과: {result['score']} / {len(items)}문제")
+        else:
+            st.info(f"채점 결과: {result['score']} / {len(items)}문제")
         for i, (question, options, answer) in enumerate(items):
             user_answer = result['answers'][i]
             if user_answer == answer:
