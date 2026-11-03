@@ -4503,9 +4503,9 @@ def compact_activity(category, topic_name, kind, items):
         for i, (question, options, answer) in enumerate(items):
             user_answer = result['answers'][i]
             if user_answer == answer:
-                st.markdown(f"✅ {i+1}. {question} — **정답**")
+                st.success(f"{i+1}번 정답입니다.")
             else:
-                st.markdown(f"❌ {i+1}. {question}  \n내 답: {user_answer or '미응답'} / 정답: **{answer}**")
+                st.error(f"{i+1}번 오답 | 내 답: {user_answer or '미응답'} | 정답: {answer}")
         if st.button("🔄 이 섹션 다시 풀기", key=prefix+"retry"):
             del st.session_state[submitted_key]
             st.rerun()
@@ -4513,7 +4513,7 @@ def compact_activity(category, topic_name, kind, items):
     with st.form(prefix + "form"):
         answers=[]
         for i, (question, options, answer) in enumerate(items):
-            st.markdown(f"**{i+1}. {question}**")
+            st.write(f"{i+1}. {question}")
             options = list(dict.fromkeys(str(o) for o in options))
             options = _stable_shuffle(options, prefix + str(i))
             selected = st.radio("답 선택", ["선택하세요"]+options, index=0, key=prefix+f"q{i}", label_visibility="collapsed")
@@ -4543,8 +4543,15 @@ def compact_matching_items(data):
         if len(pairs) >= 10:
             break
     pairs = [(str(en), str(ko)) for en, ko in pairs[:10]]
+    # 각 문항은 정답 1개 + 다른 문장의 한국어 뜻 6개만 보여 줍니다.
+    # 전체 10문항은 유지하며, 보기는 문항별로 고정되어 재실행 시에도 바뀌지 않습니다.
     choices = [ko for en, ko in pairs]
-    return [(en, choices, ko) for en, ko in pairs]
+    output = []
+    for i, (en, ko) in enumerate(pairs):
+        distractors = [other for other in choices if other != ko]
+        distractors = _stable_shuffle(distractors, f"matching_7_options_{i}_{en}")[:6]
+        output.append((en, [ko] + distractors, ko))
+    return output
 
 
 def compact_cloze_items(category, topic_name, data):
