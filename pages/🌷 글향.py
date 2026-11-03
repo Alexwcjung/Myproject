@@ -4487,34 +4487,147 @@ def show_word_order_activity(category, topic_name, data, max_questions=10):
             reset_keys_by_prefix(prefix)
             st.rerun()
 
-tab_reading = st.container()
-
 # =========================================================
+# 안정화된 단계별 Reading 활동 (섹션 단위 일괄 채점)
+# =========================================================
+def compact_activity(category, topic_name, kind, items):
+    """st.form으로 섹션당 한 번만 제출하여 재실행을 최소화합니다."""
+    prefix = f"compact_{category}_{topic_name}_{kind}_"
+    if not items:
+        st.info("이 활동에 사용할 문제가 없습니다.")
+        return
+    submitted_key = prefix + "result"
+    if submitted_key in st.session_state:
+        result = st.session_state[submitted_key]
+        st.success(f"채점 결과: {result['score']} / {len(items)}문제") if result['score']==len(items) else st.info(f"채점 결과: {result['score']} / {len(items)}문제")
+        for i, (question, options, answer) in enumerate(items):
+            user_answer = result['answers'][i]
+            if user_answer == answer:
+                st.markdown(f"✅ {i+1}. {question} — **정답**")
+            else:
+                st.markdown(f"❌ {i+1}. {question}  \n내 답: {user_answer or '미응답'} / 정답: **{answer}**")
+        if st.button("🔄 이 섹션 다시 풀기", key=prefix+"retry"):
+            del st.session_state[submitted_key]
+            st.rerun()
+        return
+    with st.form(prefix + "form"):
+        answers=[]
+        for i, (question, options, answer) in enumerate(items):
+            st.markdown(f"**{i+1}. {question}**")
+            options = list(dict.fromkeys(str(o) for o in options))
+            options = _stable_shuffle(options, prefix + str(i))
+            selected = st.radio("답 선택", ["선택하세요"]+options, index=0, key=prefix+f"q{i}", label_visibility="collapsed")
+            answers.append(None if selected == "선택하세요" else selected)
+        submitted=st.form_submit_button("✅ 이 섹션 전체 채점하기", use_container_width=True)
+    if submitted:
+        if any(a is None for a in answers):
+            st.warning("모든 문제에 답한 뒤 제출해 주세요.")
+        else:
+            score=sum(a==item[2] for a,item in zip(answers,items))
+            st.session_state[submitted_key]={"answers":answers,"score":score}
+            st.rerun()
 
-with tab_reading:
-    st.markdown("## 📖 Reading")
 
-    if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
-        st.caption("교과서 본문은 4줄씩 나누어 제시됩니다. 각 부분 아래의 한국어 해석 버튼을 눌러 필요한 부분만 확인할 수 있습니다.")
-    else:
-        st.caption("본문을 읽고 문장 매칭, 빈칸 채우기, Key Expressions 활동을 해 보세요.")
+def compact_matching_items(data):
+    pairs = data.get("matching_pairs") or [(eng, ko) for _,eng,ko in data.get("dialogue",[])[:6]]
+    pairs = [(str(en),str(ko)) for en,ko in pairs[:6]]
+    choices=[ko for en,ko in pairs]
+    return [(en, choices, ko) for en,ko in pairs]
 
-    st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
-    show_reading_blocks(dialogue, category, topic_name)
 
-    st.markdown("---")
-    show_sequence_matching_activity(category, topic_name, data)
+def compact_cloze_items(category, topic_name, data):
+    words=get_key_words(topic_name,data)
+    dialogue=data.get("dialogue",[])
+    candidates=[]
+    seen=set()
+    for _, english, korean in dialogue:
+        for word,meaning in words:
+            if len(word)<3: continue
+            pattern=r"(?<![A-Za-z])"+re.escape(word)+r"(?![A-Za-z])"
+            if re.search(pattern,english,re.I):
+                masked=re.sub(pattern,"________",english,count=1,flags=re.I)
+                if masked not in seen and len(english)<=190:
+                    candidates.append((word,masked))
+                    seen.add(masked)
+                break
+        if len(candidates)>=6: break
+    if len(candidates)<6:
+        stop={"about","after","again","there","their","these","those","would","should","really","sometimes","which","where","while","with","from","that","this","what","when","your","have","were","they","them","then"}
+        for _,english,korean in dialogue:
+            if len(candidates)>=6: break
+            if not 12<=len(english)<=190: continue
+            tokens=[w for w in re.findall(r"\b[A-Za-z]{5,}\b",english) if w.lower() not in stop]
+            if not tokens: continue
+            word=max(tokens,key=len)
+            masked=re.sub(r"(?<![A-Za-z])"+re.escape(word)+r"(?![A-Za-z])","________",english,count=1,flags=re.I)
+            if masked not in seen:
+                candidates.append((word,masked));seen.add(masked)
+    candidates=candidates[:6]
+    pool=list(dict.fromkeys([word for word,_ in words]+[w for w,_ in candidates]))
+    output=[]
+    for i,(answer,sentence) in enumerate(candidates):
+        others=[w for w in pool if w.lower()!=answer.lower()]
+        choices=[answer]+_stable_shuffle(others,f"{category}{topic_name}cloze{i}")[:3]
+        output.append((sentence,choices,answer))
+    return output
 
-    st.markdown("---")
-    show_context_cloze_activity(category, topic_name, data)
 
-    if topic_name in {"📘 교과서 1", "📗 교과서 2"}:
-        st.markdown("---")
-        show_easy_grammar_practice(category, topic_name)
+def compact_order_items(data):
+    result=[];seen=set()
+    for entry in data.get("dialogue",[]):
+        if len(entry)<3: continue
+        for sentence in re.split(r"(?<=[.!?])\s+",str(entry[1]).strip()):
+            sentence=sentence.strip()
+            if sentence in seen or not 5<=len(sentence.split())<=11: continue
+            chunks=make_order_chunks(sentence)
+            if len(chunks)<2: continue
+            seen.add(sentence)
+            # 안정성을 위해 클릭형 단어 배열 대신 보기형 문장 배열 사용
+            options=[" / ".join(chunks)]
+            for shift in range(1,min(len(chunks),4)):
+                rotated=chunks[shift:]+chunks[:shift]
+                options.append(" / ".join(rotated))
+            if len(set(options))<2: continue
+            result.append((f"올바른 어순을 고르세요. (뜻: {entry[2]})",options,options[0]))
+            if len(result)>=4:return result
+    return result
 
-    st.markdown("---")
-    show_word_order_activity(category, topic_name, data, max_questions=10)
 
-    st.markdown("---")
-    show_key_expression_word_test(category, topic_name, data, max_words=20)
+def compact_grammar_items(topic_name):
+    bank={
+      "📘 교과서 1":[
+        ("I want ___ a new person this year.",["be","to be","being","am"],"to be"),
+        ("You need ___ realistic plans.",["make","making","to make","made"],"to make"),
+        ("Quality is more important ___ quantity.",["to","of","than","with"],"than")],
+      "📗 교과서 2":[
+        ("___ the music started, Jiho felt powerful.",["As soon as","Because of","Instead of","In addition"],"As soon as"),
+        ("It is more challenging ___ it seems.",["than","to","with","of"],"than"),
+        ("The game is finally ___ to the market.",["released","release","releasing","releases"],"released")]
+    }
+    return bank.get(topic_name,[])
 
+
+st.markdown("## 📖 Reading")
+st.caption("본문을 읽은 다음, 활동을 하나씩 선택해 풀어 보세요. 각 섹션은 모든 문제를 푼 뒤 한 번에 채점합니다.")
+with st.expander("📖 본문 읽기 · 듣기 · 한국어 해석", expanded=True):
+    show_reading_blocks(dialogue,category,topic_name)
+
+activities=["🧩 문장 매칭 (6문제)","✏️ 본문 빈칸 채우기 (6문제)"]
+if topic_name in {"📘 교과서 1","📗 교과서 2"}:
+    activities.append("📝 문법 확인 (3문제)")
+activities.extend(["🔀 문장 배열 (4문제)","⭐ Key Expressions (20개)"])
+selected_activity=st.selectbox("학습 활동 선택",activities,key=f"compact_section_{category}_{topic_name}")
+if selected_activity.startswith("🧩"):
+    st.subheader("🧩 영어 문장과 한국어 뜻 연결하기")
+    compact_activity(category,topic_name,"matching",compact_matching_items(data))
+elif selected_activity.startswith("✏️"):
+    st.subheader("✏️ 본문 빈칸 채우기")
+    compact_activity(category,topic_name,"cloze",compact_cloze_items(category,topic_name,data))
+elif selected_activity.startswith("📝"):
+    st.subheader("📝 문법 확인")
+    compact_activity(category,topic_name,"grammar",compact_grammar_items(topic_name))
+elif selected_activity.startswith("🔀"):
+    st.subheader("🔀 의미 단위 문장 배열하기")
+    compact_activity(category,topic_name,"ordering",compact_order_items(data))
+else:
+    show_key_expression_word_test(category,topic_name,data,max_words=20)
