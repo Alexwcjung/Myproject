@@ -2374,6 +2374,106 @@ def show_background(song_choice, data):
     st.markdown('</div>', unsafe_allow_html=True)
 
 
+
+# =========================================================
+# 통합 성취 인증: 각 평가 10문항 / 8문항 이상
+# =========================================================
+def ten_question_test(song_choice, section, questions):
+    """정답은 공개하지 않고 점수 및 오답 번호만 안내합니다."""
+    ident = safe_key(song_choice) + "_" + section
+    if len(questions) < 10:
+        st.warning("평가 문항이 10개 미만입니다. 자료를 확인해 주세요.")
+        return
+    questions = questions[:10]
+    st.info("10문제 중 8문제 이상 맞히면 통과합니다. 정답은 공개되지 않습니다.")
+    answers = []
+    for i, q in enumerate(questions, 1):
+        st.markdown(f"**{i}. {q['q']}**")
+        options = shuffle_options(q['options'], f"{ident}_{i}")
+        choice = st.radio("답 선택", options, index=None, key=f"certquiz_{ident}_{i}", label_visibility="collapsed")
+        answers.append(choice)
+    if st.button("📝 10문제 채점하기", key=f"certquiz_submit_{ident}", use_container_width=True):
+        score = sum(a == q['answer'] for a, q in zip(answers, questions))
+        wrong = [str(i) for i, (a,q) in enumerate(zip(answers,questions),1) if a != q['answer']]
+        previous = st.session_state.get(f"cert_result_{ident}", 0)
+        st.session_state[f"cert_result_{ident}"] = max(previous, score)
+        st.session_state[f"cert_last_{ident}"] = (score, wrong)
+    if f"cert_last_{ident}" in st.session_state:
+        score, wrong = st.session_state[f"cert_last_{ident}"]
+        st.write(f"**이번 점수: {score}/10 · 최고 점수: {st.session_state[f'cert_result_{ident}']}/10**")
+        if wrong: st.warning("오답 번호: " + ", ".join(wrong) + " (정답은 공개하지 않습니다.)")
+        if st.session_state[f"cert_result_{ident}"] >= 8: st.success("🎉 이 평가를 통과했습니다!")
+        else: st.info("8문제 이상 맞히도록 다시 도전해 보세요.")
+    if st.button("🔄 다시 풀기", key=f"certquiz_retry_{ident}"):
+        for i in range(1,11): st.session_state.pop(f"certquiz_{ident}_{i}",None)
+        st.session_state.pop(f"cert_last_{ident}",None)
+        st.rerun()
+
+
+def expression_questions(data):
+    expr = list(data.get('key_expressions', []))
+    if len(expr) < 10: return []
+    out=[]
+    for i,(en,ko) in enumerate(expr[:10]):
+        wrong = [v for j,(_,v) in enumerate(expr) if j != i and v != ko]
+        wrong = list(dict.fromkeys(wrong))
+        if len(wrong)<3: return []
+        out.append({'q':f"'{en}'의 의미는?", 'options':[ko]+random.Random(i).sample(wrong,3), 'answer':ko})
+    return out
+
+
+def matching_questions(data):
+    pairs = list(data.get('matching', []))
+    if len(pairs)<4: return []
+    out=[]
+    for i in range(10):
+        en,ko=pairs[i % len(pairs)]
+        wrong=list(dict.fromkeys(v for j,(_,v) in enumerate(pairs) if j!=i and v!=ko))
+        if len(wrong)<3: return []
+        out.append({'q':f"다음 영어 문장과 일치하는 한국어 뜻을 고르세요.\n\n{en}",
+                    'options':[ko]+random.Random(i+200).sample(wrong,3), 'answer':ko})
+    return out
+
+
+def show_final_certificate(song_choice, data):
+    ident=safe_key(song_choice)
+    required=[('가사 이해도','lyrics'),('문법·핵심 표현','grammar'),('문장 매칭','matching')]
+    st.markdown('### 🏆 전체 학습 성취 인증서')
+    passed=[]
+    for label,section in required:
+        score=st.session_state.get(f'cert_result_{ident}_{section}',0)
+        ok=score>=8
+        passed.append(ok)
+        st.write(f"{'✅' if ok else '⬜'} {label}: {score}/10 (통과 기준 8/10)")
+    writing=bool(st.session_state.get(f'mission_{ident}_reflection'))
+    st.write(('✅' if writing else '⬜')+' 생각 적기: '+('완료' if writing else '미완료'))
+    st.progress((sum(passed)+int(writing))/4)
+    if not all(passed) or not writing:
+        st.info('3개 평가에서 각각 8/10 이상을 맞히고 생각 적기를 제출하면 인증서가 열립니다. 배경 학습과 핵심 표현 듣기는 학습 자료입니다.')
+        return
+    name=st.text_input('✍️ 인증서에 표시할 학생 이름',key=f'cert_name_{ident}',max_chars=40)
+    if not name.strip():
+        st.info('이름을 입력하면 인증서를 다운로드할 수 있습니다.')
+        return
+    from datetime import datetime
+    from html import escape
+    scores=[st.session_state.get(f'cert_result_{ident}_{section}',0) for _,section in required]
+    rows=''.join(f'<li>{escape(label)}: {score}/10</li>' for (label,_),score in zip(required,scores))
+    doc=f"""<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>Pop Song Certificate</title><style>
+@page{{size:A4 landscape;margin:12mm}}body{{font-family:Arial,'Malgun Gothic',sans-serif;text-align:center;background:#f8fafc;color:#1e293b}}
+article{{background:white;border:9px double #6366f1;max-width:1000px;margin:24px auto;padding:60px 28px}}
+h1{{color:#4338ca;font-size:43px}}h2{{font-size:25px}}.name{{font-size:38px;font-weight:bold;color:#166534}}
+p,li{{font-size:20px;line-height:1.9}}ul{{list-style:none;padding:0}}@media print{{button{{display:none}}body{{background:white}}article{{margin:0}}}}
+</style></head><body><button onclick="window.print()">인쇄 / PDF 저장</button><article><div style="font-size:48px">🏆 🎵 🌟</div>
+<h1>Certificate of Achievement</h1><h2>Pop Song English Learning 학습 성취 인증서</h2>
+<div class="name">{escape(name.strip())}</div><p>위 학생은 <b>{escape(song_choice)}</b> 학습의 모든 평가에서<br>10문제 중 8문제 이상 정답을 맞히고 생각 적기 활동을 완료하였습니다.</p>
+<ul>{rows}<li>생각 적기: 완료</li></ul><p><b>전체 점수: {sum(scores)}/30</b></p>
+<p>발급일: {datetime.now().strftime('%Y-%m-%d')}<br>Pop Song English Learning</p></article></body></html>"""
+    st.download_button('🏆 이름이 포함된 인증서 다운로드',doc.encode('utf-8'),
+                       file_name=f'Pop_Song_Certificate_{ident}.html',mime='text/html',
+                       key=f'cert_download_{ident}',use_container_width=True)
+    st.caption('다운로드한 HTML 파일을 브라우저에서 열어 인쇄 / PDF 저장을 누르면 PDF로 저장할 수 있습니다.')
+
 if "selected_song" not in st.session_state:
     st.session_state.selected_song = list(SONGS.keys())[0]
 if "current_tab" not in st.session_state:
@@ -2430,524 +2530,20 @@ elif selected_tab == "📖 가사 퀴즈":
         """, unsafe_allow_html=True)
 
     st.markdown("---")
-    show_integrated_quiz_tab(song_choice, data)
+    ten_question_test(song_choice, "lyrics", build_integrated_quiz(song_choice, data, total_questions=10))
 
 
 elif selected_tab == "🎯 문법":
     show_song_grammar_tab(song_choice, data)
+    st.markdown("---")
+    st.subheader("📝 문법·핵심 표현 10문제 평가")
+    ten_question_test(song_choice, "grammar", expression_questions(data))
 
 
 elif selected_tab == "🧩 문장 매칭 게임":
-    match_key = safe_key(song_choice)
-
-    pairs = [
-        {
-            "id": f"pair_{i}",
-            "en": en,
-            "ko": ko
-        }
-        for i, (en, ko) in enumerate(data["matching"], start=1)
-    ]
-
-    en_cards = [{"id": p["id"], "text": p["en"]} for p in pairs]
-    ko_cards = [{"id": p["id"], "text": p["ko"]} for p in pairs]
-
-    en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
-    ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
-
-    payload = {
-        "en": en_cards,
-        "ko": ko_cards,
-        "total": len(pairs),
-    }
-
-    data_json = json.dumps(payload, ensure_ascii=False)
-    component_id = "match_" + uuid.uuid4().hex
-
-    matching_pdf_bytes = make_mission_pdf(song_choice, "문장 매칭 게임", "문장 매칭 게임 활동 완료")
-    matching_pdf_filename = f"mission_complete_{safe_key(song_choice)}_{safe_key('문장 매칭 게임')}.pdf"
-    if matching_pdf_bytes:
-        matching_pdf_b64 = base64.b64encode(matching_pdf_bytes).decode("utf-8")
-        certificate_html = f'''
-            <div id="cert_{component_id}" class="certificate-box" style="display:none;">
-                <div class="certificate-title">📄 문장 매칭 게임 PDF 인증서</div>
-                <div class="certificate-guide">
-                    모든 문장을 성공적으로 맞췄습니다. 아래 버튼을 눌러 완료 인증서를 저장하세요.
-                </div>
-                <a class="cert-download" href="data:application/pdf;base64,{matching_pdf_b64}" download="{matching_pdf_filename}">
-                    📄 PDF 인증서 다운받기
-                </a>
-            </div>
-        '''
-    else:
-        certificate_html = f'''
-            <div id="cert_{component_id}" class="certificate-box" style="display:none;">
-                <div class="certificate-title">📄 문장 매칭 게임 PDF 인증서</div>
-                <div class="certificate-guide">
-                    PDF 저장 기능을 사용하려면 requirements.txt에 reportlab을 추가해 주세요. 예: reportlab>=4.0.0
-                </div>
-            </div>
-        '''
-
-    components.html(
-        f"""
-        <div id="{component_id}" class="match-app">
-            <div class="match-head">
-                <div class="match-title">🧩 문장 매칭 게임</div>
-                <div class="match-guide">
-                    왼쪽 영어 표현과 오른쪽 한국어 뜻을 차례로 눌러 짝을 맞추세요.<br>
-                    선택한 박스는 색칠되고, 정답이면 두 박스가 반짝이며 함께 사라집니다.
-                </div>
-            </div>
-
-            <div class="match-status">
-                <div id="status_{component_id}">먼저 영어 또는 한국어 박스를 하나 선택하세요.</div>
-                <div id="score_{component_id}">맞춘 개수: 0 / {len(pairs)}</div>
-            </div>
-
-            <div class="match-board">
-                <div class="match-col">
-                    <div class="col-title">English</div>
-                    <div id="en_{component_id}" class="card-wrap"></div>
-                </div>
-                <div class="match-col">
-                    <div class="col-title">Korean</div>
-                    <div id="ko_{component_id}" class="card-wrap"></div>
-                </div>
-            </div>
-
-            <div class="progress-outer">
-                <div id="bar_{component_id}" class="progress-inner"></div>
-            </div>
-
-            <button id="reset_{component_id}" class="reset-btn">매칭 게임 다시 시작</button>
-
-            {certificate_html}
-        </div>
-
-        <style>
-            #{component_id}.match-app {{
-                font-family: Arial, sans-serif;
-                width: 100%;
-                box-sizing: border-box;
-                background: linear-gradient(135deg,#eef2ff 0%,#f0f9ff 50%,#fdf2f8 100%);
-                border: 1px solid #c7d2fe;
-                border-radius: 22px;
-                padding: 22px;
-                margin: 8px 0 22px 0;
-                color: #1e293b;
-            }}
-
-            #{component_id} .match-head {{
-                background: rgba(255,255,255,0.72);
-                border: 1px solid #dbeafe;
-                border-radius: 18px;
-                padding: 18px 20px;
-                margin-bottom: 16px;
-            }}
-
-            #{component_id} .match-title {{
-                font-size: 30px;
-                font-weight: 1000;
-                color: #4338ca;
-                margin-bottom: 8px;
-            }}
-
-            #{component_id} .match-guide {{
-                font-size: 16px;
-                font-weight: 800;
-                color: #475569;
-                line-height: 1.7;
-            }}
-
-            #{component_id} .match-status {{
-                display: grid;
-                grid-template-columns: 1.5fr 0.8fr;
-                gap: 10px;
-                margin-bottom: 14px;
-                align-items: center;
-            }}
-
-            #{component_id} .match-status > div {{
-                background: #ffffff;
-                border: 1px solid #dbeafe;
-                border-radius: 14px;
-                padding: 12px 14px;
-                font-size: 15px;
-                font-weight: 900;
-                color: #1d4ed8;
-                min-height: 24px;
-            }}
-
-            #{component_id} .match-board {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 14px;
-            }}
-
-            #{component_id} .match-col {{
-                background: rgba(255,255,255,0.72);
-                border: 1px solid #e5e7eb;
-                border-radius: 18px;
-                padding: 14px;
-            }}
-
-            #{component_id} .col-title {{
-                font-size: 22px;
-                font-weight: 1000;
-                color: #111827;
-                margin-bottom: 12px;
-            }}
-
-            #{component_id} .card-wrap {{
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }}
-
-            #{component_id} .match-card {{
-                width: 100%;
-                text-align: left;
-                border: 2px solid #c7d2fe;
-                background: #ffffff;
-                color: #1e293b;
-                border-radius: 16px;
-                padding: 14px 15px;
-                font-size: 17px;
-                font-weight: 900;
-                line-height: 1.55;
-                cursor: pointer;
-                box-shadow: 0 4px 12px rgba(15,23,42,0.06);
-                transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
-                position: relative;
-                overflow: hidden;
-            }}
-
-            #{component_id} .match-card:hover {{
-                transform: translateY(-2px);
-                border-color: #818cf8;
-                box-shadow: 0 8px 18px rgba(99,102,241,0.16);
-            }}
-
-            #{component_id} .match-card.selected {{
-                background: linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);
-                border-color: #f59e0b;
-                color: #78350f;
-                box-shadow: 0 0 0 4px rgba(245,158,11,0.18), 0 8px 20px rgba(245,158,11,0.22);
-                transform: scale(1.015);
-            }}
-
-            #{component_id} .match-card.wrong {{
-                animation: shake_{component_id} .28s ease-in-out;
-                background: #fee2e2;
-                border-color: #ef4444;
-                color: #7f1d1d;
-            }}
-
-            #{component_id} .match-card.correct {{
-                background: linear-gradient(135deg,#dcfce7,#bbf7d0);
-                border-color: #22c55e;
-                color: #14532d;
-                animation: sparkleDisappear_{component_id} .68s ease forwards;
-            }}
-
-            #{component_id} .match-card.correct::after {{
-                content: "✨";
-                position: absolute;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 34px;
-                background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.20), rgba(255,255,255,0));
-                animation: sparkleFlash_{component_id} .68s ease forwards;
-                pointer-events: none;
-            }}
-
-            @keyframes sparkleDisappear_{component_id} {{
-                0% {{ opacity: 1; transform: scale(1); max-height: 220px; margin-bottom: 0; }}
-                35% {{ opacity: 1; transform: scale(1.04); }}
-                70% {{ opacity: .55; transform: scale(.96); max-height: 220px; }}
-                100% {{ opacity: 0; transform: scale(.86); max-height: 0; padding-top: 0; padding-bottom: 0; border-width: 0; margin: 0; }}
-            }}
-
-            @keyframes sparkleFlash_{component_id} {{
-                0% {{ opacity: 0; transform: scale(.6) rotate(0deg); }}
-                35% {{ opacity: 1; transform: scale(1.25) rotate(8deg); }}
-                100% {{ opacity: 0; transform: scale(1.7) rotate(-10deg); }}
-            }}
-
-            @keyframes shake_{component_id} {{
-                0%, 100% {{ transform: translateX(0); }}
-                25% {{ transform: translateX(-5px); }}
-                50% {{ transform: translateX(5px); }}
-                75% {{ transform: translateX(-3px); }}
-            }}
-
-            #{component_id} .progress-outer {{
-                width: 100%;
-                height: 14px;
-                background: #e5e7eb;
-                border-radius: 999px;
-                overflow: hidden;
-                margin: 16px 0 12px 0;
-            }}
-
-            #{component_id} .progress-inner {{
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);
-                border-radius: 999px;
-                transition: width .28s ease;
-            }}
-
-            #{component_id} .reset-btn {{
-                width: 100%;
-                border: 1px solid #c7d2fe;
-                background: #ffffff;
-                color: #4338ca;
-                border-radius: 999px;
-                min-height: 46px;
-                font-size: 16px;
-                font-weight: 1000;
-                cursor: pointer;
-                box-shadow: 0 4px 12px rgba(15,23,42,0.05);
-            }}
-
-            #{component_id} .reset-btn:hover {{
-                background: #eef2ff;
-            }}
-
-            #{component_id} .certificate-box {{
-                background: linear-gradient(135deg,#eef2ff,#f0f9ff,#fdf2f8);
-                border: 2px solid #6366f1;
-                border-radius: 22px;
-                padding: 24px;
-                margin-top: 18px;
-                text-align: center;
-                animation: pop_{component_id} .45s ease;
-            }}
-
-            #{component_id} .certificate-title {{
-                font-size: 25px;
-                font-weight: 1000;
-                color: #3730a3;
-                margin-bottom: 8px;
-            }}
-
-            #{component_id} .certificate-guide {{
-                font-size: 16px;
-                font-weight: 850;
-                color: #475569;
-                line-height: 1.7;
-                margin-bottom: 14px;
-            }}
-
-            #{component_id} .cert-download {{
-                display: block;
-                width: 100%;
-                box-sizing: border-box;
-                min-height: 68px;
-                line-height: 68px;
-                background: #ffffff;
-                color: #3730a3;
-                border: 2px solid #4f46e5;
-                border-radius: 18px;
-                text-decoration: none;
-                font-size: 20px;
-                font-weight: 1000;
-            }}
-
-            #{component_id} .cert-download:hover {{
-                background: #eef2ff;
-            }}
-
-            #{component_id} .done-message {{
-                background: linear-gradient(135deg,#dcfce7,#bbf7d0);
-                border: 1px solid #86efac;
-                color: #14532d;
-                border-radius: 16px;
-                padding: 16px;
-                margin-top: 14px;
-                font-size: 20px;
-                font-weight: 1000;
-                text-align: center;
-                animation: pop_{component_id} .45s ease;
-            }}
-
-            @keyframes pop_{component_id} {{
-                0% {{ transform: scale(.92); opacity: 0; }}
-                100% {{ transform: scale(1); opacity: 1; }}
-            }}
-
-            @media (max-width: 720px) {{
-                #{component_id} .match-board {{
-                    grid-template-columns: 1fr;
-                }}
-                #{component_id} .match-status {{
-                    grid-template-columns: 1fr;
-                }}
-                #{component_id} .match-card {{
-                    font-size: 15px;
-                }}
-            }}
-        </style>
-
-        <script>
-            const data_{component_id} = {data_json};
-            const root_{component_id} = document.getElementById("{component_id}");
-            const enBox_{component_id} = document.getElementById("en_{component_id}");
-            const koBox_{component_id} = document.getElementById("ko_{component_id}");
-            const status_{component_id} = document.getElementById("status_{component_id}");
-            const score_{component_id} = document.getElementById("score_{component_id}");
-            const bar_{component_id} = document.getElementById("bar_{component_id}");
-            const reset_{component_id} = document.getElementById("reset_{component_id}");
-            const certBox_{component_id} = document.getElementById("cert_{component_id}");
-
-            let selected_{component_id} = null;
-            let done_{component_id} = new Set();
-            let locked_{component_id} = false;
-
-            function escapeHtml_{component_id}(str) {{
-                return String(str)
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                    .replaceAll("'", "&#039;");
-            }}
-
-            function makeCard_{component_id}(card, kind) {{
-                const btn = document.createElement("button");
-                btn.className = "match-card";
-                btn.dataset.id = card.id;
-                btn.dataset.kind = kind;
-                btn.innerHTML = escapeHtml_{component_id}(card.text);
-                btn.addEventListener("click", () => handleClick_{component_id}(btn, card, kind));
-                return btn;
-            }}
-
-            function render_{component_id}() {{
-                enBox_{component_id}.innerHTML = "";
-                koBox_{component_id}.innerHTML = "";
-
-                data_{component_id}.en.forEach(card => {{
-                    if (!done_{component_id}.has(card.id)) {{
-                        enBox_{component_id}.appendChild(makeCard_{component_id}(card, "en"));
-                    }}
-                }});
-
-                data_{component_id}.ko.forEach(card => {{
-                    if (!done_{component_id}.has(card.id)) {{
-                        koBox_{component_id}.appendChild(makeCard_{component_id}(card, "ko"));
-                    }}
-                }});
-
-                updateScore_{component_id}();
-            }}
-
-            function updateScore_{component_id}() {{
-                const count = done_{component_id}.size;
-                const total = data_{component_id}.total;
-                score_{component_id}.textContent = "맞춘 개수: " + count + " / " + total;
-                bar_{component_id}.style.width = ((count / total) * 100) + "%";
-
-                if (count === total) {{
-                    status_{component_id}.textContent = "모든 문장을 맞췄습니다! 훌륭합니다. 🎉";
-                    if (!root_{component_id}.querySelector(".done-message")) {{
-                        const msg = document.createElement("div");
-                        msg.className = "done-message";
-                        msg.textContent = "🎉 모든 문장을 맞췄습니다! 이제 PDF 인증서를 저장하세요.";
-                        root_{component_id}.appendChild(msg);
-                    }}
-                    if (certBox_{component_id}) {{
-                        certBox_{component_id}.style.display = "block";
-                    }}
-                }}
-            }}
-
-            function clearSelection_{component_id}() {{
-                root_{component_id}.querySelectorAll(".match-card.selected").forEach(el => el.classList.remove("selected"));
-                selected_{component_id} = null;
-            }}
-
-            function handleClick_{component_id}(el, card, kind) {{
-                if (locked_{component_id}) return;
-                if (done_{component_id}.has(card.id)) return;
-
-                if (!selected_{component_id}) {{
-                    selected_{component_id} = {{ el, card, kind }};
-                    el.classList.add("selected");
-                    status_{component_id}.textContent = kind === "en"
-                        ? "오른쪽에서 알맞은 한국어 뜻을 고르세요."
-                        : "왼쪽에서 알맞은 영어 표현을 고르세요.";
-                    return;
-                }}
-
-                if (selected_{component_id}.el === el) {{
-                    clearSelection_{component_id}();
-                    status_{component_id}.textContent = "선택을 취소했습니다. 다시 하나를 고르세요.";
-                    return;
-                }}
-
-                if (selected_{component_id}.card.id === card.id && selected_{component_id}.kind !== kind) {{
-                    locked_{component_id} = true;
-                    selected_{component_id}.el.classList.remove("selected");
-                    el.classList.remove("selected");
-
-                    selected_{component_id}.el.classList.add("correct");
-                    el.classList.add("correct");
-                    status_{component_id}.textContent = "정답입니다! 두 박스가 함께 사라집니다. ✅";
-
-                    const matchedId = card.id;
-
-                    setTimeout(() => {{
-                        done_{component_id}.add(matchedId);
-                        selected_{component_id} = null;
-                        locked_{component_id} = false;
-                        render_{component_id}();
-
-                        if (done_{component_id}.size < data_{component_id}.total) {{
-                            status_{component_id}.textContent = "좋아요. 다음 문장을 맞춰 보세요.";
-                        }}
-                    }}, 680);
-                }} else {{
-                    locked_{component_id} = true;
-                    selected_{component_id}.el.classList.add("wrong");
-                    el.classList.add("wrong");
-                    status_{component_id}.textContent = "아쉬워요. 다시 짝을 맞춰 보세요. ❌";
-
-                    setTimeout(() => {{
-                        selected_{component_id}.el.classList.remove("selected", "wrong");
-                        el.classList.remove("wrong");
-                        selected_{component_id} = null;
-                        locked_{component_id} = false;
-                    }}, 360);
-                }}
-            }}
-
-            reset_{component_id}.addEventListener("click", () => {{
-                selected_{component_id} = null;
-                done_{component_id} = new Set();
-                locked_{component_id} = false;
-
-                const doneMsg = root_{component_id}.querySelector(".done-message");
-                if (doneMsg) doneMsg.remove();
-
-                if (certBox_{component_id}) {{
-                    certBox_{component_id}.style.display = "none";
-                }}
-
-                status_{component_id}.textContent = "먼저 영어 또는 한국어 박스를 하나 선택하세요.";
-                render_{component_id}();
-            }});
-
-            render_{component_id}();
-        </script>
-        """,
-        height=760,
-        scrolling=True
-    )
+    st.subheader("🧩 문장 매칭 게임")
+    st.write("영어 문장에 알맞은 한국어 뜻을 골라 보세요. 10문제 중 8문제 이상 맞히면 통과합니다.")
+    ten_question_test(song_choice, "matching", matching_questions(data))
 
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
@@ -3026,3 +2622,7 @@ elif selected_tab == "✍️ 생각 적기":
 
 elif selected_tab == "⭐ 핵심 표현 듣기":
     show_key_expression_learning_in_lyrics(song_choice, data, max_words=20)
+
+
+# 모든 활동을 완료한 후에만 이름 입력 및 최종 인증서 다운로드 가능
+show_final_certificate(song_choice, data)
