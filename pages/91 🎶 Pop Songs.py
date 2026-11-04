@@ -450,97 +450,36 @@ def build_integrated_quiz(song_choice, data, total_questions=15):
 
 
 def show_integrated_quiz_tab(song_choice, data):
-    """가사 뒤에 나오는 이해도 퀴즈입니다. 기존 종합 퀴즈 문항을 모두 사용합니다."""
-    st.subheader("✅ 이해도 퀴즈")
-    st.markdown(
-        '<div class="game-card"><div class="big-guide">'
-        '가사를 읽은 뒤 문제를 풀어 보세요.<br>'
-        '기존 종합 퀴즈 문항을 모두 넣었습니다. 총 15문제 중 12문제 이상 맞히면 통과입니다.'
-        '</div></div>',
-        unsafe_allow_html=True
-    )
-
-    key_key = safe_key(song_choice)
-    pass_score = 12
-    questions = build_integrated_quiz(song_choice, data, total_questions=15)
-    user_answers = []
-
-    for i, item in enumerate(questions, start=1):
-        # item['q'] 안에 이미 1. / 2. 같은 번호가 들어 있어도
-        # 화면에는 번호가 한 번만 보이도록 기존 번호를 제거한 뒤 다시 붙입니다.
-        question_text = re.sub(r"^\s*\d+\s*[\.\)]\s*", "", str(item["q"]).strip())
-
-        st.markdown(
-            f"""
-            <div style="background:#ffffff; padding:16px 18px; border-radius:18px; border:1px solid #e2e8f0; margin-top:18px;">
-                <div style="font-size:0.95rem; font-weight:900; color:#6366f1; margin-bottom:6px;">{clean_text_for_display(item['kind'])}</div>
-                <div style="font-size:1.12rem; font-weight:950; color:#1e293b; line-height:1.6;">{i}. {clean_text_for_display(question_text)}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        options = shuffle_options(item["options"], seed=f"{key_key}_integrated_options_{i}")
-        picked = st.radio(
-            "정답을 고르세요.",
-            options,
-            key=f"integrated_quiz_{key_key}_{i}",
-            index=None,
-            label_visibility="collapsed"
-        )
-        user_answers.append((item, picked))
-
+    st.subheader("✅ 가사 이해도 퀴즈")
+    st.info("10문제 중 8문제 이상 맞히면 통과합니다. 정답은 공개하지 않습니다.")
+    key = safe_key(song_choice)
+    questions = build_integrated_quiz(song_choice, data, total_questions=10)
+    answers = []
+    for i, item in enumerate(questions, 1):
+        q = re.sub(r"^\s*\d+\s*[.\)]\s*", "", str(item["q"]))
+        st.markdown(f"**{i}. {q}**")
+        options = shuffle_options(item["options"], f"{key}_lyrics_{i}")
+        picked = st.radio(f"{i}번 선택", options, index=None, key=f"integrated_quiz_{key}_{i}", label_visibility="collapsed")
+        answers.append(picked)
     c1, c2 = st.columns(2)
     with c1:
-        submit_quiz = st.button("종합 퀴즈 정답 확인", key=f"integrated_quiz_submit_{key_key}", use_container_width=True)
+        if st.button("채점하기", key=f"integrated_submit_{key}", use_container_width=True):
+            score = sum(p == q["answer"] for p, q in zip(answers, questions))
+            wrong = [str(i) for i,(p,q) in enumerate(zip(answers,questions),1) if p != q["answer"]]
+            st.session_state[f"result_{key}_lyrics"] = (score, wrong)
+            if score >= 8:
+                st.session_state[f"mission_{key}_lyrics_quiz"] = True
+                st.session_state[f"mission_{key}_lyrics_score"] = score
     with c2:
-        if st.button("종합 퀴즈 다시 풀기", key=f"integrated_quiz_reset_{key_key}", use_container_width=True):
-            for k in list(st.session_state.keys()):
-                if k.startswith(f"integrated_quiz_{key_key}_"):
-                    del st.session_state[k]
+        if st.button("다시 풀기", key=f"integrated_reset_{key}", use_container_width=True):
+            reset_keys_by_prefix(f"integrated_quiz_{key}_")
+            st.session_state.pop(f"result_{key}_lyrics", None)
             st.rerun()
-
-    if submit_quiz:
-        score = sum(1 for item, picked in user_answers if picked == item["answer"])
-        st.markdown(f'<div class="score-box">점수: {score} / {len(questions)}</div>', unsafe_allow_html=True)
-
-        if score >= pass_score:
-            st.success(f"통과했습니다! {len(questions)}문제 중 {score}문제를 맞혔습니다.")
-            st.session_state[f"mission_{key_key}_lyrics_quiz"] = True
-            st.session_state[f"mission_{key_key}_lyrics_quiz_detail"] = f"가사 이해도 퀴즈 완료 / 점수: {score}/{len(questions)}"
-            st.balloons()
-        else:
-            st.warning(f"아직 통과 기준에 부족합니다. 통과 기준은 {pass_score}/{len(questions)} 이상입니다.")
-
-        for idx, (item, picked) in enumerate(user_answers, start=1):
-            answer = item["answer"]
-            explain = item.get("explain", "")
-            if picked == answer:
-                st.success(f"{idx}번 정답입니다. ✅")
-            else:
-                st.markdown(
-                    f'<div class="wrong-box"><b>{idx}번</b> 다시 확인해 보세요.<br>'
-                    f'내가 고른 답: {clean_text_for_display(picked) if picked else "선택 안 함"}<br>'
-                    f'정답: <b>{clean_text_for_display(answer)}</b><br>'
-                    f'{clean_text_for_display(explain)}</div>',
-                    unsafe_allow_html=True
-                )
-
-
-    if st.session_state.get(f"mission_{key_key}_lyrics_quiz"):
-        st.markdown("---")
-        st.markdown("## 📄 가사와 이해도 퀴즈 PDF 인증서")
-
-        show_mission_pdf_download(
-            song_choice,
-            "가사 이해도 퀴즈",
-            f"{key_key}_lyrics_quiz_bottom",
-            st.session_state.get(
-                f"mission_{key_key}_lyrics_quiz_detail",
-                "가사 이해도 퀴즈 활동 완료"
-            ),
-            big=True,
-            show_message=False
-        )
+    result = st.session_state.get(f"result_{key}_lyrics")
+    if result:
+        score, wrong = result
+        st.success(f"{score}/10점 · 통과!" if score >= 8 else f"{score}/10점 · 8점 이상 필요합니다.") if score >= 8 else st.warning(f"{score}/10점 · 8점 이상 필요합니다.")
+        if wrong: st.info("오답 번호: " + ", ".join(wrong) + " (정답 비공개)")
 
 
 def check_target_grammar_sentence(target, sentence):
@@ -1903,246 +1842,54 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/명사 +
 
 
 def show_song_grammar_tab(song_choice, data):
-    """각 노래별로 자주 등장하고 쉬운 문법 포인트를 발견하게 하는 탭입니다."""
-    grammar_key = safe_key(song_choice)
-    prefix = f"song_grammar_{grammar_key}_"
+    key = safe_key(song_choice)
     g = GRAMMAR_POINTS.get(song_choice, GRAMMAR_POINTS["15. Counting Stars - OneRepublic"])
-
     st.subheader("🎯 Grammar")
-
-    st.markdown("### 1. 표현 찾기")
-    example_html = "<br>".join(clean_text_for_display(x) for x in g["examples"])
-    st.markdown(
-        f"""
-        <div style="background:#f8fafc; padding:22px; border-radius:18px; border-left:6px solid #6366f1; line-height:2.15; font-size:1.22rem;">
-            {example_html}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    frequent = st.radio(
-        "자주 등장하거나 비슷하게 반복되는 표현은 무엇인가요?",
-        g["frequent_options"],
-        key=f"{prefix}frequent",
-        horizontal=True
-    )
-
-    if st.button("확인", key=f"{prefix}frequent_check", use_container_width=True):
-        if frequent == g["frequent_answer"]:
-            st.success("정답입니다.")
-        else:
-            st.error("다시 보세요. 여러 문장에 반복되는 표현이 있습니다.")
-
-    st.markdown("---")
-    st.markdown("### 2. 표현 형태 찾기")
-
-    form = st.radio(
-        "위 표현들의 공통 형태은 무엇인가요?",
-        g["form_options"],
-        key=f"{prefix}form",
-        horizontal=False
-    )
-
-    if st.button("확인", key=f"{prefix}form_check", use_container_width=True):
-        if form == g["form_answer"]:
-            st.success("정답입니다.")
-        else:
-            st.error("다시 보세요. 반복되는 표현 뒤의 단어 형태을 비교해 보세요.")
-
-    st.markdown("---")
-    st.markdown("### 3. 의미 찾기")
-    meaning_lines = "<br>".join(
-        f"{clean_text_for_display(en)} → {clean_text_for_display(ko)}"
-        for en, ko in g["meaning_examples"]
-    )
-    st.markdown(
-        f"""
-        <div style="background:#f0f9ff; padding:22px; border-radius:18px; border:1px solid #bae6fd; line-height:2.1; font-size:1.12rem;">
-            {meaning_lines}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    meaning = st.radio(
-        "위 문장들의 공통 의미로 가장 알맞은 것은 무엇인가요?",
-        g["meaning_options"],
-        key=f"{prefix}meaning",
-        horizontal=False
-    )
-
-    if st.button("확인", key=f"{prefix}meaning_check", use_container_width=True):
-        if meaning == g["meaning_answer"]:
-            st.success("정답입니다.")
-        else:
-            st.error("다시 생각해 보세요. 영어 문장과 한국어 뜻을 함께 비교해 보세요.")
-
-    st.markdown("---")
-    st.markdown("### 4. 규칙 정리")
-
-    rule = st.radio(
-        "지금까지 발견한 말의 규칙을 가장 잘 정리한 것은 무엇인가요?",
-        g["rule_options"],
-        key=f"{prefix}rule",
-        horizontal=False
-    )
-
-    if st.button("확인", key=f"{prefix}rule_check", use_container_width=True):
-        if rule == g["rule_answer"]:
-            st.success("정답입니다.")
-            st.balloons()
-        else:
-            st.error("다시 보세요. 앞에서 찾은 표현과 의미를 연결해 보세요.")
-
-    if st.session_state.get(f"{prefix}rule") == g["rule_answer"]:
-        st.markdown(
-            f"""
-            <div style="background:#f0fdf4; padding:22px; border-radius:20px; border:2px solid #bbf7d0; margin-top:18px;">
-                <div style="font-size:1.35rem; font-weight:900; color:#166534; margin-bottom:10px;">
-                    발견한 규칙
-                </div>
-                <div style="font-size:1.2rem; line-height:1.8; color:#1e293b; font-weight:850;">
-                    {clean_text_for_display(g['rule_answer'])}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.markdown("---")
-    st.markdown("### 📝 Controlled Practice")
-
-    score = 0
-    checked = 0
-    questions = g["practice"]
-
-    for i, item in enumerate(questions, start=1):
-        q, options, answer, explain = item
-        q_key = f"{prefix}cp_{i}"
-        check_key = f"{prefix}cp_checked_{i}"
-        st.markdown(
-            f"""
-            <div style="background:#ffffff; padding:16px 18px; border-radius:18px; border:1px solid #e2e8f0; margin-top:16px;">
-                <div style="font-size:1.12rem; font-weight:900; color:#1e293b;">{clean_text_for_display(q)}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        choice = st.radio(
-            "정답을 고르세요.",
-            options,
-            key=q_key,
-            label_visibility="collapsed"
-        )
-        if st.button("정답 확인", key=f"{prefix}cp_check_btn_{i}"):
-            st.session_state[check_key] = choice == answer
-
-        if check_key in st.session_state:
-            checked += 1
-            if st.session_state[check_key]:
-                score += 1
-                st.success(f"정답입니다. {explain}")
-            else:
-                st.error(f"정답: {answer} / {explain}")
-
-    st.markdown(f"### 📊 Grammar Practice 점수: {score}/{len(questions)}")
-    st.caption(f"정답 확인을 누른 문제: {checked}/{len(questions)} · 통과 기준: 4/{len(questions)} 이상")
-
-    if checked == len(questions):
-        if score >= 4:
-            st.success("통과했습니다.")
-        else:
-            st.warning("다시 풀기로 한 번 더 도전해 보세요.")
-    else:
-        st.info("모든 문제의 정답 확인을 누르면 점수가 표시됩니다.")
-
-    if checked > 0:
-        if st.button("🔄 Grammar Practice 다시 풀기", key=f"{prefix}reset", use_container_width=True):
-            reset_keys_by_prefix(prefix)
+    st.markdown("**오늘의 문법: **" + g["target"])
+    for example in g["examples"]:
+        st.markdown("- " + clean_text_for_display(example))
+    st.info("10문제 중 8문제 이상 맞히면 통과합니다. 정답은 공개하지 않습니다.")
+    items = [
+        ("자주 등장하는 표현은?",g["frequent_options"],g["frequent_answer"]),
+        ("공통 표현 형태는?",g["form_options"],g["form_answer"]),
+        ("표현의 의미는?",g["meaning_options"],g["meaning_answer"]),
+        ("올바른 문법 규칙은?",g["rule_options"],g["rule_answer"]),
+    ]
+    for q, opts, ans, explain in g["practice"]:
+        items.append((q, opts, ans))
+    # 10번째 문항은 제공된 문법 예문에 근거하여 구성
+    items.append(("오늘 배운 문법 표현은?", g["form_options"], g["form_answer"]))
+    picked=[]
+    for i,(q,options,ans) in enumerate(items,1):
+        st.markdown(f"**{i}. {q}**")
+        picked.append(st.radio(f"문법 {i}", shuffle_options(options, f"{key}_grammar_{i}"), index=None, key=f"song_grammar_{key}_{i}", label_visibility="collapsed"))
+    c1,c2=st.columns(2)
+    with c1:
+        if st.button("문법 채점하기", key=f"grammar_submit_{key}", use_container_width=True):
+            score=sum(p == item[2] for p,item in zip(picked,items))
+            wrong=[str(i) for i,(p,item) in enumerate(zip(picked,items),1) if p != item[2]]
+            st.session_state[f"result_{key}_grammar"]=(score,wrong)
+            if score>=8:
+                st.session_state[f"mission_{key}_grammar"]=True
+                st.session_state[f"mission_{key}_grammar_score"]=score
+    with c2:
+        if st.button("문법 다시 풀기", key=f"grammar_reset_{key}", use_container_width=True):
+            reset_keys_by_prefix(f"song_grammar_{key}_")
+            st.session_state.pop(f"result_{key}_grammar",None)
             st.rerun()
-
-    st.markdown("---")
+    result=st.session_state.get(f"result_{key}_grammar")
+    if result:
+        score,wrong=result
+        if score>=8: st.success(f"{score}/10점 · 통과!")
+        else: st.warning(f"{score}/10점 · 8점 이상 필요합니다.")
+        if wrong: st.info("오답 번호: " + ", ".join(wrong) + " (정답 비공개)")
     st.markdown("### ✍️ My Sentence")
+    sentence=st.text_area("오늘의 문법을 사용하여 문장을 작성하세요.",key=f"grammar_sentence_{key}")
+    if st.button("문장 확인",key=f"grammar_sentence_check_{key}"):
+        ok, feedback, advice=check_target_grammar_sentence(g["target"],sentence)
+        if ok: st.success(feedback)
+        else: st.warning(feedback + " " + advice)
 
-    st.markdown(
-        f"""
-        <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff); padding:22px; border-radius:20px; border:1px solid #bfdbfe; margin-bottom:16px;">
-            <div style="font-size:1.1rem; font-weight:850; color:#475569; margin-bottom:8px;">
-                오늘의 target grammar를 사용해서 영어 문장을 직접 써 보세요.
-            </div>
-            <div style="font-size:1.35rem; font-weight:950; color:#1e3a8a;">
-                {clean_text_for_display(g['target'])}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    user_sentence = st.text_area(
-        "학생이 직접 쓴 문장",
-        placeholder="예: I can help my friend. / I'm sorry for being late.",
-        key=f"{prefix}user_sentence",
-        height=110
-    )
-
-    c_check, c_clear = st.columns([2, 1])
-    with c_check:
-        if st.button("문법성 검사", key=f"{prefix}my_sentence_check", use_container_width=True):
-            is_ok, feedback, advice = check_target_grammar_sentence(g["target"], user_sentence)
-            st.session_state[f"{prefix}my_sentence_result"] = {
-                "is_ok": is_ok,
-                "feedback": feedback,
-                "advice": advice,
-                "sentence": user_sentence,
-            }
-    with c_clear:
-        if st.button("다시 쓰기", key=f"{prefix}my_sentence_clear", use_container_width=True):
-            for k in [f"{prefix}my_sentence_result", f"{prefix}user_sentence"]:
-                if k in st.session_state:
-                    del st.session_state[k]
-            st.rerun()
-
-    result_key = f"{prefix}my_sentence_result"
-    if result_key in st.session_state:
-        result = st.session_state[result_key]
-        if result["is_ok"]:
-            st.success(result["feedback"])
-            st.balloons()
-        else:
-            st.error(result["feedback"])
-        st.info(result["advice"])
-
-    grammar_complete = (
-        st.session_state.get(f"{prefix}frequent") == g["frequent_answer"]
-        and st.session_state.get(f"{prefix}form") == g["form_answer"]
-        and st.session_state.get(f"{prefix}meaning") == g["meaning_answer"]
-        and st.session_state.get(f"{prefix}rule") == g["rule_answer"]
-        and checked == len(questions)
-        and score >= 4
-        and st.session_state.get(result_key, {}).get("is_ok")
-    )
-    if grammar_complete:
-        st.session_state[f"mission_{grammar_key}_grammar"] = True
-        st.session_state[f"mission_{grammar_key}_grammar_detail"] = (
-            f"Grammar 활동 완료 / Grammar Practice 점수: {score}/{len(questions)}"
-        )
-
-    if st.session_state.get(f"mission_{grammar_key}_grammar"):
-        st.markdown("---")
-        st.markdown("## 📄 Grammar PDF 인증서")
-
-        show_mission_pdf_download(
-            song_choice,
-            "Grammar",
-            f"{grammar_key}_grammar_big",
-            st.session_state.get(
-                f"mission_{grammar_key}_grammar_detail",
-                "Grammar 활동 완료"
-            ),
-            big=True,
-            show_message=False
-        )
 
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
@@ -5951,7 +5698,7 @@ if "current_tab" not in st.session_state:
 
 def sync_song():
     for k in list(st.session_state.keys()):
-        if k.startswith(("quiz_", "keygame_", "match_", "reflect_", "integrated_quiz_", "song_grammar_", "mission_")):
+        if k.startswith(("quiz_", "keygame_", "match_", "reflect_", "integrated_quiz_", "song_grammar_", "mission_", "result_", "grammar_sentence_", "cert_name_")):
             del st.session_state[k]
 
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
@@ -5960,7 +5707,7 @@ song_choice = st.selectbox("👉 학습할 노래를 선택하세요", song_opti
 st.session_state.selected_song = song_choice
 data = SONGS[song_choice]
 
-tabs_list = ["🎬 배경 학습", "📖 가사 퀴즈", "🎯 문법", "🧩 문장 매칭 게임", "✍️ 생각 적기", "⭐ 핵심 표현 듣기"]
+tabs_list = ["🎬 배경 학습", "📖 가사 퀴즈", "🎯 문법", "🧩 문장 매칭 게임", "✍️ 생각 적기", "⭐ 핵심 표현 듣기", "🏆 최종 인증서"]
 selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
 
 if selected_tab == "🎬 배경 학습":
@@ -6008,512 +5755,43 @@ elif selected_tab == "🎯 문법":
 
 
 elif selected_tab == "🧩 문장 매칭 게임":
-    match_key = safe_key(song_choice)
-
-    pairs = [
-        {
-            "id": f"pair_{i}",
-            "en": en,
-            "ko": ko
-        }
-        for i, (en, ko) in enumerate(data["matching"], start=1)
-    ]
-
-    en_cards = [{"id": p["id"], "text": p["en"]} for p in pairs]
-    ko_cards = [{"id": p["id"], "text": p["ko"]} for p in pairs]
-
-    en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
-    ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
-
-    payload = {
-        "en": en_cards,
-        "ko": ko_cards,
-        "total": len(pairs),
-    }
-
-    data_json = json.dumps(payload, ensure_ascii=False)
-    component_id = "match_" + uuid.uuid4().hex
-
-    matching_pdf_bytes = make_mission_pdf(song_choice, "문장 매칭 게임", "문장 매칭 게임 활동 완료")
-    matching_pdf_filename = f"mission_complete_{safe_key(song_choice)}_{safe_key('문장 매칭 게임')}.pdf"
-    if matching_pdf_bytes:
-        matching_pdf_b64 = base64.b64encode(matching_pdf_bytes).decode("utf-8")
-        certificate_html = f'''
-            <div id="cert_{component_id}" class="certificate-box" style="display:none;">
-                <div class="certificate-title">📄 문장 매칭 게임 PDF 인증서</div>
-                <div class="certificate-guide">
-                    모든 문장을 성공적으로 맞췄습니다. 아래 버튼을 눌러 완료 인증서를 저장하세요.
-                </div>
-                <a class="cert-download" href="data:application/pdf;base64,{matching_pdf_b64}" download="{matching_pdf_filename}">
-                    📄 PDF 인증서 다운받기
-                </a>
-            </div>
-        '''
+    key=safe_key(song_choice)
+    st.subheader("🧩 문장 매칭")
+    st.info("10문제 중 8문제 이상 맞히면 통과합니다. 정답은 공개하지 않습니다.")
+    pairs=list(data.get("matching", []))
+    if len(pairs)<2:
+        st.warning("문장 매칭 자료가 부족합니다.")
     else:
-        certificate_html = f'''
-            <div id="cert_{component_id}" class="certificate-box" style="display:none;">
-                <div class="certificate-title">📄 문장 매칭 게임 PDF 인증서</div>
-                <div class="certificate-guide">
-                    PDF 저장 기능을 사용하려면 requirements.txt에 reportlab을 추가해 주세요. 예: reportlab>=4.0.0
-                </div>
-            </div>
-        '''
-
-    components.html(
-        f"""
-        <div id="{component_id}" class="match-app">
-            <div class="match-head">
-                <div class="match-title">🧩 문장 매칭 게임</div>
-                <div class="match-guide">
-                    왼쪽 영어 표현과 오른쪽 한국어 뜻을 차례로 눌러 짝을 맞추세요.<br>
-                    선택한 박스는 색칠되고, 정답이면 두 박스가 반짝이며 함께 사라집니다.
-                </div>
-            </div>
-
-            <div class="match-status">
-                <div id="status_{component_id}">먼저 영어 또는 한국어 박스를 하나 선택하세요.</div>
-                <div id="score_{component_id}">맞춘 개수: 0 / {len(pairs)}</div>
-            </div>
-
-            <div class="match-board">
-                <div class="match-col">
-                    <div class="col-title">English</div>
-                    <div id="en_{component_id}" class="card-wrap"></div>
-                </div>
-                <div class="match-col">
-                    <div class="col-title">Korean</div>
-                    <div id="ko_{component_id}" class="card-wrap"></div>
-                </div>
-            </div>
-
-            <div class="progress-outer">
-                <div id="bar_{component_id}" class="progress-inner"></div>
-            </div>
-
-            <button id="reset_{component_id}" class="reset-btn">매칭 게임 다시 시작</button>
-
-            {certificate_html}
-        </div>
-
-        <style>
-            #{component_id}.match-app {{
-                font-family: Arial, sans-serif;
-                width: 100%;
-                box-sizing: border-box;
-                background: linear-gradient(135deg,#eef2ff 0%,#f0f9ff 50%,#fdf2f8 100%);
-                border: 1px solid #c7d2fe;
-                border-radius: 22px;
-                padding: 22px;
-                margin: 8px 0 22px 0;
-                color: #1e293b;
-            }}
-
-            #{component_id} .match-head {{
-                background: rgba(255,255,255,0.72);
-                border: 1px solid #dbeafe;
-                border-radius: 18px;
-                padding: 18px 20px;
-                margin-bottom: 16px;
-            }}
-
-            #{component_id} .match-title {{
-                font-size: 30px;
-                font-weight: 1000;
-                color: #4338ca;
-                margin-bottom: 8px;
-            }}
-
-            #{component_id} .match-guide {{
-                font-size: 16px;
-                font-weight: 800;
-                color: #475569;
-                line-height: 1.7;
-            }}
-
-            #{component_id} .match-status {{
-                display: grid;
-                grid-template-columns: 1.5fr 0.8fr;
-                gap: 10px;
-                margin-bottom: 14px;
-                align-items: center;
-            }}
-
-            #{component_id} .match-status > div {{
-                background: #ffffff;
-                border: 1px solid #dbeafe;
-                border-radius: 14px;
-                padding: 12px 14px;
-                font-size: 15px;
-                font-weight: 900;
-                color: #1d4ed8;
-                min-height: 24px;
-            }}
-
-            #{component_id} .match-board {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 14px;
-            }}
-
-            #{component_id} .match-col {{
-                background: rgba(255,255,255,0.72);
-                border: 1px solid #e5e7eb;
-                border-radius: 18px;
-                padding: 14px;
-            }}
-
-            #{component_id} .col-title {{
-                font-size: 22px;
-                font-weight: 1000;
-                color: #111827;
-                margin-bottom: 12px;
-            }}
-
-            #{component_id} .card-wrap {{
-                display: flex;
-                flex-direction: column;
-                gap: 10px;
-            }}
-
-            #{component_id} .match-card {{
-                width: 100%;
-                text-align: left;
-                border: 2px solid #c7d2fe;
-                background: #ffffff;
-                color: #1e293b;
-                border-radius: 16px;
-                padding: 14px 15px;
-                font-size: 17px;
-                font-weight: 900;
-                line-height: 1.55;
-                cursor: pointer;
-                box-shadow: 0 4px 12px rgba(15,23,42,0.06);
-                transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
-                position: relative;
-                overflow: hidden;
-            }}
-
-            #{component_id} .match-card:hover {{
-                transform: translateY(-2px);
-                border-color: #818cf8;
-                box-shadow: 0 8px 18px rgba(99,102,241,0.16);
-            }}
-
-            #{component_id} .match-card.selected {{
-                background: linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);
-                border-color: #f59e0b;
-                color: #78350f;
-                box-shadow: 0 0 0 4px rgba(245,158,11,0.18), 0 8px 20px rgba(245,158,11,0.22);
-                transform: scale(1.015);
-            }}
-
-            #{component_id} .match-card.wrong {{
-                animation: shake_{component_id} .28s ease-in-out;
-                background: #fee2e2;
-                border-color: #ef4444;
-                color: #7f1d1d;
-            }}
-
-            #{component_id} .match-card.correct {{
-                background: linear-gradient(135deg,#dcfce7,#bbf7d0);
-                border-color: #22c55e;
-                color: #14532d;
-                animation: sparkleDisappear_{component_id} .68s ease forwards;
-            }}
-
-            #{component_id} .match-card.correct::after {{
-                content: "✨";
-                position: absolute;
-                inset: 0;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 34px;
-                background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.20), rgba(255,255,255,0));
-                animation: sparkleFlash_{component_id} .68s ease forwards;
-                pointer-events: none;
-            }}
-
-            @keyframes sparkleDisappear_{component_id} {{
-                0% {{ opacity: 1; transform: scale(1); max-height: 220px; margin-bottom: 0; }}
-                35% {{ opacity: 1; transform: scale(1.04); }}
-                70% {{ opacity: .55; transform: scale(.96); max-height: 220px; }}
-                100% {{ opacity: 0; transform: scale(.86); max-height: 0; padding-top: 0; padding-bottom: 0; border-width: 0; margin: 0; }}
-            }}
-
-            @keyframes sparkleFlash_{component_id} {{
-                0% {{ opacity: 0; transform: scale(.6) rotate(0deg); }}
-                35% {{ opacity: 1; transform: scale(1.25) rotate(8deg); }}
-                100% {{ opacity: 0; transform: scale(1.7) rotate(-10deg); }}
-            }}
-
-            @keyframes shake_{component_id} {{
-                0%, 100% {{ transform: translateX(0); }}
-                25% {{ transform: translateX(-5px); }}
-                50% {{ transform: translateX(5px); }}
-                75% {{ transform: translateX(-3px); }}
-            }}
-
-            #{component_id} .progress-outer {{
-                width: 100%;
-                height: 14px;
-                background: #e5e7eb;
-                border-radius: 999px;
-                overflow: hidden;
-                margin: 16px 0 12px 0;
-            }}
-
-            #{component_id} .progress-inner {{
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);
-                border-radius: 999px;
-                transition: width .28s ease;
-            }}
-
-            #{component_id} .reset-btn {{
-                width: 100%;
-                border: 1px solid #c7d2fe;
-                background: #ffffff;
-                color: #4338ca;
-                border-radius: 999px;
-                min-height: 46px;
-                font-size: 16px;
-                font-weight: 1000;
-                cursor: pointer;
-                box-shadow: 0 4px 12px rgba(15,23,42,0.05);
-            }}
-
-            #{component_id} .reset-btn:hover {{
-                background: #eef2ff;
-            }}
-
-            #{component_id} .certificate-box {{
-                background: linear-gradient(135deg,#eef2ff,#f0f9ff,#fdf2f8);
-                border: 2px solid #6366f1;
-                border-radius: 22px;
-                padding: 24px;
-                margin-top: 18px;
-                text-align: center;
-                animation: pop_{component_id} .45s ease;
-            }}
-
-            #{component_id} .certificate-title {{
-                font-size: 25px;
-                font-weight: 1000;
-                color: #3730a3;
-                margin-bottom: 8px;
-            }}
-
-            #{component_id} .certificate-guide {{
-                font-size: 16px;
-                font-weight: 850;
-                color: #475569;
-                line-height: 1.7;
-                margin-bottom: 14px;
-            }}
-
-            #{component_id} .cert-download {{
-                display: block;
-                width: 100%;
-                box-sizing: border-box;
-                min-height: 68px;
-                line-height: 68px;
-                background: #ffffff;
-                color: #3730a3;
-                border: 2px solid #4f46e5;
-                border-radius: 18px;
-                text-decoration: none;
-                font-size: 20px;
-                font-weight: 1000;
-            }}
-
-            #{component_id} .cert-download:hover {{
-                background: #eef2ff;
-            }}
-
-            #{component_id} .done-message {{
-                background: linear-gradient(135deg,#dcfce7,#bbf7d0);
-                border: 1px solid #86efac;
-                color: #14532d;
-                border-radius: 16px;
-                padding: 16px;
-                margin-top: 14px;
-                font-size: 20px;
-                font-weight: 1000;
-                text-align: center;
-                animation: pop_{component_id} .45s ease;
-            }}
-
-            @keyframes pop_{component_id} {{
-                0% {{ transform: scale(.92); opacity: 0; }}
-                100% {{ transform: scale(1); opacity: 1; }}
-            }}
-
-            @media (max-width: 720px) {{
-                #{component_id} .match-board {{
-                    grid-template-columns: 1fr;
-                }}
-                #{component_id} .match-status {{
-                    grid-template-columns: 1fr;
-                }}
-                #{component_id} .match-card {{
-                    font-size: 15px;
-                }}
-            }}
-        </style>
-
-        <script>
-            const data_{component_id} = {data_json};
-            const root_{component_id} = document.getElementById("{component_id}");
-            const enBox_{component_id} = document.getElementById("en_{component_id}");
-            const koBox_{component_id} = document.getElementById("ko_{component_id}");
-            const status_{component_id} = document.getElementById("status_{component_id}");
-            const score_{component_id} = document.getElementById("score_{component_id}");
-            const bar_{component_id} = document.getElementById("bar_{component_id}");
-            const reset_{component_id} = document.getElementById("reset_{component_id}");
-            const certBox_{component_id} = document.getElementById("cert_{component_id}");
-
-            let selected_{component_id} = null;
-            let done_{component_id} = new Set();
-            let locked_{component_id} = false;
-
-            function escapeHtml_{component_id}(str) {{
-                return String(str)
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                    .replaceAll("'", "&#039;");
-            }}
-
-            function makeCard_{component_id}(card, kind) {{
-                const btn = document.createElement("button");
-                btn.className = "match-card";
-                btn.dataset.id = card.id;
-                btn.dataset.kind = kind;
-                btn.innerHTML = escapeHtml_{component_id}(card.text);
-                btn.addEventListener("click", () => handleClick_{component_id}(btn, card, kind));
-                return btn;
-            }}
-
-            function render_{component_id}() {{
-                enBox_{component_id}.innerHTML = "";
-                koBox_{component_id}.innerHTML = "";
-
-                data_{component_id}.en.forEach(card => {{
-                    if (!done_{component_id}.has(card.id)) {{
-                        enBox_{component_id}.appendChild(makeCard_{component_id}(card, "en"));
-                    }}
-                }});
-
-                data_{component_id}.ko.forEach(card => {{
-                    if (!done_{component_id}.has(card.id)) {{
-                        koBox_{component_id}.appendChild(makeCard_{component_id}(card, "ko"));
-                    }}
-                }});
-
-                updateScore_{component_id}();
-            }}
-
-            function updateScore_{component_id}() {{
-                const count = done_{component_id}.size;
-                const total = data_{component_id}.total;
-                score_{component_id}.textContent = "맞춘 개수: " + count + " / " + total;
-                bar_{component_id}.style.width = ((count / total) * 100) + "%";
-
-                if (count === total) {{
-                    status_{component_id}.textContent = "모든 문장을 맞췄습니다! 훌륭합니다. 🎉";
-                    if (!root_{component_id}.querySelector(".done-message")) {{
-                        const msg = document.createElement("div");
-                        msg.className = "done-message";
-                        msg.textContent = "🎉 모든 문장을 맞췄습니다! 이제 PDF 인증서를 저장하세요.";
-                        root_{component_id}.appendChild(msg);
-                    }}
-                    if (certBox_{component_id}) {{
-                        certBox_{component_id}.style.display = "block";
-                    }}
-                }}
-            }}
-
-            function clearSelection_{component_id}() {{
-                root_{component_id}.querySelectorAll(".match-card.selected").forEach(el => el.classList.remove("selected"));
-                selected_{component_id} = null;
-            }}
-
-            function handleClick_{component_id}(el, card, kind) {{
-                if (locked_{component_id}) return;
-                if (done_{component_id}.has(card.id)) return;
-
-                if (!selected_{component_id}) {{
-                    selected_{component_id} = {{ el, card, kind }};
-                    el.classList.add("selected");
-                    status_{component_id}.textContent = kind === "en"
-                        ? "오른쪽에서 알맞은 한국어 뜻을 고르세요."
-                        : "왼쪽에서 알맞은 영어 표현을 고르세요.";
-                    return;
-                }}
-
-                if (selected_{component_id}.el === el) {{
-                    clearSelection_{component_id}();
-                    status_{component_id}.textContent = "선택을 취소했습니다. 다시 하나를 고르세요.";
-                    return;
-                }}
-
-                if (selected_{component_id}.card.id === card.id && selected_{component_id}.kind !== kind) {{
-                    locked_{component_id} = true;
-                    selected_{component_id}.el.classList.remove("selected");
-                    el.classList.remove("selected");
-
-                    selected_{component_id}.el.classList.add("correct");
-                    el.classList.add("correct");
-                    status_{component_id}.textContent = "정답입니다! 두 박스가 함께 사라집니다. ✅";
-
-                    const matchedId = card.id;
-
-                    setTimeout(() => {{
-                        done_{component_id}.add(matchedId);
-                        selected_{component_id} = null;
-                        locked_{component_id} = false;
-                        render_{component_id}();
-
-                        if (done_{component_id}.size < data_{component_id}.total) {{
-                            status_{component_id}.textContent = "좋아요. 다음 문장을 맞춰 보세요.";
-                        }}
-                    }}, 680);
-                }} else {{
-                    locked_{component_id} = true;
-                    selected_{component_id}.el.classList.add("wrong");
-                    el.classList.add("wrong");
-                    status_{component_id}.textContent = "아쉬워요. 다시 짝을 맞춰 보세요. ❌";
-
-                    setTimeout(() => {{
-                        selected_{component_id}.el.classList.remove("selected", "wrong");
-                        el.classList.remove("wrong");
-                        selected_{component_id} = null;
-                        locked_{component_id} = false;
-                    }}, 360);
-                }}
-            }}
-
-            reset_{component_id}.addEventListener("click", () => {{
-                selected_{component_id} = null;
-                done_{component_id} = new Set();
-                locked_{component_id} = false;
-
-                const doneMsg = root_{component_id}.querySelector(".done-message");
-                if (doneMsg) doneMsg.remove();
-                if (certBox_{component_id}) certBox_{component_id}.style.display = "none";
-                status_{component_id}.textContent = "먼저 영어 또는 한국어 박스를 하나 선택하세요.";
-                render_{component_id}();
-            }});
-
-            render_{component_id}();
-        </script>
-        """,
-        height=760,
-        scrolling=True
-    )
+        questions=[pairs[i % len(pairs)] for i in range(10)]
+        all_korean=list(dict.fromkeys(ko for en,ko in pairs))
+        picks=[]
+        for i,(en,ko) in enumerate(questions,1):
+            st.markdown(f"**{i}. {clean_text_for_display(en)}**")
+            options=shuffle_options(all_korean, f"{key}_matching_{i}")[:7]
+            if ko not in options:
+                options[-1]=ko
+                options=shuffle_options(options,f"{key}_matching_final_{i}")
+            picks.append(st.radio(f"매칭 {i}",options,index=None,key=f"match_answer_{key}_{i}",label_visibility="collapsed"))
+        c1,c2=st.columns(2)
+        with c1:
+            if st.button("문장 매칭 채점",key=f"match_submit_{key}",use_container_width=True):
+                score=sum(p==q[1] for p,q in zip(picks,questions))
+                wrong=[str(i) for i,(p,q) in enumerate(zip(picks,questions),1) if p!=q[1]]
+                st.session_state[f"result_{key}_matching"]=(score,wrong)
+                if score>=8:
+                    st.session_state[f"mission_{key}_matching"]=True
+                    st.session_state[f"mission_{key}_matching_score"]=score
+        with c2:
+            if st.button("매칭 다시 풀기",key=f"match_reset_{key}",use_container_width=True):
+                reset_keys_by_prefix(f"match_answer_{key}_")
+                st.session_state.pop(f"result_{key}_matching",None)
+                st.rerun()
+        result=st.session_state.get(f"result_{key}_matching")
+        if result:
+            score,wrong=result
+            if score>=8: st.success(f"{score}/10점 · 통과!")
+            else: st.warning(f"{score}/10점 · 8점 이상 필요합니다.")
+            if wrong: st.info("오답 번호: " + ", ".join(wrong) + " (정답 비공개)")
 
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
@@ -6592,3 +5870,26 @@ elif selected_tab == "✍️ 생각 적기":
 
 elif selected_tab == "⭐ 핵심 표현 듣기":
     show_key_expression_learning_in_lyrics(song_choice, data, max_words=10)
+
+
+elif selected_tab == "🏆 최종 인증서":
+    key=safe_key(song_choice)
+    activities=[("가사 퀴즈",f"mission_{key}_lyrics_quiz",f"mission_{key}_lyrics_score"),
+                ("문법",f"mission_{key}_grammar",f"mission_{key}_grammar_score"),
+                ("문장 매칭",f"mission_{key}_matching",f"mission_{key}_matching_score"),
+                ("생각 적기",f"mission_{key}_reflection",None)]
+    st.subheader("🏆 팝송 학습 최종 인증서")
+    for label,flag,scorekey in activities:
+        done=bool(st.session_state.get(flag))
+        score=f" ({st.session_state[scorekey]}/10점)" if scorekey and scorekey in st.session_state else ""
+        st.write(("✅ " if done else "⬜ ")+label+(score if done else ""))
+    if all(st.session_state.get(flag) for _,flag,_ in activities):
+        name=st.text_input("인증서에 표시할 학생 이름",key=f"cert_name_{key}",max_chars=40)
+        if name.strip():
+            score_lines="".join(f"<tr><td>{html.escape(label)}</td><td>{st.session_state.get(scorekey, '-') if scorekey else '완료'}{('/10' if scorekey else '')}</td></tr>" for label,flag,scorekey in activities)
+            doc=f"""<!DOCTYPE html><html lang='ko'><head><meta charset='utf-8'><title>Pop Song Certificate</title><style>body{{font-family:Arial,'Malgun Gothic',sans-serif;background:#f8fafc;text-align:center;padding:40px;color:#1e293b}}main{{background:white;border:8px double #6366f1;padding:55px;max-width:740px;margin:auto}}h1{{color:#3730a3;font-size:36px}}h2{{font-size:30px}}table{{border-collapse:collapse;width:80%;margin:30px auto}}td{{border-bottom:1px solid #ddd;padding:13px}}@media print{{body{{background:white;padding:0}}main{{border:8px double #6366f1}}}}</style></head><body><main><h1>🏆 CERTIFICATE OF COMPLETION</h1><p>팝송 영어 학습 최종 인증서</p><h2>{html.escape(name.strip())}</h2><p>다음 노래의 학습 활동을 모두 성공적으로 마쳤습니다.</p><h3>{html.escape(song_choice)}</h3><table>{score_lines}</table><p>발급일: {datetime.now().strftime('%Y-%m-%d')}</p><p>Pop Song English Learning</p></main></body></html>"""
+            st.success(f"{name.strip()} 학생, 모든 활동을 완료했습니다!")
+            st.download_button("🏆 이름이 들어간 최종 인증서 다운로드",doc.encode('utf-8'),file_name=f"popsong_certificate_{safe_key(name)}.html",mime="text/html",use_container_width=True)
+            st.caption("다운로드한 HTML을 브라우저로 열고 인쇄 → PDF로 저장할 수 있습니다.")
+    else:
+        st.warning("모든 활동을 완료한 후 인증서를 발급받을 수 있습니다. 객관식 활동은 각각 8/10점 이상이어야 합니다.")
